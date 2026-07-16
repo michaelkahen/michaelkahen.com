@@ -72,15 +72,13 @@ The production site is intentionally self-contained:
   management.
 - `assets/icons/` contains the original SVG machine artwork and site identity.
 - `assets/documents/` is reserved for portfolio documents.
-- `other/` contains exploratory prototypes and planning references that are not
-  part of the production site.
 
 ## Repository Structure
 
 ```text
 .
 ├── index.html
-├── assets/
+└── assets/
 │   ├── css/
 │   │   ├── site.css
 │   │   └── ecosystem.css
@@ -97,9 +95,6 @@ The production site is intentionally self-contained:
 │   └── js/
 │       ├── site.js
 │       └── ecosystem.js
-└── other/
-    ├── gemini-ecosystem.html
-    └── plans.txt
 ```
 
 All production artwork is original to the portfolio. The factory theme is an
