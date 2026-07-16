@@ -166,6 +166,30 @@
           "     )/---,( ",
           "    / \\  / |",
         ],
+        [
+          " ,_)/",
+          "   (-'",
+          " .-'\\ ",
+          '  "\'\\\'"""""\')-',
+          "     )\\---,( ",
+          "     | \\ / \\",
+        ],
+        [
+          " ,_)/",
+          "   (-'",
+          " .-'\\ ",
+          '  "\'\\\'"""""\')~',
+          "     )|---,( ",
+          "     \\  | | /",
+        ],
+        [
+          " ,_)/",
+          "   (-'",
+          " .-'\\ ",
+          '  "\'\\\'"""""\')_',
+          "     )/---,( ",
+          "    \\ /  | /",
+        ],
       ],
     },
     fish: {
@@ -191,6 +215,33 @@
           "    VvvvvvvVvv`___...)_/  /_/_/_/_/_/_/_/\\  (__________^^-.",
           "    `^^^^^^^^`       /  /                >  >        _`)  )",
           "                     (((`                (((`        `'--'^",
+        ],
+        [
+          "              _  _",
+          "             / \\/ \\-._   _.-'^^'^'^^'^'^^\"^^'-.",
+          "    .OO.----'\\o/\\o/   `-'                /^  ^^-._",
+          "   (    `                 \\             |    _    ^^-._",
+          "    VvvvvvvVvv`___...)_/  /_/_/_/_/_/_/_/\\  (__________^^-.",
+          "    `^^^^^^^^`       \\  \\                <  <        _`)  )",
+          "                     `)))                `)))        `'--'~",
+        ],
+        [
+          "              _  _",
+          "             / \\/ \\-._   _.-'^'^^'^'^^'^'\"^^'-.",
+          "    .OO.----'\\o/\\o/   `-'                /^  ^^-._",
+          "   (    `                 \\             |    _    ^^-._",
+          "    VvvvvvvVvv`___...)_/  /_/_/_/_/_/_/_/\\  (__________^^-.",
+          "    `^^^^^^^^`       /  \\                >  <        _`)  )",
+          "                     (((`                `)))        `'--'_",
+        ],
+        [
+          "              _  _",
+          "             / \\/ \\-._   _.-'^^'^'^^'^'^^\"^^'-.",
+          "    .OO.----'\\o/\\o/   `-'                /^  ^^-._",
+          "   (    `                 \\             |    _    ^^-._",
+          "    VvvvvvvVvv`___...)_/  /_/_/_/_/_/_/_/\\  (__________^^-.",
+          "    `^^^^^^^^`       \\  /                <  >        _`)  )",
+          "                     `)))                (((`        `'--'^",
         ],
       ],
     },
@@ -221,9 +272,77 @@
           "           __/   /_..-' `  ),'  //",
           "          ((__.-'((___..-'' \\__.'",
         ],
+        [
+          "                      __,,,,_",
+          "       _ __..-;''`--/'/ /.',-`-.",
+          "   (`/' ` |  \\ \\ \\\\ / / / / .-'/`,_",
+          "  /'`\\ \\   |  \\ | \\| // // / -.,/_,'-,",
+          " /<7' ;  \\ \\  | ; ||/ /| | \\/    |`-/,/-.,_,/)-",
+          "/  _.-, `,-\\,__|  _-| / \\ \\/|_/  |    '-/.;.\\'",
+          "`-`  f/ ;      / __/ \\__ `/ |__/ |",
+          "     `-'      |  -| =|\\_  \\  |-' |",
+          "            _\\   \\_..-' `  ),' / |",
+          "           ((  -'((___..-'' /_/",
+        ],
+        [
+          "                      __,,,,_",
+          "       _ __..-;''`--/'/ /.',-`-.",
+          "   (`/' ` |  \\ \\ \\\\ / / / / .-'/`,_",
+          "  /'`\\ \\   |  \\ | \\| // // / -.,/_,'-,",
+          " /<7' ;  \\ \\  | ; ||/ /| | \\/    |`-/,/-.,_,/)~",
+          "/  _.-, `,-\\,__|  _-| / \\ \\/|_/  |    '-/.;.\\'",
+          "`-`  f/ ;      / __/ \\__ `/ |__/ |",
+          "     `-'      |  -| =|\\_  \\  |-' |",
+          "            _/  /_..-' `  ),' | \\",
+          "           ((__' ((___..-'' \\_.'",
+        ],
+        [
+          "                      __,,,,_",
+          "       _ __..-;''`--/'/ /.',-`-.",
+          "   (`/' ` |  \\ \\ \\\\ / / / / .-'/`,_",
+          "  /'`\\ \\   |  \\ | \\| // // / -.,/_,'-,",
+          " /<7' ;  \\ \\  | ; ||/ /| | \\/    |`-/,/-.,_,/)_",
+          "/  _.-, `,-\\,__|  _-| / \\ \\/|_/  |    '-/.;.\\'",
+          "`-`  f/ ;      / __/ \\__ `/ |__/ |",
+          "     `-'      |  -| =|\\_  \\  |-' |",
+          "           __\\   \\_..-' `  ),' | \\",
+          "          ((_.-'((___..-'' /__/",
+        ],
       ],
     },
   };
+
+  // Decorative aerial sprites are deliberately kept outside the ecosystem.
+  // They are never indexed, hunted, fed, counted, or constrained by habitat.
+  const BIRD_ART = [
+    {
+      lineHeightScale: 0.82,
+      frames: [
+        ["\\   /", " \\v/ "],
+        ["     ", "--v--"],
+        [" /v\\ ", "/   \\"],
+        ["     ", "--v--"],
+      ],
+    },
+    {
+      lineHeightScale: 0.8,
+      frames: [
+        ["\\     /", " `\\_v_/ "],
+        ["       ", "---v---"],
+        [" /_v_\\ ", "/     \\"],
+        ["       ", "---v---"],
+      ],
+    },
+    {
+      lineHeightScale: 0.86,
+      frames: [
+        ["\\  /", " \\o>"],
+        ["    ", "-o->"],
+        [" /o>", "/  \\"],
+        ["    ", "-o->"],
+      ],
+    },
+  ];
 
   const HABITAT_STRUCTURE_ART = {
     land: [
@@ -376,6 +495,7 @@
   let pixelRatio = 1;
   let backgroundCanvas = null;
   let animals = [];
+  let birds = [];
   let foodResources = [];
   let habitatStructures = [];
   let habitatStructuresByHabitat = { land: [], lake: [] };
@@ -427,6 +547,94 @@
       state ^= state + Math.imul(state ^ (state >>> 7), state | 61);
       return ((state ^ (state >>> 14)) >>> 0) / 4294967296;
     };
+  }
+
+  function getTargetBirdCount() {
+    return clamp(Math.round(worldWidth / 170), 4, 9);
+  }
+
+  function createDecorativeBird() {
+    const direction = Math.random() < 0.5 ? -1 : 1;
+    const upperFlightBoundary = Math.max(26, worldHeight * 0.08);
+    const lowerFlightBoundary = Math.max(
+      upperFlightBoundary + 1,
+      worldHeight * 0.42,
+    );
+    const baseY = randomBetween(upperFlightBoundary, lowerFlightBoundary);
+    return {
+      artIndex: Math.floor(randomBetween(0, BIRD_ART.length)),
+      x: randomBetween(-28, worldWidth + 28),
+      y: baseY,
+      baseY: baseY,
+      velocityX:
+        direction * randomBetween(34, 56) * (0.8 + worldSpatialScale * 0.2),
+      verticalDriftAmplitude: randomBetween(2.5, 8),
+      verticalDriftFrequency: randomBetween(0.35, 0.8),
+      verticalDriftPhase: randomBetween(0, FULL_CIRCLE_RADIANS),
+      flapSpeed: randomBetween(3.4, 5.8),
+      frameOffset: randomBetween(0, 4),
+      fontSize:
+        randomBetween(5.2, 8.2) * (0.86 + worldSpatialScale * 0.14),
+      opacity: randomBetween(0.34, 0.62),
+    };
+  }
+
+  function populateDecorativeBirds() {
+    birds = [];
+    const targetBirdCount = getTargetBirdCount();
+    for (let i = 0; i < targetBirdCount; i += 1) {
+      birds.push(createDecorativeBird());
+    }
+  }
+
+  function resizeDecorativeBirds(previousSize) {
+    if (previousSize.width && previousSize.height) {
+      const scaleX = worldWidth / previousSize.width;
+      const scaleY = worldHeight / previousSize.height;
+      birds.forEach(function (bird) {
+        bird.x *= scaleX;
+        bird.baseY *= scaleY;
+        bird.y *= scaleY;
+      });
+    }
+
+    const targetBirdCount = getTargetBirdCount();
+    if (birds.length > targetBirdCount) {
+      birds.length = targetBirdCount;
+    }
+    while (birds.length < targetBirdCount) {
+      birds.push(createDecorativeBird());
+    }
+  }
+
+  function updateDecorativeBirds(deltaSeconds) {
+    const wrapMargin = 42;
+    const upperFlightBoundary = Math.max(24, worldHeight * 0.07);
+    const lowerFlightBoundary = Math.max(
+      upperFlightBoundary + 1,
+      worldHeight * 0.43,
+    );
+    for (let i = 0; i < birds.length; i += 1) {
+      const bird = birds[i];
+      bird.x += bird.velocityX * deltaSeconds;
+      bird.y =
+        bird.baseY +
+        Math.sin(
+          simulationTime * bird.verticalDriftFrequency +
+            bird.verticalDriftPhase,
+        ) *
+          bird.verticalDriftAmplitude;
+
+      const flewPastRightEdge =
+        bird.velocityX > 0 && bird.x > worldWidth + wrapMargin;
+      const flewPastLeftEdge = bird.velocityX < 0 && bird.x < -wrapMargin;
+      if (flewPastRightEdge || flewPastLeftEdge) {
+        bird.x = bird.velocityX > 0 ? -wrapMargin : worldWidth + wrapMargin;
+        bird.baseY = randomBetween(upperFlightBoundary, lowerFlightBoundary);
+        bird.verticalDriftAmplitude = randomBetween(2.5, 8);
+        bird.verticalDriftPhase = randomBetween(0, FULL_CIRCLE_RADIANS);
+      }
+    }
   }
 
   class SpatialHash {
@@ -785,6 +993,7 @@
         speciesConfig.reproductionCooldownSeconds * 0.65,
       ),
       wanderOffsetRadians: randomBetween(-0.35, 0.35),
+      animationFrameProgress: randomBetween(0, 4),
       isDead: false,
     };
     updateDerivedTraits(animal);
@@ -1381,6 +1590,10 @@
 
     const speciesConfig = SPECIES_CONFIG[animal.species];
     const movementEffortRatio = clamp(speed / animal.maxSpeed, 0, 1);
+    if (movementEffortRatio > 0.035) {
+      animal.animationFrameProgress +=
+        deltaSeconds * (1.25 + movementEffortRatio * 4.75);
+    }
     const bodyMetabolismFactor = 0.58 + 0.42 * animal.genome.sizeMultiplier;
     const movementEnergyUsePerSecond =
       speciesConfig.movementEnergyCostPerSecond *
@@ -1694,6 +1907,7 @@
     reproduceAnimals(populations, deltaSeconds);
     updateFoodResources(deltaSeconds, populations);
     updateVisualEchoes(deltaSeconds);
+    updateDecorativeBirds(deltaSeconds);
     removeDeadEntities();
     handleExtinctions(populations, deltaSeconds);
   }
@@ -1730,9 +1944,9 @@
       ? spriteModel.frames
       : spriteModel.framesByFacing[facing];
     const frameIndex =
-      Math.floor(
-        simulationTime * (1.7 + movementRatio * 3.1) + animal.id * 0.37,
-      ) % animationFrames.length;
+      movementRatio > 0.035
+        ? Math.floor(animal.animationFrameProgress) % animationFrames.length
+        : 0;
     const spriteLines = animationFrames[frameIndex];
     const fontSize = Math.max(
       spriteModel.minFontSize || 5.2,
@@ -1785,6 +1999,45 @@
       );
     }
     context.restore();
+  }
+
+  function drawDecorativeBirds() {
+    for (let birdIndex = 0; birdIndex < birds.length; birdIndex += 1) {
+      const bird = birds[birdIndex];
+      const spriteModel = BIRD_ART[bird.artIndex];
+      const frameIndex =
+        Math.floor(simulationTime * bird.flapSpeed + bird.frameOffset) %
+        spriteModel.frames.length;
+      const spriteLines = spriteModel.frames[frameIndex];
+      const lineHeight = bird.fontSize * spriteModel.lineHeightScale;
+
+      context.save();
+      context.translate(bird.x, bird.y);
+      if (bird.velocityX < 0) {
+        context.scale(-1, 1);
+      }
+      context.font =
+        "600 " +
+        bird.fontSize.toFixed(1) +
+        "px Menlo, Consolas, monospace";
+      context.fillStyle = "rgb(181, 232, 205)";
+      context.globalAlpha = bird.opacity;
+      context.shadowColor = "rgba(132, 239, 190, 0.34)";
+      context.shadowBlur = 4;
+      context.textAlign = "center";
+      for (
+        let spriteLineIndex = 0;
+        spriteLineIndex < spriteLines.length;
+        spriteLineIndex += 1
+      ) {
+        context.fillText(
+          spriteLines[spriteLineIndex],
+          0,
+          (spriteLineIndex - (spriteLines.length - 1) / 2) * lineHeight,
+        );
+      }
+      context.restore();
+    }
   }
 
   function drawFoodResources(resourceType) {
@@ -1861,6 +2114,9 @@
     for (let animalIndex = 0; animalIndex < animals.length; animalIndex += 1) {
       drawAnimalSprite(animals[animalIndex]);
     }
+
+    // Birds render last as distant aerial silhouettes, but have no world state.
+    drawDecorativeBirds();
 
     context.globalAlpha = 1;
     context.shadowBlur = 0;
@@ -2082,6 +2338,8 @@
       });
     }
 
+    resizeDecorativeBirds(previousSize);
+
     renderBackgroundCache();
     renderWorld();
   }
@@ -2097,6 +2355,7 @@
 
   function resetWorld() {
     animals = [];
+    birds = [];
     foodResources = [];
     visualEchoes = [];
     resourceSpawnBudget = { berry: 0, plankton: 0 };
@@ -2107,6 +2366,7 @@
     terrainSeed = Math.floor(Math.random() * 0x7fffffff);
     generateLake();
     generateStructures();
+    populateDecorativeBirds();
     renderBackgroundCache();
     SPECIES_ORDER.forEach(function (species) {
       extinctionStates[species] = { isActive: false, secondsUntilReseed: 0 };
@@ -2249,6 +2509,7 @@
         foodResources: countFoodResources(),
         maxGeneration: maxGeneration,
         animals: animals.length,
+        decorativeBirds: birds.length,
         habitatStructures: habitatStructures.length,
         lake: Boolean(lake),
       };
