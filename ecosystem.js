@@ -2,17 +2,47 @@
   "use strict";
 
   const canvas = document.getElementById("world");
+  const liveMarkElement = document.getElementById("live-mark");
+  const pausedOverlayElement = document.getElementById("paused-overlay");
+  const pauseButtonElement = document.getElementById("pause-button");
+  const speedButtonElement = document.getElementById("speed-button");
+  const resetButtonElement = document.getElementById("reset-button");
+  const statTimeElement = document.getElementById("stat-time");
+  const statGenerationElement = document.getElementById("stat-generation");
+  const statPopulationElement = document.getElementById("stat-population");
+  const statFpsElement = document.getElementById("stat-fps");
   const context = canvas.getContext("2d", { alpha: false });
   if (!context) {
-    document.getElementById("live-mark").textContent = "[ NO CANVAS ]";
+    liveMarkElement.textContent = "[ NO CANVAS ]";
     return;
   }
 
   // Simulation configuration and ASCII artwork.
   const FULL_CIRCLE_RADIANS = Math.PI * 2;
   const SIMULATION_STEP_SECONDS = 1 / 30;
+  const MAX_ENVIRONMENT_EFFECTS = 160;
   const SPECIES_ORDER = ["deer", "fish", "alligator", "snake", "tiger"];
   const SIMULATION_SPEEDS = [1, 2, 4];
+  const SPECIES_MASKS = {
+    deer: 1,
+    fish: 2,
+    alligator: 4,
+    snake: 8,
+    tiger: 16,
+  };
+  const PREY_MASKS = {
+    deer: 0,
+    fish: 0,
+    alligator: SPECIES_MASKS.fish,
+    snake: SPECIES_MASKS.deer,
+    tiger: SPECIES_MASKS.deer | SPECIES_MASKS.fish | SPECIES_MASKS.snake,
+  };
+  const WATER_GLYPHS = ["~", "-", "_", "."];
+  const RIPPLE_GLYPHS = [".", "-", ".", "_", ".", "-", ".", "_"];
+  const RIPPLE_UNIT_POINTS = RIPPLE_GLYPHS.map(function (glyph, index) {
+    const angle = (index / RIPPLE_GLYPHS.length) * FULL_CIRCLE_RADIANS;
+    return { glyph: glyph, x: Math.cos(angle), y: Math.sin(angle) };
+  });
   const SPECIES_CONFIG = {
     deer: {
       hueDegrees: 34,
@@ -351,6 +381,8 @@
         radius: 27,
         fontSize: 7,
         color: "rgba(84, 205, 113, 0.46)",
+        foregroundLineCount: 3,
+        windSwayScale: 0.72,
         sprite: [
           "    .^^.    ",
           " .(^^^^^^). ",
@@ -365,6 +397,8 @@
         radius: 28,
         fontSize: 7,
         color: "rgba(95, 221, 126, 0.43)",
+        foregroundLineCount: 3,
+        windSwayScale: 0.88,
         sprite: [
           "   .&&&&.   ",
           " .&&&&&&&&. ",
@@ -378,6 +412,8 @@
         radius: 25,
         fontSize: 7,
         color: "rgba(111, 221, 128, 0.43)",
+        foregroundLineCount: 3,
+        windSwayScale: 1.18,
         sprite: [
           "  __\\|/__  ",
           "--==(*)==--",
@@ -391,6 +427,7 @@
         radius: 15,
         fontSize: 7,
         color: "rgba(81, 188, 109, 0.40)",
+        windSwayScale: 0.62,
         sprite: [" \\  |  / ", "  \\ | /  ", "---\\|/---", "   /|\\   "],
       },
       {
@@ -434,6 +471,7 @@
         radius: 16,
         fontSize: 7,
         color: "rgba(91, 191, 152, 0.39)",
+        windSwayScale: 0.82,
         sprite: ["  |  /| | ", " /| | |/| ", " ||/| ||| ", "~~~~~~~~~~"],
       },
       {
@@ -441,6 +479,7 @@
         radius: 17,
         fontSize: 7,
         color: "rgba(84, 204, 205, 0.39)",
+        windSwayScale: 0.24,
         sprite: ["   .-.   ", "~-(   )-~", "   '-'   "],
       },
       {
@@ -462,6 +501,7 @@
         radius: 16,
         fontSize: 7,
         color: "rgba(110, 184, 143, 0.38)",
+        windSwayScale: 0.92,
         sprite: [" !  ! | ! ", " |  | ! | ", " |/ | |/| ", "~~~~~~~~~"],
       },
     ],
@@ -499,8 +539,25 @@
   let foodResources = [];
   let habitatStructures = [];
   let habitatStructuresByHabitat = { land: [], lake: [] };
+  let habitatStructuresByX = { land: [], lake: [] };
+  let backgroundWindStructures = [];
+  let foregroundWindStructures = [];
+  let leafEmittingStructures = [];
   let lake = null;
   let visualEchoes = [];
+  let environmentEffects = [];
+  let waterSurfaceMarks = [];
+  const windState = {
+    directionX: 1,
+    directionY: 0.08,
+    targetDirectionX: 1,
+    targetDirectionY: 0.08,
+    strength: 0.18,
+    targetStrength: 0.18,
+    secondsUntilChange: 0,
+    gustSpawnBudget: 0,
+    rippleSpawnBudget: 0,
+  };
   const extinctionStates = {};
   let resourceSpawnBudget = { berry: 0, plankton: 0 };
   let nextEntityId = 1;
@@ -513,6 +570,14 @@
   let lastTelemetryUpdate = 0;
   let framesPerSecond = 60;
   let terrainSeed = Math.floor(Math.random() * 0x7fffffff);
+  const steeringForceScratch = {
+    primary: { x: 0, y: 0 },
+    separation: { x: 0, y: 0 },
+    boundary: { x: 0, y: 0 },
+    obstacle: { x: 0, y: 0 },
+    combined: { x: 0, y: 0 },
+  };
+  const shoreNormalScratch = { x: 0, y: 0 };
 
   // Math helpers and reusable spatial indexes.
   function clamp(value, min, max) {
@@ -527,13 +592,17 @@
     return Math.sqrt(x * x + y * y);
   }
 
-  function limitVectorMagnitude(x, y, maximumMagnitude) {
+  function limitVectorMagnitude(output, x, y, maximumMagnitude) {
     const magnitude = vectorLength(x, y);
     if (magnitude > maximumMagnitude && magnitude > 0) {
       const ratio = maximumMagnitude / magnitude;
-      return { x: x * ratio, y: y * ratio };
+      output.x = x * ratio;
+      output.y = y * ratio;
+    } else {
+      output.x = x;
+      output.y = y;
     }
-    return { x: x, y: y };
+    return output;
   }
 
   function zeroPad(value, digits) {
@@ -549,6 +618,29 @@
     };
   }
 
+  function addEnvironmentEffect(effect) {
+    if (environmentEffects.length >= MAX_ENVIRONMENT_EFFECTS) {
+      environmentEffects.shift();
+    }
+    environmentEffects.push(effect);
+  }
+
+  function createEnvironmentEffect(type, x, y, options) {
+    const effectOptions = options || {};
+    addEnvironmentEffect({
+      type: type,
+      x: x,
+      y: y,
+      velocityX: effectOptions.velocityX || 0,
+      velocityY: effectOptions.velocityY || 0,
+      ageSeconds: 0,
+      lifetimeSeconds: effectOptions.lifetimeSeconds || 1,
+      phase: effectOptions.phase || randomBetween(0, FULL_CIRCLE_RADIANS),
+      angleRadians: effectOptions.angleRadians || 0,
+      glyph: effectOptions.glyph || ".",
+    });
+  }
+
   function getTargetBirdCount() {
     return clamp(Math.round(worldWidth / 170), 4, 9);
   }
@@ -561,7 +653,7 @@
       worldHeight * 0.42,
     );
     const baseY = randomBetween(upperFlightBoundary, lowerFlightBoundary);
-    return {
+    const bird = {
       artIndex: Math.floor(randomBetween(0, BIRD_ART.length)),
       x: randomBetween(-28, worldWidth + 28),
       y: baseY,
@@ -577,6 +669,11 @@
         randomBetween(5.2, 8.2) * (0.86 + worldSpatialScale * 0.14),
       opacity: randomBetween(0.34, 0.62),
     };
+    bird.font =
+      "600 " + bird.fontSize.toFixed(1) + "px Menlo, Consolas, monospace";
+    bird.spriteLineHeight =
+      bird.fontSize * BIRD_ART[bird.artIndex].lineHeightScale;
+    return bird;
   }
 
   function populateDecorativeBirds() {
@@ -637,14 +734,145 @@
     }
   }
 
+  // Seeded water details, wind cycles, and lightweight ambient particles.
+  function generateWaterSurfaceMarks() {
+    waterSurfaceMarks = [];
+    if (!lake) {
+      return;
+    }
+    const waterRandom = createSeededRandom(terrainSeed ^ 0x7a73d);
+    const targetMarkCount = clamp(
+      Math.floor((lake.radiusX * lake.radiusY) / 1800),
+      24,
+      64,
+    );
+    let placementAttempts = 0;
+    while (
+      waterSurfaceMarks.length < targetMarkCount &&
+      placementAttempts < targetMarkCount * 30
+    ) {
+      placementAttempts += 1;
+      const x = lake.centerX + (waterRandom() * 2 - 1) * lake.radiusX;
+      const y = lake.centerY + (waterRandom() * 2 - 1) * lake.radiusY;
+      const driftAmplitude = 2 + waterRandom() * 7;
+      if (calculateSignedShoreDistance(x, y) < driftAmplitude + 9) {
+        continue;
+      }
+      waterSurfaceMarks.push({
+        x: x,
+        y: y,
+        driftAmplitude: driftAmplitude,
+        phase: waterRandom() * FULL_CIRCLE_RADIANS,
+        speed: 0.32 + waterRandom() * 0.62,
+        glyphIndex: Math.floor(waterRandom() * 4),
+        opacity: 0.16 + waterRandom() * 0.2,
+      });
+    }
+  }
+
+  function findAmbientShorePoint() {
+    for (let attempt = 0; attempt < 24; attempt += 1) {
+      const x = randomBetween(
+        lake.centerX - lake.radiusX,
+        lake.centerX + lake.radiusX,
+      );
+      const y = randomBetween(
+        lake.centerY - lake.radiusY,
+        lake.centerY + lake.radiusY,
+      );
+      const shoreDistance = calculateSignedShoreDistance(x, y);
+      if (shoreDistance > 4 && shoreDistance < 24) {
+        return { x: x, y: y };
+      }
+    }
+    return { x: lake.centerX, y: lake.centerY };
+  }
+
+  function updateEnvironmentEffects(deltaSeconds) {
+    windState.secondsUntilChange -= deltaSeconds;
+    if (windState.secondsUntilChange <= 0) {
+      const directionAngle =
+        (Math.random() < 0.5 ? 0 : Math.PI) + randomBetween(-0.42, 0.42);
+      windState.targetDirectionX = Math.cos(directionAngle);
+      windState.targetDirectionY = Math.sin(directionAngle);
+      windState.targetStrength = randomBetween(0.12, 0.96);
+      windState.secondsUntilChange = randomBetween(5, 12);
+    }
+    const directionBlend = Math.min(1, deltaSeconds * 0.36);
+    windState.directionX +=
+      (windState.targetDirectionX - windState.directionX) * directionBlend;
+    windState.directionY +=
+      (windState.targetDirectionY - windState.directionY) * directionBlend;
+    windState.strength +=
+      (windState.targetStrength - windState.strength) *
+      Math.min(1, deltaSeconds * 0.7);
+
+    if (windState.strength > 0.42) {
+      windState.gustSpawnBudget +=
+        deltaSeconds * windState.strength * clamp(worldWidth / 520, 1, 2.4);
+      while (windState.gustSpawnBudget >= 1) {
+        windState.gustSpawnBudget -= 1;
+        const gustSpeed = randomBetween(36, 68) * windState.strength;
+        createEnvironmentEffect(
+          "gust",
+          randomBetween(12, Math.max(13, worldWidth - 12)),
+          randomBetween(18, Math.max(19, worldHeight - 18)),
+          {
+            velocityX: windState.directionX * gustSpeed,
+            velocityY: windState.directionY * gustSpeed,
+            lifetimeSeconds: randomBetween(0.9, 1.8),
+            glyph: Math.random() < 0.5 ? "'" : ",",
+          },
+        );
+      }
+    }
+
+    if (lake) {
+      windState.rippleSpawnBudget +=
+        deltaSeconds * (0.08 + windState.strength * 0.1);
+      while (windState.rippleSpawnBudget >= 1) {
+        windState.rippleSpawnBudget -= 1;
+        const ripplePoint = findAmbientShorePoint();
+        createEnvironmentEffect("ripple", ripplePoint.x, ripplePoint.y, {
+          lifetimeSeconds: randomBetween(1.4, 2.2),
+        });
+      }
+    }
+
+    let activeEffectCount = 0;
+    for (let i = 0; i < environmentEffects.length; i += 1) {
+      const effect = environmentEffects[i];
+      effect.ageSeconds += deltaSeconds;
+      if (effect.ageSeconds >= effect.lifetimeSeconds) {
+        continue;
+      }
+      effect.x += effect.velocityX * deltaSeconds;
+      effect.y += effect.velocityY * deltaSeconds;
+      if (effect.type === "leaf" || effect.type === "dust") {
+        effect.velocityX +=
+          windState.directionX * windState.strength * deltaSeconds * 5;
+        effect.velocityY +=
+          windState.directionY * windState.strength * deltaSeconds * 5;
+      }
+      environmentEffects[activeEffectCount] = effect;
+      activeEffectCount += 1;
+    }
+    environmentEffects.length = activeEffectCount;
+  }
+
   class SpatialHash {
     constructor(cellSize) {
       this.cellSize = cellSize;
       this.cells = new Map();
+      this.generation = 0;
     }
 
     clear() {
-      this.cells.clear();
+      this.generation += 1;
+      if (this.generation >= Number.MAX_SAFE_INTEGER) {
+        this.cells.clear();
+        this.generation = 1;
+      }
     }
 
     getCellKey(cellX, cellY) {
@@ -657,10 +885,13 @@
       const cellKey = this.getCellKey(cellX, cellY);
       let cell = this.cells.get(cellKey);
       if (!cell) {
-        cell = [];
+        cell = { generation: this.generation, entities: [] };
         this.cells.set(cellKey, cell);
+      } else if (cell.generation !== this.generation) {
+        cell.generation = this.generation;
+        cell.entities.length = 0;
       }
-      cell.push(entity);
+      cell.entities.push(entity);
     }
 
     query(x, y, radius, results) {
@@ -672,13 +903,14 @@
       for (let cellY = minimumCellY; cellY <= maximumCellY; cellY += 1) {
         for (let cellX = minimumCellX; cellX <= maximumCellX; cellX += 1) {
           const cell = this.cells.get(this.getCellKey(cellX, cellY));
-          if (cell) {
+          if (cell && cell.generation === this.generation) {
+            const cellEntities = cell.entities;
             for (
               let entityIndex = 0;
-              entityIndex < cell.length;
+              entityIndex < cellEntities.length;
               entityIndex += 1
             ) {
-              results.push(cell[entityIndex]);
+              results.push(cellEntities[entityIndex]);
             }
           }
         }
@@ -688,9 +920,22 @@
   }
 
   const animalSpatialHash = new SpatialHash(76);
-  const foodSpatialHash = new SpatialHash(62);
+  const predatorSpatialHash = new SpatialHash(76);
+  const animalSpatialHashesBySpecies = {
+    deer: new SpatialHash(76),
+    fish: new SpatialHash(76),
+    alligator: new SpatialHash(76),
+    snake: new SpatialHash(76),
+    tiger: new SpatialHash(76),
+  };
+  const foodSpatialHashes = {
+    berry: new SpatialHash(62),
+    plankton: new SpatialHash(62),
+  };
+  const maximumStructureRadiusByHabitat = { land: 0, lake: 0 };
   const nearbyAnimals = [];
   const nearbyFoodResources = [];
+  const nearbyStructures = [];
   const spriteWidthCache = new Map();
 
   // Terrain generation and habitat geometry.
@@ -745,6 +990,7 @@
       0.22 + lakeRandom() * 0.055,
       0.27 + lakeRandom() * 0.075,
     );
+    generateWaterSurfaceMarks();
   }
 
   function calculateSignedShoreDistance(x, y) {
@@ -771,7 +1017,20 @@
     return calculateSignedShoreDistance(x, y) > 0;
   }
 
-  function calculateInwardShoreNormal(x, y) {
+  function isDefinitelyBeyondShoreDistance(x, y, distanceFromShore) {
+    const maximumNormalizedRadius =
+      1 +
+      lake.primaryWaveAmplitude +
+      lake.secondaryWaveAmplitude +
+      distanceFromShore / lake.minimumRadius +
+      0.0000001;
+    return (
+      Math.abs(x - lake.centerX) > lake.radiusX * maximumNormalizedRadius ||
+      Math.abs(y - lake.centerY) > lake.radiusY * maximumNormalizedRadius
+    );
+  }
+
+  function calculateInwardShoreNormal(x, y, output) {
     const gradientSampleDistance = 2.5;
     const gradientX =
       calculateSignedShoreDistance(x + gradientSampleDistance, y) -
@@ -781,16 +1040,17 @@
       calculateSignedShoreDistance(x, y - gradientSampleDistance);
     const magnitude = vectorLength(gradientX, gradientY);
     if (magnitude > 0.0001) {
-      return { x: gradientX / magnitude, y: gradientY / magnitude };
+      output.x = gradientX / magnitude;
+      output.y = gradientY / magnitude;
+      return output;
     }
 
     const fallbackX = lake.centerX - x;
     const fallbackY = lake.centerY - y;
     const fallbackLength = Math.max(0.001, vectorLength(fallbackX, fallbackY));
-    return {
-      x: fallbackX / fallbackLength,
-      y: fallbackY / fallbackLength,
-    };
+    output.x = fallbackX / fallbackLength;
+    output.y = fallbackY / fallbackLength;
+    return output;
   }
 
   function pointClearOfStructures(x, y, padding, habitat) {
@@ -810,6 +1070,12 @@
   function generateStructures() {
     habitatStructures = [];
     habitatStructuresByHabitat = { land: [], lake: [] };
+    habitatStructuresByX = { land: [], lake: [] };
+    backgroundWindStructures = [];
+    foregroundWindStructures = [];
+    leafEmittingStructures = [];
+    maximumStructureRadiusByHabitat.land = 0;
+    maximumStructureRadiusByHabitat.lake = 0;
     const terrainRandom = createSeededRandom(terrainSeed ^ 0x3f19b);
     const worldArea = worldWidth * worldHeight;
     const structureTargets = {
@@ -871,18 +1137,45 @@
         const generatedStructure = {
           name: structureDefinition.name,
           habitat: habitat,
+          habitatOrder: placedStructureCount,
           x: x,
           y: y,
           radius: structureDefinition.radius,
           fontSize: structureDefinition.fontSize,
+          font: structureDefinition.fontSize + "px Menlo, Consolas, monospace",
+          spriteLineHeight: structureDefinition.fontSize * 1.08,
           color: structureDefinition.color,
+          shadowColor:
+            habitat === "lake"
+              ? "rgba(86, 218, 235, 0.22)"
+              : "rgba(83, 235, 126, 0.2)",
           sprite: structureDefinition.sprite,
+          foregroundLineCount: structureDefinition.foregroundLineCount || 0,
+          windSwayScale: structureDefinition.windSwayScale || 0,
+          windPhase: terrainRandom() * FULL_CIRCLE_RADIANS,
         };
         habitatStructures.push(generatedStructure);
         habitatStructuresByHabitat[habitat].push(generatedStructure);
+        habitatStructuresByX[habitat].push(generatedStructure);
+        maximumStructureRadiusByHabitat[habitat] = Math.max(
+          maximumStructureRadiusByHabitat[habitat],
+          generatedStructure.radius,
+        );
+        if (generatedStructure.foregroundLineCount > 0) {
+          foregroundWindStructures.push(generatedStructure);
+          leafEmittingStructures.push(generatedStructure);
+        } else if (generatedStructure.windSwayScale > 0) {
+          backgroundWindStructures.push(generatedStructure);
+        }
         placedStructureCount += 1;
       }
     }
+    habitatStructuresByX.land.sort(function (first, second) {
+      return first.x - second.x;
+    });
+    habitatStructuresByX.lake.sort(function (first, second) {
+      return first.x - second.x;
+    });
   }
 
   function findHabitatPoint(habitat, requireNearShore, minimumDepthFromShore) {
@@ -947,6 +1240,7 @@
 
   function updateDerivedTraits(animal) {
     const speciesConfig = SPECIES_CONFIG[animal.species];
+    const spriteModel = SPECIES_ART[animal.species];
     const spatialScale = worldSpatialScale;
     const displayScale = 0.72 + spatialScale * 0.28;
     animal.spatialScale = spatialScale;
@@ -965,6 +1259,26 @@
       (1.08 - 0.11 * animal.genome.sizeMultiplier) *
       spatialScale;
     animal.maxEnergy = speciesConfig.maxEnergy;
+    animal.bodyMetabolismFactor =
+      0.58 + 0.42 * animal.genome.sizeMultiplier;
+    animal.movementSpeedEnergyFactor =
+      0.65 + 0.35 * animal.genome.speedMultiplier;
+    animal.movementSizeEnergyFactor = Math.pow(
+      animal.genome.sizeMultiplier,
+      1.25,
+    );
+    animal.spriteFontSize = Math.max(
+      spriteModel.minFontSize || 5.2,
+      animal.displaySize * spriteModel.fontScale,
+    );
+    animal.spriteLineHeight =
+      animal.spriteFontSize * spriteModel.lineHeightScale;
+    animal.spriteFont =
+      (animal.species === "alligator" || animal.species === "tiger"
+        ? "700 "
+        : "600 ") +
+      animal.spriteFontSize.toFixed(1) +
+      "px Menlo, Consolas, monospace";
   }
 
   function createAnimal(species, x, y, genome, generation, energy) {
@@ -973,6 +1287,8 @@
     const animal = {
       id: nextEntityId++,
       species: species,
+      speciesMask: SPECIES_MASKS[species],
+      preyMask: PREY_MASKS[species],
       x: x,
       y: y,
       velocityX: 0,
@@ -994,6 +1310,7 @@
       ),
       wanderOffsetRadians: randomBetween(-0.35, 0.35),
       animationFrameProgress: randomBetween(0, 4),
+      distanceSinceEnvironmentEffect: randomBetween(0, 18),
       isDead: false,
     };
     updateDerivedTraits(animal);
@@ -1047,26 +1364,45 @@
     }
   }
 
-  function rebuildAnimalSpatialIndex() {
+  function rebuildAnimalSpatialIndex(rebuildBehaviorIndexes) {
     animalSpatialHash.clear();
+    if (rebuildBehaviorIndexes) {
+      predatorSpatialHash.clear();
+      for (
+        let speciesIndex = 0;
+        speciesIndex < SPECIES_ORDER.length;
+        speciesIndex += 1
+      ) {
+        animalSpatialHashesBySpecies[SPECIES_ORDER[speciesIndex]].clear();
+      }
+    }
     for (let i = 0; i < animals.length; i += 1) {
-      if (!animals[i].isDead) {
-        animalSpatialHash.insert(animals[i]);
+      const animal = animals[i];
+      if (!animal.isDead) {
+        animalSpatialHash.insert(animal);
+        if (rebuildBehaviorIndexes) {
+          animalSpatialHashesBySpecies[animal.species].insert(animal);
+          if (animal.preyMask) {
+            predatorSpatialHash.insert(animal);
+          }
+        }
       }
     }
   }
 
   function rebuildFoodSpatialIndex() {
-    foodSpatialHash.clear();
+    foodSpatialHashes.berry.clear();
+    foodSpatialHashes.plankton.clear();
     for (let j = 0; j < foodResources.length; j += 1) {
-      if (!foodResources[j].isDead) {
-        foodSpatialHash.insert(foodResources[j]);
+      const foodResource = foodResources[j];
+      if (!foodResource.isDead) {
+        foodSpatialHashes[foodResource.type].insert(foodResource);
       }
     }
   }
 
   function rebuildSpatialIndexes() {
-    rebuildAnimalSpatialIndex();
+    rebuildAnimalSpatialIndex(true);
     rebuildFoodSpatialIndex();
   }
 
@@ -1097,7 +1433,12 @@
   }
 
   function findNearestFood(animal, foodType, radius) {
-    foodSpatialHash.query(animal.x, animal.y, radius, nearbyFoodResources);
+    foodSpatialHashes[foodType].query(
+      animal.x,
+      animal.y,
+      radius,
+      nearbyFoodResources,
+    );
     let nearestFoodResource = null;
     let nearestDistanceSquared = radius * radius;
     for (let i = 0; i < nearbyFoodResources.length; i += 1) {
@@ -1116,15 +1457,8 @@
     return nearestFoodResource;
   }
 
-  function isPredatorOf(predatorSpecies, preySpecies) {
-    const preySpeciesList = SPECIES_CONFIG[predatorSpecies].preySpecies;
-    return Boolean(
-      preySpeciesList && preySpeciesList.indexOf(preySpecies) >= 0,
-    );
-  }
-
   function findNearestPredator(animal, radius) {
-    animalSpatialHash.query(animal.x, animal.y, radius, nearbyAnimals);
+    predatorSpatialHash.query(animal.x, animal.y, radius, nearbyAnimals);
     let nearestPredator = null;
     let nearestDistanceSquared = radius * radius;
     for (let i = 0; i < nearbyAnimals.length; i += 1) {
@@ -1132,7 +1466,7 @@
       if (
         predatorCandidate === animal ||
         predatorCandidate.isDead ||
-        !isPredatorOf(predatorCandidate.species, animal.species)
+        (predatorCandidate.preyMask & animal.speciesMask) === 0
       ) {
         continue;
       }
@@ -1157,7 +1491,7 @@
       if (
         preyCandidate === animal ||
         preyCandidate.isDead ||
-        !isPredatorOf(animal.species, preyCandidate.species)
+        (animal.preyMask & preyCandidate.speciesMask) === 0
       ) {
         continue;
       }
@@ -1195,6 +1529,48 @@
     return nearestPrey;
   }
 
+  function collectPotentialStructures(x, y, extraRadius, habitat, results) {
+    results.length = 0;
+    const structuresByX = habitatStructuresByX[habitat];
+    const maximumCenterDistance =
+      maximumStructureRadiusByHabitat[habitat] + extraRadius + 0.0000001;
+    const minimumX = x - maximumCenterDistance;
+    const maximumX = x + maximumCenterDistance;
+    let lowerIndex = 0;
+    let upperIndex = structuresByX.length;
+    while (lowerIndex < upperIndex) {
+      const middleIndex = (lowerIndex + upperIndex) >> 1;
+      if (structuresByX[middleIndex].x < minimumX) {
+        lowerIndex = middleIndex + 1;
+      } else {
+        upperIndex = middleIndex;
+      }
+    }
+    for (
+      let i = lowerIndex;
+      i < structuresByX.length && structuresByX[i].x <= maximumX;
+      i += 1
+    ) {
+      const structure = structuresByX[i];
+      const clearance = structure.radius + extraRadius + 0.0000001;
+      if (
+        Math.abs(x - structure.x) < clearance &&
+        Math.abs(y - structure.y) < clearance
+      ) {
+        let insertionIndex = results.length;
+        while (
+          insertionIndex > 0 &&
+          results[insertionIndex - 1].habitatOrder > structure.habitatOrder
+        ) {
+          results[insertionIndex] = results[insertionIndex - 1];
+          insertionIndex -= 1;
+        }
+        results[insertionIndex] = structure;
+      }
+    }
+    return results;
+  }
+
   // Movement and behavior.
   function calculateTargetSteering(
     animal,
@@ -1202,6 +1578,7 @@
     targetY,
     shouldFlee,
     forceMultiplier,
+    output,
   ) {
     let dx = targetX - animal.x;
     let dy = targetY - animal.y;
@@ -1211,7 +1588,9 @@
     }
     const distance = vectorLength(dx, dy);
     if (distance < 0.0001) {
-      return { x: 0, y: 0 };
+      output.x = 0;
+      output.y = 0;
+      return output;
     }
 
     const desiredX = (dx / distance) * animal.maxSpeed;
@@ -1219,35 +1598,47 @@
     const steerX = desiredX - animal.velocityX;
     const steerY = desiredY - animal.velocityY;
     return limitVectorMagnitude(
+      output,
       steerX,
       steerY,
       animal.maxForce * (forceMultiplier || 1),
     );
   }
 
-  function calculateWanderSteering(animal, deltaSeconds) {
+  function calculateWanderSteering(
+    animal,
+    squareRootDeltaSeconds,
+    currentSpeed,
+    output,
+  ) {
     animal.wanderOffsetRadians +=
-      randomBetween(-0.55, 0.55) * Math.sqrt(deltaSeconds);
+      randomBetween(-0.55, 0.55) * squareRootDeltaSeconds;
     animal.wanderOffsetRadians *= 0.988;
     animal.wanderOffsetRadians = clamp(animal.wanderOffsetRadians, -0.92, 0.92);
     const baseHeading =
-      vectorLength(animal.velocityX, animal.velocityY) > 0.5
+      currentSpeed > 0.5
         ? Math.atan2(animal.velocityY, animal.velocityX)
         : animal.headingRadians;
     const angle = baseHeading + animal.wanderOffsetRadians;
     const desiredX = Math.cos(angle) * animal.maxSpeed * 0.62;
     const desiredY = Math.sin(angle) * animal.maxSpeed * 0.62;
     return limitVectorMagnitude(
+      output,
       desiredX - animal.velocityX,
       desiredY - animal.velocityY,
       animal.maxForce * 0.52,
     );
   }
 
-  function calculateSeparationSteering(animal) {
+  function calculateSeparationSteering(animal, output) {
     const radius = animal.displaySize * 1.35 + 9;
     const radiusSquared = radius * radius;
-    animalSpatialHash.query(animal.x, animal.y, radius, nearbyAnimals);
+    animalSpatialHashesBySpecies[animal.species].query(
+      animal.x,
+      animal.y,
+      radius,
+      nearbyAnimals,
+    );
     let awayX = 0;
     let awayY = 0;
     let neighborCount = 0;
@@ -1270,23 +1661,27 @@
       }
     }
     if (!neighborCount) {
-      return { x: 0, y: 0 };
+      output.x = 0;
+      output.y = 0;
+      return output;
     }
     const magnitude = vectorLength(awayX, awayY);
     if (!magnitude) {
-      return { x: 0, y: 0 };
+      output.x = 0;
+      output.y = 0;
+      return output;
     }
     const desiredX = (awayX / magnitude) * animal.maxSpeed * 0.48;
     const desiredY = (awayY / magnitude) * animal.maxSpeed * 0.48;
     return limitVectorMagnitude(
+      output,
       desiredX - animal.velocityX,
       desiredY - animal.velocityY,
       animal.maxForce * 0.42,
     );
   }
 
-  function calculateObstacleSteering(animal) {
-    const speed = vectorLength(animal.velocityX, animal.velocityY);
+  function calculateObstacleSteering(animal, speed, output) {
     const directionX =
       speed > 0.5 ? animal.velocityX / speed : Math.cos(animal.headingRadians);
     const directionY =
@@ -1297,15 +1692,34 @@
     let forceX = 0;
     let forceY = 0;
     const habitat = SPECIES_CONFIG[animal.species].habitat;
+    const extraClearance = animal.displaySize * 0.32 + 12;
 
-    const structuresInHabitat = habitatStructuresByHabitat[habitat];
+    const structuresInHabitat = collectPotentialStructures(
+      probeX,
+      probeY,
+      extraClearance,
+      habitat,
+      nearbyStructures,
+    );
+    if (!structuresInHabitat.length) {
+      return limitVectorMagnitude(
+        output,
+        forceX,
+        forceY,
+        animal.maxForce * 0.92,
+      );
+    }
+
     for (let i = 0; i < structuresInHabitat.length; i += 1) {
       const habitatStructure = structuresInHabitat[i];
       let dx = probeX - habitatStructure.x;
       let dy = probeY - habitatStructure.y;
-      let distance = vectorLength(dx, dy);
       const clearance =
         habitatStructure.radius + animal.displaySize * 0.32 + 12;
+      if (Math.abs(dx) >= clearance || Math.abs(dy) >= clearance) {
+        continue;
+      }
+      let distance = vectorLength(dx, dy);
       if (distance >= clearance) {
         continue;
       }
@@ -1318,14 +1732,18 @@
       forceX += (dx / distance) * animal.maxForce * (0.45 + avoidanceStrength);
       forceY += (dy / distance) * animal.maxForce * (0.45 + avoidanceStrength);
     }
-    return limitVectorMagnitude(forceX, forceY, animal.maxForce * 0.92);
+    return limitVectorMagnitude(
+      output,
+      forceX,
+      forceY,
+      animal.maxForce * 0.92,
+    );
   }
 
-  function calculateBoundarySteering(animal) {
+  function calculateBoundarySteering(animal, output) {
     let forceX = 0;
     let forceY = 0;
     const boundaryMargin = 48;
-    const shoreDistance = calculateSignedShoreDistance(animal.x, animal.y);
     const habitat = SPECIES_CONFIG[animal.species].habitat;
 
     if (animal.x < boundaryMargin) {
@@ -1341,27 +1759,45 @@
         animal.maxForce * (1 - (worldHeight - animal.y) / boundaryMargin);
     }
 
-    if (habitat === "land" && shoreDistance > -58) {
-      const normal = calculateInwardShoreNormal(animal.x, animal.y);
-      const landPressure =
-        animal.maxForce * clamp((shoreDistance + 58) / 58, 0, 1.15);
-      forceX -= normal.x * landPressure;
-      forceY -= normal.y * landPressure;
-    } else if (habitat === "lake" && shoreDistance < 58) {
-      const normal = calculateInwardShoreNormal(animal.x, animal.y);
-      const waterPressure =
-        animal.maxForce * clamp((58 - shoreDistance) / 58, 0, 1.15);
-      forceX += normal.x * waterPressure;
-      forceY += normal.y * waterPressure;
+    if (
+      habitat === "lake" ||
+      !isDefinitelyBeyondShoreDistance(animal.x, animal.y, 58)
+    ) {
+      const shoreDistance = calculateSignedShoreDistance(animal.x, animal.y);
+      if (habitat === "land" && shoreDistance > -58) {
+        const normal = calculateInwardShoreNormal(
+          animal.x,
+          animal.y,
+          shoreNormalScratch,
+        );
+        const landPressure =
+          animal.maxForce * clamp((shoreDistance + 58) / 58, 0, 1.15);
+        forceX -= normal.x * landPressure;
+        forceY -= normal.y * landPressure;
+      } else if (habitat === "lake" && shoreDistance < 58) {
+        const normal = calculateInwardShoreNormal(
+          animal.x,
+          animal.y,
+          shoreNormalScratch,
+        );
+        const waterPressure =
+          animal.maxForce * clamp((58 - shoreDistance) / 58, 0, 1.15);
+        forceX += normal.x * waterPressure;
+        forceY += normal.y * waterPressure;
+      }
     }
-    return { x: forceX, y: forceY };
+    output.x = forceX;
+    output.y = forceY;
+    return output;
   }
 
-  function calculateSteering(animal, deltaSeconds) {
+  function calculateSteering(animal, squareRootDeltaSeconds) {
     const speciesConfig = SPECIES_CONFIG[animal.species];
+    const currentSpeed = vectorLength(animal.velocityX, animal.velocityY);
     const energyRatio = animal.energy / animal.maxEnergy;
     const hungerRatio = 1 - energyRatio;
-    let primaryForce = null;
+    const primaryForce = steeringForceScratch.primary;
+    let hasPrimaryForce = false;
     let primaryForceWeight = 1;
 
     if (speciesConfig.fleesPredators) {
@@ -1376,18 +1812,20 @@
         );
         const dangerRatio =
           1 - clamp(predatorDistance / (animal.senseRadius * 1.12), 0, 1);
-        primaryForce = calculateTargetSteering(
+        calculateTargetSteering(
           animal,
           nearestPredator.x,
           nearestPredator.y,
           true,
           1,
+          primaryForce,
         );
+        hasPrimaryForce = true;
         primaryForceWeight = 1.25 + dangerRatio * 1.15;
       }
     }
 
-    if (!primaryForce && speciesConfig.foodType) {
+    if (!hasPrimaryForce && speciesConfig.foodType) {
       if (hungerRatio > 0.16) {
         const foodSenseRadius = animal.senseRadius * (1 + hungerRatio * 0.28);
         const nearestFoodResource = findNearestFood(
@@ -1396,45 +1834,64 @@
           foodSenseRadius,
         );
         if (nearestFoodResource) {
-          primaryForce = calculateTargetSteering(
+          calculateTargetSteering(
             animal,
             nearestFoodResource.x,
             nearestFoodResource.y,
             false,
             0.86,
+            primaryForce,
           );
+          hasPrimaryForce = true;
           primaryForceWeight = 1;
         }
       }
     }
 
-    if (!primaryForce && speciesConfig.preySpecies) {
+    if (!hasPrimaryForce && speciesConfig.preySpecies) {
       const huntingHungerThreshold =
         speciesConfig.huntingHungerThreshold + (1 - animal.spatialScale) * 0.12;
       if (hungerRatio > huntingHungerThreshold) {
         const preySenseRadius = animal.senseRadius * (1 + hungerRatio * 0.24);
         const nearestPrey = findNearestPrey(animal, preySenseRadius);
         if (nearestPrey) {
-          primaryForce = calculateTargetSteering(
+          calculateTargetSteering(
             animal,
             nearestPrey.x,
             nearestPrey.y,
             false,
             0.94,
+            primaryForce,
           );
+          hasPrimaryForce = true;
           primaryForceWeight = 1.08;
         }
       }
     }
 
-    if (!primaryForce) {
-      primaryForce = calculateWanderSteering(animal, deltaSeconds);
+    if (!hasPrimaryForce) {
+      calculateWanderSteering(
+        animal,
+        squareRootDeltaSeconds,
+        currentSpeed,
+        primaryForce,
+      );
       primaryForceWeight = 0.74;
     }
 
-    const separationForce = calculateSeparationSteering(animal);
-    const boundaryForce = calculateBoundarySteering(animal);
-    const obstacleForce = calculateObstacleSteering(animal);
+    const separationForce = calculateSeparationSteering(
+      animal,
+      steeringForceScratch.separation,
+    );
+    const boundaryForce = calculateBoundarySteering(
+      animal,
+      steeringForceScratch.boundary,
+    );
+    const obstacleForce = calculateObstacleSteering(
+      animal,
+      currentSpeed,
+      steeringForceScratch.obstacle,
+    );
     const combinedForceX =
       primaryForce.x * primaryForceWeight +
       separationForce.x * 0.42 +
@@ -1446,6 +1903,7 @@
       boundaryForce.y * 1.18 +
       obstacleForce.y * 1.12;
     return limitVectorMagnitude(
+      steeringForceScratch.combined,
       combinedForceX,
       combinedForceY,
       animal.maxForce,
@@ -1453,6 +1911,13 @@
   }
 
   function constrainToWaterHabitat(animal, habitat) {
+    if (
+      habitat === "land" &&
+      isDefinitelyBeyondShoreDistance(animal.x, animal.y, 2)
+    ) {
+      return false;
+    }
+    let madeCorrection = false;
     for (
       let correctionAttempt = 0;
       correctionAttempt < 3;
@@ -1462,9 +1927,14 @@
       const outsideHabitat =
         habitat === "land" ? shoreDistance >= -2 : shoreDistance <= 2;
       if (!outsideHabitat) {
-        return;
+        return madeCorrection;
       }
-      const normal = calculateInwardShoreNormal(animal.x, animal.y);
+      madeCorrection = true;
+      const normal = calculateInwardShoreNormal(
+        animal.x,
+        animal.y,
+        shoreNormalScratch,
+      );
       if (habitat === "land") {
         const landCorrection = shoreDistance + 3;
         animal.x -= normal.x * landCorrection;
@@ -1487,6 +1957,7 @@
         }
       }
     }
+    return madeCorrection;
   }
 
   function keepInHabitat(animal) {
@@ -1507,36 +1978,56 @@
     }
 
     const habitat = SPECIES_CONFIG[animal.species].habitat;
-    constrainToWaterHabitat(animal, habitat);
+    const habitatWasCorrected = constrainToWaterHabitat(animal, habitat);
 
     const structuresInHabitat = habitatStructuresByHabitat[habitat];
-    for (let i = 0; i < structuresInHabitat.length; i += 1) {
-      const habitatStructure = structuresInHabitat[i];
-      let dx = animal.x - habitatStructure.x;
-      let dy = animal.y - habitatStructure.y;
-      let distance = vectorLength(dx, dy);
-      const minimumDistance =
-        habitatStructure.radius + animal.displaySize * 0.22;
-      if (distance >= minimumDistance) {
-        continue;
-      }
-      if (distance < 0.001) {
-        dx = Math.cos(animal.headingRadians + Math.PI / 2);
-        dy = Math.sin(animal.headingRadians + Math.PI / 2);
-        distance = 1;
-      }
-      const normalX = dx / distance;
-      const normalY = dy / distance;
-      animal.x = habitatStructure.x + normalX * minimumDistance;
-      animal.y = habitatStructure.y + normalY * minimumDistance;
-      const inwardSpeed =
-        animal.velocityX * normalX + animal.velocityY * normalY;
-      if (inwardSpeed < 0) {
-        animal.velocityX -= inwardSpeed * normalX * 1.45;
-        animal.velocityY -= inwardSpeed * normalY * 1.45;
+    let structureCollisionOccurred = false;
+    const structurePadding = animal.displaySize * 0.22;
+    if (
+      collectPotentialStructures(
+        animal.x,
+        animal.y,
+        structurePadding,
+        habitat,
+        nearbyStructures,
+      ).length
+    ) {
+      for (let i = 0; i < structuresInHabitat.length; i += 1) {
+        const habitatStructure = structuresInHabitat[i];
+        let dx = animal.x - habitatStructure.x;
+        let dy = animal.y - habitatStructure.y;
+        const minimumDistance = habitatStructure.radius + structurePadding;
+        if (
+          Math.abs(dx) >= minimumDistance ||
+          Math.abs(dy) >= minimumDistance
+        ) {
+          continue;
+        }
+        let distance = vectorLength(dx, dy);
+        if (distance >= minimumDistance) {
+          continue;
+        }
+        structureCollisionOccurred = true;
+        if (distance < 0.001) {
+          dx = Math.cos(animal.headingRadians + Math.PI / 2);
+          dy = Math.sin(animal.headingRadians + Math.PI / 2);
+          distance = 1;
+        }
+        const normalX = dx / distance;
+        const normalY = dy / distance;
+        animal.x = habitatStructure.x + normalX * minimumDistance;
+        animal.y = habitatStructure.y + normalY * minimumDistance;
+        const inwardSpeed =
+          animal.velocityX * normalX + animal.velocityY * normalY;
+        if (inwardSpeed < 0) {
+          animal.velocityX -= inwardSpeed * normalX * 1.45;
+          animal.velocityY -= inwardSpeed * normalY * 1.45;
+        }
       }
     }
-    constrainToWaterHabitat(animal, habitat);
+    if (habitatWasCorrected || structureCollisionOccurred) {
+      constrainToWaterHabitat(animal, habitat);
+    }
     animal.x = clamp(animal.x, worldEdgePadding, worldWidth - worldEdgePadding);
     animal.y = clamp(
       animal.y,
@@ -1559,11 +2050,98 @@
     });
   }
 
-  function updateAnimal(animal, deltaSeconds) {
+  function emitMovementEnvironmentEffects(
+    animal,
+    distanceTraveled,
+    movementEffortRatio,
+  ) {
+    if (movementEffortRatio < 0.32) {
+      return;
+    }
+    animal.distanceSinceEnvironmentEffect += distanceTraveled;
+    const habitat = SPECIES_CONFIG[animal.species].habitat;
+    const emissionDistance =
+      habitat === "lake"
+        ? animal.species === "alligator"
+          ? 19
+          : 14
+        : animal.species === "tiger"
+          ? 27
+          : 22;
+    if (animal.distanceSinceEnvironmentEffect < emissionDistance) {
+      return;
+    }
+    animal.distanceSinceEnvironmentEffect %= emissionDistance;
+
+    const speed = Math.max(
+      0.001,
+      vectorLength(animal.velocityX, animal.velocityY),
+    );
+    const directionX = animal.velocityX / speed;
+    const directionY = animal.velocityY / speed;
+    const effectX = animal.x - directionX * animal.displaySize * 0.35;
+    const effectY = animal.y - directionY * animal.displaySize * 0.35;
+
+    if (habitat === "lake") {
+      const nearShore = calculateSignedShoreDistance(animal.x, animal.y) < 18;
+      createEnvironmentEffect(nearShore ? "splash" : "wake", effectX, effectY, {
+        velocityX: -animal.velocityX * 0.07,
+        velocityY: -animal.velocityY * 0.07,
+        lifetimeSeconds: nearShore ? 0.75 : 1.15,
+        angleRadians: animal.headingRadians,
+        glyph: nearShore ? "'" : "~",
+      });
+      if (nearShore && animal.species === "alligator") {
+        createEnvironmentEffect("ripple", effectX, effectY, {
+          lifetimeSeconds: 1.25,
+        });
+      }
+      return;
+    }
+
+    createEnvironmentEffect("dust", effectX, effectY, {
+      velocityX: -animal.velocityX * 0.05,
+      velocityY: -animal.velocityY * 0.05,
+      lifetimeSeconds: randomBetween(0.65, 1.05),
+      glyph: Math.random() < 0.5 ? "." : ",",
+    });
+
+    if (movementEffortRatio < 0.58 || Math.random() > 0.34) {
+      return;
+    }
+    for (let i = 0; i < leafEmittingStructures.length; i += 1) {
+      const structure = leafEmittingStructures[i];
+      const dx = animal.x - structure.x;
+      const dy = animal.y - structure.y;
+      const leafTriggerRadius =
+        structure.radius + animal.displaySize * 0.5 + 14;
+      if (dx * dx + dy * dy > leafTriggerRadius * leafTriggerRadius) {
+        continue;
+      }
+      createEnvironmentEffect(
+        "leaf",
+        structure.x +
+          randomBetween(-structure.radius * 0.55, structure.radius * 0.55),
+        structure.y - randomBetween(0, structure.radius * 0.65),
+        {
+          velocityX: windState.directionX * randomBetween(7, 15),
+          velocityY: randomBetween(5, 13),
+          lifetimeSeconds: randomBetween(1.1, 2.1),
+          glyph: Math.random() < 0.5 ? "'" : ",",
+        },
+      );
+      break;
+    }
+  }
+
+  function updateAnimal(animal, deltaSeconds, squareRootDeltaSeconds) {
     if (animal.isDead) {
       return;
     }
-    const steering = calculateSteering(animal, deltaSeconds);
+    const steering = calculateSteering(
+      animal,
+      squareRootDeltaSeconds,
+    );
     animal.velocityX += steering.x * deltaSeconds;
     animal.velocityY += steering.y * deltaSeconds;
 
@@ -1594,15 +2172,19 @@
       animal.animationFrameProgress +=
         deltaSeconds * (1.25 + movementEffortRatio * 4.75);
     }
-    const bodyMetabolismFactor = 0.58 + 0.42 * animal.genome.sizeMultiplier;
+    emitMovementEnvironmentEffects(
+      animal,
+      speed * deltaSeconds,
+      movementEffortRatio,
+    );
     const movementEnergyUsePerSecond =
       speciesConfig.movementEnergyCostPerSecond *
       movementEffortRatio *
       movementEffortRatio *
-      (0.65 + 0.35 * animal.genome.speedMultiplier) *
-      Math.pow(animal.genome.sizeMultiplier, 1.25);
+      animal.movementSpeedEnergyFactor *
+      animal.movementSizeEnergyFactor;
     let energyUsePerSecond =
-      speciesConfig.metabolicEnergyCostPerSecond * bodyMetabolismFactor +
+      speciesConfig.metabolicEnergyCostPerSecond * animal.bodyMetabolismFactor +
       movementEnergyUsePerSecond;
     if (speciesConfig.preySpecies) {
       energyUsePerSecond *= 0.58 + animal.spatialScale * 0.42;
@@ -1625,7 +2207,12 @@
       return;
     }
     const catchRadius = animal.displaySize * 0.48 + 5 * animal.spatialScale;
-    foodSpatialHash.query(animal.x, animal.y, catchRadius, nearbyFoodResources);
+    foodSpatialHashes[speciesConfig.foodType].query(
+      animal.x,
+      animal.y,
+      catchRadius,
+      nearbyFoodResources,
+    );
     let selectedFoodResource = null;
     let nearestDistanceSquared = catchRadius * catchRadius;
     for (let i = 0; i < nearbyFoodResources.length; i += 1) {
@@ -1691,7 +2278,7 @@
       if (
         preyCandidate === animal ||
         preyCandidate.isDead ||
-        !isPredatorOf(animal.species, preyCandidate.species)
+        (animal.preyMask & preyCandidate.speciesMask) === 0
       ) {
         continue;
       }
@@ -1892,12 +2479,13 @@
   function simulateStep(deltaSeconds) {
     simulationTime += deltaSeconds;
     rebuildSpatialIndexes();
+    const squareRootDeltaSeconds = Math.sqrt(deltaSeconds);
 
     for (let i = 0; i < animals.length; i += 1) {
-      updateAnimal(animals[i], deltaSeconds);
+      updateAnimal(animals[i], deltaSeconds, squareRootDeltaSeconds);
     }
 
-    rebuildAnimalSpatialIndex();
+    rebuildAnimalSpatialIndex(false);
     for (let j = 0; j < animals.length; j += 1) {
       resolveForaging(animals[j]);
       resolveHunting(animals[j]);
@@ -1908,6 +2496,7 @@
     updateFoodResources(deltaSeconds, populations);
     updateVisualEchoes(deltaSeconds);
     updateDecorativeBirds(deltaSeconds);
+    updateEnvironmentEffects(deltaSeconds);
     removeDeadEntities();
     handleExtinctions(populations, deltaSeconds);
   }
@@ -1948,11 +2537,6 @@
         ? Math.floor(animal.animationFrameProgress) % animationFrames.length
         : 0;
     const spriteLines = animationFrames[frameIndex];
-    const fontSize = Math.max(
-      spriteModel.minFontSize || 5.2,
-      animal.displaySize * spriteModel.fontScale,
-    );
-    const spriteLineHeight = fontSize * spriteModel.lineHeightScale;
     const tilt =
       clamp(animal.velocityY / animal.maxSpeed, -1, 1) *
       (isLargePredator ? 0.045 : 0.11);
@@ -1964,17 +2548,14 @@
     if (spriteModel.mirrorHorizontally && facing !== spriteModel.artFacing) {
       context.scale(-1, 1);
     }
-    context.font =
-      (isLargePredator ? "700 " : "600 ") +
-      fontSize.toFixed(1) +
-      "px Menlo, Consolas, monospace";
+    context.font = animal.spriteFont;
     context.fillStyle = color;
     context.globalAlpha = 0.52 + energyRatio * 0.48;
     context.shadowColor = color;
     context.shadowBlur =
       animal.species === "tiger" ? 9 : animal.species === "alligator" ? 8 : 5;
     const widthCacheKey =
-      animal.species + "|" + facing + "|" + frameIndex + "|" + context.font;
+      animal.species + "|" + facing + "|" + frameIndex + "|" + animal.spriteFont;
     let spriteWidth = spriteWidthCache.get(widthCacheKey);
     if (spriteWidth == null) {
       let widestLine = spriteLines[0];
@@ -1995,7 +2576,8 @@
       context.fillText(
         spriteLines[spriteLineIndex],
         -spriteWidth / 2,
-        (spriteLineIndex - (spriteLines.length - 1) / 2) * spriteLineHeight,
+        (spriteLineIndex - (spriteLines.length - 1) / 2) *
+          animal.spriteLineHeight,
       );
     }
     context.restore();
@@ -2009,17 +2591,13 @@
         Math.floor(simulationTime * bird.flapSpeed + bird.frameOffset) %
         spriteModel.frames.length;
       const spriteLines = spriteModel.frames[frameIndex];
-      const lineHeight = bird.fontSize * spriteModel.lineHeightScale;
 
       context.save();
       context.translate(bird.x, bird.y);
       if (bird.velocityX < 0) {
         context.scale(-1, 1);
       }
-      context.font =
-        "600 " +
-        bird.fontSize.toFixed(1) +
-        "px Menlo, Consolas, monospace";
+      context.font = bird.font;
       context.fillStyle = "rgb(181, 232, 205)";
       context.globalAlpha = bird.opacity;
       context.shadowColor = "rgba(132, 239, 190, 0.34)";
@@ -2033,9 +2611,173 @@
         context.fillText(
           spriteLines[spriteLineIndex],
           0,
-          (spriteLineIndex - (spriteLines.length - 1) / 2) * lineHeight,
+          (spriteLineIndex - (spriteLines.length - 1) / 2) *
+            bird.spriteLineHeight,
         );
       }
+      context.restore();
+    }
+  }
+
+  // Dynamic scenery is split around the animal pass to create visual depth.
+  function drawStructureLines(
+    renderContext,
+    habitatStructure,
+    firstLineIndex,
+    endLineIndex,
+    originX,
+    originY,
+  ) {
+    renderContext.font = habitatStructure.font;
+    renderContext.fillStyle = habitatStructure.color;
+    renderContext.shadowColor = habitatStructure.shadowColor;
+    renderContext.shadowBlur = 3;
+    for (
+      let spriteLineIndex = firstLineIndex;
+      spriteLineIndex < endLineIndex;
+      spriteLineIndex += 1
+    ) {
+      renderContext.fillText(
+        habitatStructure.sprite[spriteLineIndex],
+        originX,
+        originY +
+          (spriteLineIndex - (habitatStructure.sprite.length - 1) / 2) *
+            habitatStructure.spriteLineHeight,
+      );
+    }
+  }
+
+  function drawWindAnimatedStructures(layer) {
+    const layerStructures =
+      layer === "foreground"
+        ? foregroundWindStructures
+        : backgroundWindStructures;
+    for (let i = 0; i < layerStructures.length; i += 1) {
+      const habitatStructure = layerStructures[i];
+      const foregroundLineCount = habitatStructure.foregroundLineCount;
+      const swayPulse =
+        0.62 +
+        Math.sin(simulationTime * 0.82 + habitatStructure.windPhase) * 0.38;
+      const swayAngle =
+        windState.directionX *
+        windState.strength *
+        habitatStructure.windSwayScale *
+        swayPulse *
+        0.022;
+      context.save();
+      context.translate(habitatStructure.x, habitatStructure.y);
+      context.rotate(swayAngle);
+      drawStructureLines(
+        context,
+        habitatStructure,
+        0,
+        layer === "foreground"
+          ? foregroundLineCount
+          : habitatStructure.sprite.length,
+        0,
+        0,
+      );
+      context.restore();
+    }
+    context.shadowBlur = 0;
+  }
+
+  function drawAnimatedWater() {
+    context.font = "9px Menlo, Consolas, monospace";
+    context.fillStyle = "rgb(91, 209, 226)";
+    context.shadowColor = "rgba(77, 218, 238, 0.26)";
+    context.shadowBlur = 3;
+    const glyphAnimationOffset = Math.floor(simulationTime * 0.65);
+    for (let i = 0; i < waterSurfaceMarks.length; i += 1) {
+      const waterMark = waterSurfaceMarks[i];
+      const wavePhase = simulationTime * waterMark.speed + waterMark.phase;
+      const x =
+        waterMark.x + Math.sin(wavePhase) * waterMark.driftAmplitude;
+      const y = waterMark.y + Math.cos(wavePhase * 0.63) * 1.8;
+      context.globalAlpha =
+        waterMark.opacity * (0.72 + Math.sin(wavePhase * 1.7) * 0.28);
+      context.fillText(
+        WATER_GLYPHS[
+          (waterMark.glyphIndex + glyphAnimationOffset) % WATER_GLYPHS.length
+        ],
+        x,
+        y,
+      );
+    }
+    context.globalAlpha = 1;
+    context.shadowBlur = 0;
+  }
+
+  function drawRippleEffect(effect, opacity) {
+    const progress = effect.ageSeconds / effect.lifetimeSeconds;
+    const radiusX = 3 + progress * 18;
+    const radiusY = 1.5 + progress * 7;
+    context.font = "8px Menlo, Consolas, monospace";
+    context.fillStyle = "rgba(111, 226, 238, " + opacity * 0.62 + ")";
+    for (let i = 0; i < RIPPLE_UNIT_POINTS.length; i += 1) {
+      const ripplePoint = RIPPLE_UNIT_POINTS[i];
+      context.fillText(
+        ripplePoint.glyph,
+        effect.x + ripplePoint.x * radiusX,
+        effect.y + ripplePoint.y * radiusY,
+      );
+    }
+  }
+
+  function drawEnvironmentEffects(layer) {
+    context.shadowBlur = 0;
+    for (let i = 0; i < environmentEffects.length; i += 1) {
+      const effect = environmentEffects[i];
+      const isForegroundEffect = effect.type === "leaf";
+      if (
+        (layer === "foreground" && !isForegroundEffect) ||
+        (layer === "background" && isForegroundEffect)
+      ) {
+        continue;
+      }
+      const remainingLifeRatio =
+        1 - effect.ageSeconds / effect.lifetimeSeconds;
+      if (effect.type === "ripple") {
+        drawRippleEffect(effect, remainingLifeRatio);
+        continue;
+      }
+
+      if (effect.type === "splash") {
+        context.font = "10px Menlo, Consolas, monospace";
+        context.fillStyle =
+          "rgba(137, 235, 241, " + remainingLifeRatio * 0.72 + ")";
+        context.fillText(effect.glyph, effect.x, effect.y);
+        continue;
+      }
+      if (effect.type === "dust") {
+        context.font = "9px Menlo, Consolas, monospace";
+        context.fillStyle =
+          "rgba(169, 180, 104, " + remainingLifeRatio * 0.46 + ")";
+        context.fillText(effect.glyph, effect.x, effect.y);
+        continue;
+      }
+
+      context.save();
+      context.translate(effect.x, effect.y);
+      if (effect.type === "wake") {
+        const wakeProgress = effect.ageSeconds / effect.lifetimeSeconds;
+        context.rotate(effect.angleRadians);
+        context.scale(1 + wakeProgress * 0.75, 1);
+        context.font = "9px Menlo, Consolas, monospace";
+        context.fillStyle =
+          "rgba(101, 222, 237, " + remainingLifeRatio * 0.56 + ")";
+      } else if (effect.type === "leaf") {
+        context.rotate(effect.phase + effect.ageSeconds * 2.4);
+        context.font = "9px Menlo, Consolas, monospace";
+        context.fillStyle =
+          "rgba(110, 221, 123, " + remainingLifeRatio * 0.7 + ")";
+      } else {
+        context.rotate(Math.atan2(windState.directionY, windState.directionX));
+        context.font = "8px Menlo, Consolas, monospace";
+        context.fillStyle =
+          "rgba(127, 206, 150, " + remainingLifeRatio * 0.34 + ")";
+      }
+      context.fillText(effect.glyph, 0, 0);
       context.restore();
     }
   }
@@ -2074,7 +2816,6 @@
       return;
     }
     context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    context.clearRect(0, 0, worldWidth, worldHeight);
     context.drawImage(
       backgroundCanvas,
       0,
@@ -2090,8 +2831,12 @@
     context.textAlign = "center";
     context.textBaseline = "middle";
 
+    drawAnimatedWater();
+    drawWindAnimatedStructures("background");
+    drawDecorativeBirds();
     drawFoodResources("berry");
     drawFoodResources("plankton");
+    drawEnvironmentEffects("background");
 
     context.font = "12px Menlo, Consolas, monospace";
     context.shadowColor = "transparent";
@@ -2115,8 +2860,8 @@
       drawAnimalSprite(animals[animalIndex]);
     }
 
-    // Birds render last as distant aerial silhouettes, but have no world state.
-    drawDecorativeBirds();
+    drawWindAnimatedStructures("foreground");
+    drawEnvironmentEffects("foreground");
 
     context.globalAlpha = 1;
     context.shadowBlur = 0;
@@ -2244,26 +2989,25 @@
       structureIndex += 1
     ) {
       const habitatStructure = depthSortedStructures[structureIndex];
-      const spriteLineHeight = habitatStructure.fontSize * 1.08;
-      backgroundContext.font =
-        habitatStructure.fontSize + "px Menlo, Consolas, monospace";
-      backgroundContext.fillStyle = habitatStructure.color;
-      backgroundContext.shadowColor =
-        habitatStructure.habitat === "lake"
-          ? "rgba(86, 218, 235, 0.22)"
-          : "rgba(83, 235, 126, 0.2)";
-      backgroundContext.shadowBlur = 3;
-      for (
-        let spriteLineIndex = 0;
-        spriteLineIndex < habitatStructure.sprite.length;
-        spriteLineIndex += 1
-      ) {
-        backgroundContext.fillText(
-          habitatStructure.sprite[spriteLineIndex],
+      if (habitatStructure.windSwayScale > 0) {
+        if (habitatStructure.foregroundLineCount > 0) {
+          drawStructureLines(
+            backgroundContext,
+            habitatStructure,
+            habitatStructure.foregroundLineCount,
+            habitatStructure.sprite.length,
+            habitatStructure.x,
+            habitatStructure.y,
+          );
+        }
+      } else {
+        drawStructureLines(
+          backgroundContext,
+          habitatStructure,
+          0,
+          habitatStructure.sprite.length,
           habitatStructure.x,
-          habitatStructure.y +
-            (spriteLineIndex - (habitatStructure.sprite.length - 1) / 2) *
-              spriteLineHeight,
+          habitatStructure.y,
         );
       }
     }
@@ -2336,6 +3080,12 @@
           foodResource.y = point.y;
         }
       });
+      environmentEffects.forEach(function (effect) {
+        effect.x *= scaleX;
+        effect.y *= scaleY;
+        effect.velocityX *= scaleX;
+        effect.velocityY *= scaleY;
+      });
     }
 
     resizeDecorativeBirds(previousSize);
@@ -2358,11 +3108,21 @@
     birds = [];
     foodResources = [];
     visualEchoes = [];
+    environmentEffects = [];
     resourceSpawnBudget = { berry: 0, plankton: 0 };
     simulationTime = 0;
     maxGeneration = 0;
     simulationAccumulator = 0;
     nextEntityId = 1;
+    windState.directionX = 1;
+    windState.directionY = 0.08;
+    windState.targetDirectionX = 1;
+    windState.targetDirectionY = 0.08;
+    windState.strength = 0.18;
+    windState.targetStrength = 0.18;
+    windState.secondsUntilChange = 0;
+    windState.gustSpawnBudget = 0;
+    windState.rippleSpawnBudget = 0;
     terrainSeed = Math.floor(Math.random() * 0x7fffffff);
     generateLake();
     generateStructures();
@@ -2379,36 +3139,34 @@
     renderWorld();
   }
 
-  function setTextContent(elementId, text) {
-    const element = document.getElementById(elementId);
-    if (element) {
+  function setTextContent(element, text) {
+    if (element && element.textContent !== text) {
       element.textContent = text;
     }
   }
 
   function updateTelemetry() {
-    setTextContent("stat-time", formatElapsedTime(simulationTime));
-    setTextContent("stat-generation", zeroPad(maxGeneration, 3));
-    setTextContent("stat-population", zeroPad(animals.length, 3));
-    setTextContent("stat-fps", zeroPad(Math.round(framesPerSecond), 2));
-    document.getElementById("live-mark").textContent = isPaused
-      ? "[ HOLD ]"
-      : "[ RUNNING ]";
+    setTextContent(statTimeElement, formatElapsedTime(simulationTime));
+    setTextContent(statGenerationElement, zeroPad(maxGeneration, 3));
+    setTextContent(statPopulationElement, zeroPad(animals.length, 3));
+    setTextContent(statFpsElement, zeroPad(Math.round(framesPerSecond), 2));
+    setTextContent(liveMarkElement, isPaused ? "[ HOLD ]" : "[ RUNNING ]");
   }
 
   function setPaused(nextPausedState) {
     isPaused = nextPausedState;
-    document.getElementById("paused-overlay").hidden = !isPaused;
-    const button = document.getElementById("pause-button");
-    button.textContent = isPaused ? "SPACE : RESUME" : "SPACE : PAUSE";
-    button.setAttribute("aria-pressed", String(isPaused));
+    pausedOverlayElement.hidden = !isPaused;
+    pauseButtonElement.textContent = isPaused
+      ? "SPACE : RESUME"
+      : "SPACE : PAUSE";
+    pauseButtonElement.setAttribute("aria-pressed", String(isPaused));
     updateTelemetry();
   }
 
   function cycleSpeed() {
     simulationSpeedIndex =
       (simulationSpeedIndex + 1) % SIMULATION_SPEEDS.length;
-    document.getElementById("speed-button").textContent =
+    speedButtonElement.textContent =
       "S : " + SIMULATION_SPEEDS[simulationSpeedIndex] + "×";
   }
 
@@ -2481,11 +3239,9 @@
     requestAnimationFrame(animationFrame);
   }
 
-  document
-    .getElementById("pause-button")
-    .addEventListener("click", togglePaused);
-  document.getElementById("speed-button").addEventListener("click", cycleSpeed);
-  document.getElementById("reset-button").addEventListener("click", resetWorld);
+  pauseButtonElement.addEventListener("click", togglePaused);
+  speedButtonElement.addEventListener("click", cycleSpeed);
+  resetButtonElement.addEventListener("click", resetWorld);
   window.addEventListener("keydown", handleKeyboardShortcut);
   document.addEventListener("visibilitychange", handleVisibilityChange);
 
@@ -2510,6 +3266,9 @@
         maxGeneration: maxGeneration,
         animals: animals.length,
         decorativeBirds: birds.length,
+        environmentEffects: environmentEffects.length,
+        waterSurfaceMarks: waterSurfaceMarks.length,
+        windStrength: windState.strength,
         habitatStructures: habitatStructures.length,
         lake: Boolean(lake),
       };
