@@ -1,92 +1,107 @@
-# Michael Kahen - Portfolio Factory
+# michaelkahen.com
 
-A dependency-free portfolio for Michael Kahen, a computer engineer and Stony
-Brook University Class of 2025 graduate. The site presents projects and contact
-links as an original factory-automation interface.
+Michael Kahen's personal engineering portfolio, presented as an interactive
+industrial control system. Rather than using a conventional collection of
+pages, the site turns projects, professional information, and contact channels
+into connected machines on a factory floor.
 
-## Run locally
+The visual language draws from factory automation, logistics networks, rugged
+control panels, and monochrome terminals. Original SVG machinery, animated
+belts and signals, technical readouts, and compact system controls support that
+theme without relying on external frameworks or game assets.
 
-No dependencies or build step are required.
+## Project Scope
 
-```sh
-python3 -m http.server 8000
-```
+The portfolio is a single-page experience centered on Michael's work as a
+computer engineer and Stony Brook University Class of 2025 graduate. Its main
+areas are:
 
-Open [http://localhost:8000](http://localhost:8000).
+- **Factory floor** - the central navigation map, where each portfolio
+  destination is represented by a connected machine.
+- **Assembly complex** - a project catalog and detail console for engineering
+  work and interactive experiments.
+- **Biosphere Unit** - a real-time autonomous ASCII ecosystem rendered with the
+  Canvas 2D API.
+- **Document archive** - the portfolio's resume area.
+- **Communications radar** - direct email, GitHub, and LinkedIn channels.
+- **Display controls** - persistent alternate technical labels and motion
+  preferences, including reduced-motion support.
 
-## Navigation
+Hash-based views preserve the feeling of operating one system while giving
+each major section a distinct route. The interface is designed for keyboard,
+pointer, and touch use, with focus management, live announcements, semantic
+controls, and responsive layouts built into the experience.
 
-- `#home` - interactive factory floor
-- `#projects` - project assembly console
-- `#ecosystem` - autonomous ASCII ecosystem
-- `#resume` - resume archive
-- `#contact` - direct contact console
-- GitHub and LinkedIn open their external profiles in new tabs
+## Autonomous Ecosystem
 
-The header includes Alt Mode for additional technical labels and a master motion
-control. `Alt+A` toggles Alt Mode and `Alt+M` toggles ambient motion.
+The Biosphere Unit is the portfolio's primary interactive software project. It
+generates a jungle-and-lake habitat populated by deer, fish, snakes, an
+alligator, and a tiger, with decorative birds moving above the environment.
 
-## Ecosystem controls
+The simulation combines:
 
-- `Space` - pause or resume
-- `S` - cycle between 1x, 2x, and 4x speed
-- `R` - generate a new ecosystem
+- Fixed-step updates at 30 Hz with rendering managed independently.
+- Procedural terrain, a generated lake, structures, vegetation, food, and
+  weather effects.
+- Agent steering for wandering, seeking, fleeing, separation, hunting, and
+  habitat boundaries.
+- Energy, age, reproduction, inherited traits, mutation, and population
+  recovery systems.
+- Animated multi-frame ASCII species artwork and live population telemetry.
+- Spatial hashing, cached background layers, visibility-aware suspension, and
+  population caps to keep the simulation responsive.
 
-The ecosystem script is loaded only when the simulation is opened. It suspends
-itself when its view or browser tab is hidden.
+The ecosystem is isolated from the portfolio shell and loaded only when its
+view is opened. A small lifecycle API allows the site controller to activate or
+suspend it as navigation and motion preferences change.
 
-## Add the resume
+## Architecture
 
-Place the PDF at:
+The production site is intentionally self-contained:
+
+- `index.html` defines the complete semantic structure for the factory,
+  project, resume, contact, and ecosystem views.
+- `assets/css/site.css` contains the shared industrial design system, factory
+  layout, responsive behavior, animation states, and component styling.
+- `assets/css/ecosystem.css` contains the terminal presentation and responsive
+  simulation viewport.
+- `assets/js/site.js` manages hash routing, view focus, navigation state,
+  display preferences, contact interactions, and lazy ecosystem loading.
+- `assets/js/ecosystem.js` contains procedural world generation, simulation
+  entities and behavior, ASCII rendering, telemetry, controls, and lifecycle
+  management.
+- `assets/icons/` contains the original SVG machine artwork and site identity.
+- `assets/documents/` is reserved for portfolio documents.
+- `other/` contains exploratory prototypes and planning references that are not
+  part of the production site.
+
+## Repository Structure
 
 ```text
-assets/documents/michael-kahen-resume.pdf
+.
+├── index.html
+├── assets/
+│   ├── css/
+│   │   ├── site.css
+│   │   └── ecosystem.css
+│   ├── documents/
+│   │   └── README.md
+│   ├── icons/
+│   │   ├── biosphere-module.svg
+│   │   ├── contact-radar.svg
+│   │   ├── favicon.svg
+│   │   ├── github-uplink.svg
+│   │   ├── linkedin-relay.svg
+│   │   ├── project-assembler.svg
+│   │   └── resume-archive.svg
+│   └── js/
+│       ├── site.js
+│       └── ecosystem.js
+└── other/
+    ├── gemini-ecosystem.html
+    └── plans.txt
 ```
 
-Then replace the pending document block in `index.html` with view and download
-links to that file.
-
-## Add a project
-
-1. Add an original project illustration under `assets/icons/`.
-2. Add a project slot inside `.project-catalog` in `index.html`.
-3. Add the corresponding project detail article.
-4. Add a hash route in `assets/js/site.js` if the project has an interactive view.
-
-Project descriptions should identify the problem, implementation, important
-engineering choices, technologies, and source or live links.
-
-## Project structure
-
-```text
-index.html
-assets/
-  css/
-    site.css
-    ecosystem.css
-  documents/
-    README.md
-    michael-kahen-resume.pdf  # added later
-  icons/
-    biosphere-module.svg
-    contact-radar.svg
-    favicon.svg
-    github-uplink.svg
-    linkedin-relay.svg
-    project-assembler.svg
-    resume-archive.svg
-  js/
-    site.js
-    ecosystem.js
-```
-
-All machine artwork is original SVG. The site does not include or redistribute
-Factorio sprites, textures, fonts, audio, or logos.
-
-## Ecosystem model
-
-The simulation advances in fixed steps of `1/30` second. Animals combine seek,
-flee, wander, separation, boundary, and obstacle steering. Energy use depends
-on metabolism and movement, eligible animals reproduce probabilistically, and
-speed, sensing, and size traits can mutate across generations. Spatial hashing
-limits nearby food, predator, prey, and separation searches.
+All production artwork is original to the portfolio. The factory theme is an
+independent visual interpretation and does not include or redistribute
+third-party sprites, textures, fonts, audio, logos, or other game assets.
