@@ -743,9 +743,14 @@ a:focus-visible {
 }
 
 .machine--contact {
-  top: 0.5%;
+  top: max(2%, 18px);
   left: 42%;
   width: 16%;
+}
+
+.machine--contact .machine-tooltip {
+  top: calc(100% + 5px);
+  bottom: auto;
 }
 
 .machine:hover,
