@@ -100,14 +100,6 @@
                 aria-hidden="true"
               >
                 <defs>
-                  <pattern
-                    id="belt-treads"
-                    width="28"
-                    height="12"
-                    patternUnits="userSpaceOnUse"
-                  >
-                    <path d="M0 0L12 12M14 0l12 12M28 0l12 12" />
-                  </pattern>
                   <filter id="route-glow" x="-30%" y="-30%" width="160%" height="160%">
                     <feGaussianBlur stdDeviation="2.5" result="blur" />
                     <feMerge>
@@ -119,59 +111,142 @@
 
                 <g class="route route--projects">
                   <path class="belt-shadow" d="M500 350H408V286H286" />
+                  <path class="belt-frame" d="M500 350H408V286H286" />
+                  <path class="belt-rail" d="M500 350H408V286H286" />
                   <path class="belt-bed" d="M500 350H408V286H286" />
                   <path class="belt-treads" d="M500 350H408V286H286" />
-                  <path class="circuit-wire circuit-wire--red" d="M500 338H425V272H286" />
-                  <path class="circuit-wire circuit-wire--green" d="M500 362H392V301H286" />
+                  <g class="drive-node" transform="translate(408 350)">
+                    <circle class="drive-node__housing" r="19" />
+                    <circle class="drive-node__rim" r="14" />
+                    <path class="drive-node__rotor" d="M0-10V10M-10 0H10M-7-7L7 7M7-7L-7 7" />
+                    <circle class="drive-node__core" r="5" />
+                  </g>
+                  <g class="drive-node" transform="translate(408 286)">
+                    <circle class="drive-node__housing" r="19" />
+                    <circle class="drive-node__rim" r="14" />
+                    <path class="drive-node__rotor" d="M0-10V10M-10 0H10M-7-7L7 7M7-7L-7 7" />
+                    <circle class="drive-node__core" r="5" />
+                  </g>
+                  <g class="belt-coupler" transform="translate(500 350)">
+                    <rect x="-7" y="-22" width="14" height="44" rx="2" />
+                    <path d="M-7-13H7M-7 13H7" />
+                    <circle cx="0" cy="-17" r="2" /><circle cx="0" cy="17" r="2" />
+                  </g>
+                  <g class="belt-coupler" transform="translate(286 286)">
+                    <rect x="-7" y="-22" width="14" height="44" rx="2" />
+                    <path d="M-7-13H7M-7 13H7" />
+                    <circle cx="0" cy="-17" r="2" /><circle cx="0" cy="17" r="2" />
+                  </g>
                 </g>
                 <g class="route route--resume">
                   <path class="belt-shadow" d="M700 334H794V246H900" />
+                  <path class="belt-frame" d="M700 334H794V246H900" />
+                  <path class="belt-rail" d="M700 334H794V246H900" />
                   <path class="belt-bed" d="M700 334H794V246H900" />
                   <path class="belt-treads" d="M700 334H794V246H900" />
-                  <path class="circuit-wire circuit-wire--red" d="M700 322H812V232H900" />
-                  <path class="circuit-wire circuit-wire--green" d="M700 346H778V261H900" />
+                  <g class="drive-node" transform="translate(794 334)">
+                    <circle class="drive-node__housing" r="19" />
+                    <circle class="drive-node__rim" r="14" />
+                    <path class="drive-node__rotor" d="M0-10V10M-10 0H10M-7-7L7 7M7-7L-7 7" />
+                    <circle class="drive-node__core" r="5" />
+                  </g>
+                  <g class="drive-node" transform="translate(794 246)">
+                    <circle class="drive-node__housing" r="19" />
+                    <circle class="drive-node__rim" r="14" />
+                    <path class="drive-node__rotor" d="M0-10V10M-10 0H10M-7-7L7 7M7-7L-7 7" />
+                    <circle class="drive-node__core" r="5" />
+                  </g>
+                  <g class="belt-coupler" transform="translate(700 334)">
+                    <rect x="-7" y="-22" width="14" height="44" rx="2" />
+                    <path d="M-7-13H7M-7 13H7" />
+                    <circle cx="0" cy="-17" r="2" /><circle cx="0" cy="17" r="2" />
+                  </g>
+                  <g class="belt-coupler" transform="translate(900 246)">
+                    <rect x="-7" y="-22" width="14" height="44" rx="2" />
+                    <path d="M-7-13H7M-7 13H7" />
+                    <circle cx="0" cy="-17" r="2" /><circle cx="0" cy="17" r="2" />
+                  </g>
                 </g>
                 <g class="route route--github">
                   <path class="belt-shadow" d="M520 398V467H322V515" />
+                  <path class="belt-frame" d="M520 398V467H322V515" />
+                  <path class="belt-rail" d="M520 398V467H322V515" />
                   <path class="belt-bed" d="M520 398V467H322V515" />
                   <path class="belt-treads" d="M520 398V467H322V515" />
-                  <path class="circuit-wire circuit-wire--red" d="M507 398V451H307V515" />
-                  <path class="circuit-wire circuit-wire--green" d="M533 398V483H338V515" />
+                  <g class="drive-node" transform="translate(520 467)">
+                    <circle class="drive-node__housing" r="19" />
+                    <circle class="drive-node__rim" r="14" />
+                    <path class="drive-node__rotor" d="M0-10V10M-10 0H10M-7-7L7 7M7-7L-7 7" />
+                    <circle class="drive-node__core" r="5" />
+                  </g>
+                  <g class="drive-node" transform="translate(322 467)">
+                    <circle class="drive-node__housing" r="19" />
+                    <circle class="drive-node__rim" r="14" />
+                    <path class="drive-node__rotor" d="M0-10V10M-10 0H10M-7-7L7 7M7-7L-7 7" />
+                    <circle class="drive-node__core" r="5" />
+                  </g>
+                  <g class="belt-coupler" transform="translate(520 398) rotate(90)">
+                    <rect x="-7" y="-22" width="14" height="44" rx="2" />
+                    <path d="M-7-13H7M-7 13H7" />
+                    <circle cx="0" cy="-17" r="2" /><circle cx="0" cy="17" r="2" />
+                  </g>
+                  <g class="belt-coupler" transform="translate(322 515) rotate(90)">
+                    <rect x="-7" y="-22" width="14" height="44" rx="2" />
+                    <path d="M-7-13H7M-7 13H7" />
+                    <circle cx="0" cy="-17" r="2" /><circle cx="0" cy="17" r="2" />
+                  </g>
                 </g>
                 <g class="route route--linkedin">
                   <path class="belt-shadow" d="M680 398V467H864V515" />
+                  <path class="belt-frame" d="M680 398V467H864V515" />
+                  <path class="belt-rail" d="M680 398V467H864V515" />
                   <path class="belt-bed" d="M680 398V467H864V515" />
                   <path class="belt-treads" d="M680 398V467H864V515" />
-                  <path class="circuit-wire circuit-wire--red" d="M667 398V482H849V515" />
-                  <path class="circuit-wire circuit-wire--green" d="M693 398V451H879V515" />
+                  <g class="drive-node" transform="translate(680 467)">
+                    <circle class="drive-node__housing" r="19" />
+                    <circle class="drive-node__rim" r="14" />
+                    <path class="drive-node__rotor" d="M0-10V10M-10 0H10M-7-7L7 7M7-7L-7 7" />
+                    <circle class="drive-node__core" r="5" />
+                  </g>
+                  <g class="drive-node" transform="translate(864 467)">
+                    <circle class="drive-node__housing" r="19" />
+                    <circle class="drive-node__rim" r="14" />
+                    <path class="drive-node__rotor" d="M0-10V10M-10 0H10M-7-7L7 7M7-7L-7 7" />
+                    <circle class="drive-node__core" r="5" />
+                  </g>
+                  <g class="belt-coupler" transform="translate(680 398) rotate(90)">
+                    <rect x="-7" y="-22" width="14" height="44" rx="2" />
+                    <path d="M-7-13H7M-7 13H7" />
+                    <circle cx="0" cy="-17" r="2" /><circle cx="0" cy="17" r="2" />
+                  </g>
+                  <g class="belt-coupler" transform="translate(864 515) rotate(90)">
+                    <rect x="-7" y="-22" width="14" height="44" rx="2" />
+                    <path d="M-7-13H7M-7 13H7" />
+                    <circle cx="0" cy="-17" r="2" /><circle cx="0" cy="17" r="2" />
+                  </g>
                 </g>
                 <g class="route route--contact">
                   <path class="belt-shadow" d="M600 286V178" />
+                  <path class="belt-frame" d="M600 286V178" />
+                  <path class="belt-rail" d="M600 286V178" />
                   <path class="belt-bed" d="M600 286V178" />
                   <path class="belt-treads" d="M600 286V178" />
-                  <path class="circuit-wire circuit-wire--red" d="M588 286V178" />
-                  <path class="circuit-wire circuit-wire--green" d="M612 286V178" />
-                </g>
-
-                <g class="power-node" transform="translate(408 350)">
-                  <circle r="16" />
-                  <circle class="power-node__core" r="6" />
-                </g>
-                <g class="power-node" transform="translate(794 334)">
-                  <circle r="16" />
-                  <circle class="power-node__core" r="6" />
-                </g>
-                <g class="power-node" transform="translate(520 467)">
-                  <circle r="16" />
-                  <circle class="power-node__core" r="6" />
-                </g>
-                <g class="power-node" transform="translate(680 467)">
-                  <circle r="16" />
-                  <circle class="power-node__core" r="6" />
-                </g>
-                <g class="power-node" transform="translate(600 215)">
-                  <circle r="16" />
-                  <circle class="power-node__core" r="6" />
+                  <g class="drive-node" transform="translate(600 215)">
+                    <circle class="drive-node__housing" r="19" />
+                    <circle class="drive-node__rim" r="14" />
+                    <path class="drive-node__rotor" d="M0-10V10M-10 0H10M-7-7L7 7M7-7L-7 7" />
+                    <circle class="drive-node__core" r="5" />
+                  </g>
+                  <g class="belt-coupler" transform="translate(600 286) rotate(90)">
+                    <rect x="-7" y="-22" width="14" height="44" rx="2" />
+                    <path d="M-7-13H7M-7 13H7" />
+                    <circle cx="0" cy="-17" r="2" /><circle cx="0" cy="17" r="2" />
+                  </g>
+                  <g class="belt-coupler" transform="translate(600 178) rotate(90)">
+                    <rect x="-7" y="-22" width="14" height="44" rx="2" />
+                    <path d="M-7-13H7M-7 13H7" />
+                    <circle cx="0" cy="-17" r="2" /><circle cx="0" cy="17" r="2" />
+                  </g>
                 </g>
               </svg>
 
