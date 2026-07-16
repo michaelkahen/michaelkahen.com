@@ -339,7 +339,8 @@ a:focus-visible {
 }
 
 .site-view.is-entering .machine-window,
-.site-view.is-entering .terminal {
+.site-view.is-entering .terminal,
+.site-view.is-entering .cpu-app {
   animation: window-enter 240ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
@@ -1368,6 +1369,20 @@ a:focus-visible {
     0 13px 18px rgba(0, 0, 0, 0.35);
 }
 
+.project-detail__screen--cpu {
+  background:
+    radial-gradient(circle at 50% 43%, #173955, #09131f 72%),
+    #09131f;
+}
+
+.project-detail__screen--cpu .scan-sweep {
+  background: linear-gradient(to bottom, transparent, rgba(84, 184, 255, 0.14), transparent);
+}
+
+.project-detail__screen--cpu .screen-corner {
+  border-color: rgba(115, 199, 255, 0.58);
+}
+
 .project-detail__screen::after {
   position: absolute;
   inset: 0;
@@ -2072,6 +2087,10 @@ html:not(.js) .site-view[hidden] {
 }
 
 html:not(.js) .site-view--ecosystem {
+  display: none !important;
+}
+
+html:not(.js) .site-view--cpu {
   display: none !important;
 }
 

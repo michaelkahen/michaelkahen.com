@@ -9,6 +9,7 @@
   const toast = document.getElementById("site-toast");
   const routeAnnouncer = document.getElementById("route-announcer");
   const ecosystemLoader = document.getElementById("ecosystem-loader");
+  const cpuLoader = document.getElementById("cpu-loader");
   const views = new Map();
   const navigationLinks = Array.from(
     document.querySelectorAll("[data-nav-route]"),
@@ -34,6 +35,11 @@
       announcement: "Autonomous ecosystem simulation",
       navigationRoute: "projects",
     },
+    cpu: {
+      title: "RISC-V Pipeline Lab | Michael Kahen",
+      announcement: "RISC-V pipeline lab",
+      navigationRoute: "projects",
+    },
     resume: {
       title: "Resume | Michael Kahen",
       announcement: "Resume",
@@ -48,6 +54,7 @@
 
   let activeRoute = null;
   let ecosystemLoadPromise = null;
+  let cpuLoadPromise = null;
   let toastTimer = 0;
   let altModeEnabled = readPreference("mk-alt-mode") === "enabled";
   let motionPaused =
@@ -161,6 +168,10 @@
       window.ECOSYSTEM.setActive(false);
     }
 
+    if (activeRoute === "cpu" && route !== "cpu" && window.CPU_LAB) {
+      window.CPU_LAB.setActive(false);
+    }
+
     views.forEach(function (view, viewRoute) {
       const isCurrent = viewRoute === route;
       view.hidden = !isCurrent;
@@ -183,6 +194,10 @@
 
     if (route === "ecosystem") {
       loadEcosystem();
+    }
+
+    if (route === "cpu") {
+      loadCpu();
     }
 
     if (moveFocus) {
@@ -241,6 +256,56 @@
     });
 
     return ecosystemLoadPromise;
+  }
+
+  function loadCpu() {
+    if (window.CPU_LAB) {
+      cpuLoader.hidden = true;
+      window.CPU_LAB.setActive(true);
+      return Promise.resolve(window.CPU_LAB);
+    }
+
+    if (cpuLoadPromise) {
+      return cpuLoadPromise;
+    }
+
+    cpuLoader.hidden = false;
+    cpuLoadPromise = new Promise(function (resolve, reject) {
+      const script = document.createElement("script");
+      script.src = shell.dataset.cpuScript;
+      script.async = true;
+
+      script.addEventListener("load", function () {
+        if (!window.CPU_LAB) {
+          reject(new Error("The CPU lab lifecycle API did not initialize."));
+          return;
+        }
+
+        cpuLoader.hidden = true;
+        window.CPU_LAB.setActive(activeRoute === "cpu");
+        resolve(window.CPU_LAB);
+      });
+
+      script.addEventListener("error", function () {
+        reject(new Error("The CPU lab script could not be loaded."));
+      });
+
+      document.body.appendChild(script);
+    }).catch(function (error) {
+      cpuLoader.innerHTML = "";
+      const content = document.createElement("div");
+      const title = document.createElement("strong");
+      const detail = document.createElement("small");
+      content.className = "cpu-loader__content";
+      title.textContent = "CPU LAB FAILED TO INITIALIZE";
+      detail.textContent = error.message;
+      content.append(title, detail);
+      cpuLoader.appendChild(content);
+      showToast("Unable to load the CPU lab");
+      return null;
+    });
+
+    return cpuLoadPromise;
   }
 
   function setFactoryRoute(machineName) {
@@ -328,7 +393,7 @@
 
       if (!targetIsEditable && activeRoute !== "home") {
         event.preventDefault();
-        window.location.hash = activeRoute === "ecosystem" ? "projects" : "home";
+        window.location.hash = ["ecosystem", "cpu"].includes(activeRoute) ? "projects" : "home";
       }
       return;
     }

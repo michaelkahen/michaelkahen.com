@@ -20,6 +20,8 @@ areas are:
   destination is represented by a connected machine.
 - **Assembly complex** - a project catalog and detail console for engineering
   work and interactive experiments.
+- **RISC-V Pipeline Lab** - an interactive five-stage CPU model, assembler,
+  debugger, cache, and branch-prediction laboratory.
 - **Biosphere Unit** - a real-time autonomous ASCII ecosystem rendered with the
   Canvas 2D API.
 - **Document archive** - the portfolio's resume area.
@@ -32,9 +34,48 @@ each major section a distinct route. The interface is designed for keyboard,
 pointer, and touch use, with focus management, live announcements, semantic
 controls, and responsive layouts built into the experience.
 
+## RISC-V Pipeline Lab
+
+The RISC-V Pipeline Lab is a deterministic, cycle-level model of an in-order
+RV32I processor. It launches from the project catalog into a standalone modern
+debugger where visitors can edit assembly, inspect real machine-code encodings,
+step individual cycles, or run programs continuously.
+
+The model includes:
+
+- Five IF, ID, EX, MEM, and WB stages with visible bubbles and instruction flow.
+- EX/MEM and MEM/WB forwarding, load-use interlocks, and control-hazard flushes.
+- A two-pass assembler with labels, ABI register names, pseudo-instructions,
+  source diagnostics, and real 32-bit RISC-V encodings.
+- Selectable static or 16-entry adaptive branch prediction with a branch target
+  buffer and two-bit saturating counters.
+- A toggleable 128-byte direct-mapped, write-through data cache with modeled
+  refill latency and a 4 KiB backing memory.
+- Live registers, memory, cache, predictor state, cycle events, CPI, stalls,
+  prediction accuracy, and cache-hit telemetry.
+- Fibonacci, array-sum, branch-prediction, and forwarding/hazard programs.
+
+The supported instruction subset covers RV32I integer register and immediate
+operations, shifts, signed and unsigned comparisons, `lui`, `auipc`, `lw`,
+`sw`, conditional branches, `jal`, `jalr`, and `ebreak`. The assembler also
+supports `nop`, `mv`, `li`, `j`, `jr`, `ret`, and `halt` pseudo-instructions.
+
+The engine is independent of the DOM and exports the assembler, pipeline model,
+cache, predictor, decoder, and a sequential reference interpreter to Node. Run
+the verification suite with:
+
+```sh
+node --test tests/cpu.test.js
+```
+
+The suite covers canonical encodings, instruction semantics, forwarding,
+interlocks, flushes, cache behavior, predictor saturation, faults, built-in
+programs, and deterministic generated programs checked against the independent
+reference model.
+
 ## Autonomous Ecosystem
 
-The Biosphere Unit is the portfolio's primary interactive software project. It
+The Biosphere Unit is the portfolio's autonomous simulation project. It
 generates a jungle-and-lake habitat populated by deer, fish, snakes, an
 alligator, and a tiger, with decorative birds moving above the environment.
 
@@ -60,13 +101,17 @@ suspend it as navigation and motion preferences change.
 The production site is intentionally self-contained:
 
 - `index.html` defines the complete semantic structure for the factory,
-  project, resume, contact, and ecosystem views.
+  project, resume, contact, CPU, and ecosystem views.
 - `assets/css/site.css` contains the shared industrial design system, factory
   layout, responsive behavior, animation states, and component styling.
 - `assets/css/ecosystem.css` contains the terminal presentation and responsive
   simulation viewport.
+- `assets/css/cpu.css` contains the independent debugger interface and its
+  responsive desktop workspace.
 - `assets/js/site.js` manages hash routing, view focus, navigation state,
-  display preferences, contact interactions, and lazy ecosystem loading.
+  display preferences, contact interactions, and lazy project loading.
+- `assets/js/cpu.js` contains the assembler, CPU pipeline, memory hierarchy,
+  predictor, reference model, debugger rendering, controls, and lifecycle API.
 - `assets/js/ecosystem.js` contains procedural world generation, simulation
   entities and behavior, ASCII rendering, telemetry, controls, and lifecycle
   management.
@@ -78,23 +123,28 @@ The production site is intentionally self-contained:
 ```text
 .
 ├── index.html
-└── assets/
+├── assets/
 │   ├── css/
-│   │   ├── site.css
-│   │   └── ecosystem.css
+│   │   ├── cpu.css
+│   │   ├── ecosystem.css
+│   │   └── site.css
 │   ├── documents/
 │   │   └── README.md
 │   ├── icons/
 │   │   ├── biosphere-module.svg
 │   │   ├── contact-radar.svg
+│   │   ├── cpu-core.svg
 │   │   ├── favicon.svg
 │   │   ├── github-uplink.svg
 │   │   ├── linkedin-relay.svg
 │   │   ├── project-assembler.svg
 │   │   └── resume-archive.svg
 │   └── js/
-│       ├── site.js
-│       └── ecosystem.js
+│       ├── cpu.js
+│       ├── ecosystem.js
+│       └── site.js
+└── tests/
+    └── cpu.test.js
 ```
 
 All production artwork is original to the portfolio. The factory theme is an

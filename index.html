@@ -20,6 +20,7 @@
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="assets/css/site.css">
     <link rel="stylesheet" href="assets/css/ecosystem.css">
+    <link rel="stylesheet" href="assets/css/cpu.css">
     <script defer src="assets/js/site.js"></script>
   </head>
   <body>
@@ -30,6 +31,7 @@
       id="site-shell"
       data-route="home"
       data-ecosystem-script="assets/js/ecosystem.js"
+      data-cpu-script="assets/js/cpu.js"
     >
       <header class="site-header">
         <a class="site-identity" href="#home" aria-label="My portfolio home">
@@ -292,7 +294,7 @@
                   <strong>ASSEMBLY COMPLEX</strong>
                   <small>PROJECTS</small>
                 </span>
-                <span class="machine__metadata alt-data">UNIT A-01 // 1 RECIPE</span>
+                <span class="machine__metadata alt-data">UNIT A-01 // 2 RECIPES</span>
                 <span class="machine-tooltip" id="machine-tip-projects" role="tooltip">
                   Inspect and launch engineering projects
                 </span>
@@ -430,9 +432,27 @@
               <aside class="project-catalog" aria-labelledby="project-catalog-title">
                 <div class="subheader">
                   <h2 id="project-catalog-title">Production queue</h2>
-                  <span>1 / 1</span>
+                  <span>2 / 2</span>
                 </div>
-                <a class="project-slot is-selected" href="#ecosystem" aria-current="true">
+                <a class="project-slot is-selected" href="#cpu" aria-current="true">
+                  <span class="project-slot__icon">
+                    <img
+                      src="assets/icons/cpu-core.svg"
+                      alt=""
+                      width="96"
+                      height="72"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                    <span>02</span>
+                  </span>
+                  <span class="project-slot__copy">
+                    <strong>RISC-V Pipeline Lab</strong>
+                    <small>Cycle-level CPU debugger</small>
+                  </span>
+                  <span class="project-slot__status"><i></i> RUNNABLE</span>
+                </a>
+                <a class="project-slot" href="#ecosystem">
                   <span class="project-slot__icon">
                     <img
                       src="assets/icons/biosphere-module.svg"
@@ -452,17 +472,17 @@
                 </a>
                 <div class="catalog-readout">
                   <span>SELECTED</span>
-                  <strong>BIOSPHERE-01</strong>
-                  <span class="alt-data">SOURCE: /ECOSYSTEM.JS</span>
+                  <strong>RISCV-PIPELINE-02</strong>
+                  <span class="alt-data">SOURCE: /CPU.JS</span>
                 </div>
               </aside>
 
-              <article class="project-detail" aria-labelledby="biosphere-title">
+              <article class="project-detail" aria-labelledby="cpu-project-title">
                 <div class="project-detail__visual">
-                  <div class="project-detail__screen">
+                  <div class="project-detail__screen project-detail__screen--cpu">
                     <img
-                      src="assets/icons/biosphere-module.svg"
-                      alt="Industrial glass biosphere chamber containing water and vegetation"
+                      src="assets/icons/cpu-core.svg"
+                      alt="RISC-V processor core with five illuminated pipeline stages"
                       width="320"
                       height="240"
                       loading="lazy"
@@ -477,54 +497,54 @@
                     role="group"
                     aria-label="Project status"
                   >
-                    <span><i class="status-light status-light--green"></i> STABLE</span>
-                    <span>CANVAS 2D</span>
-                    <span>VANILLA JS</span>
+                    <span><i class="status-light status-light--green"></i> VERIFIED</span>
+                    <span>RV32I</span>
+                    <span>5-STAGE</span>
                   </div>
                 </div>
 
                 <div class="project-detail__content">
                   <p class="section-label">ACTIVE RECIPE</p>
-                  <h2 id="biosphere-title">Autonomous ASCII Ecosystem</h2>
+                  <h2 id="cpu-project-title">RISC-V Pipeline Lab</h2>
                   <p class="project-lede">
-                    A procedural jungle-and-lake habitat where animals forage,
-                    hunt, reproduce, and pass evolving traits to new generations.
+                    An interactive cycle-level CPU debugger with editable assembly,
+                    visible hazards, branch prediction, cache timing, and differential verification.
                   </p>
 
                   <dl class="project-specs">
                     <div>
-                      <dt>Simulation</dt>
-                      <dd>Fixed 30 Hz model with independent rendering</dd>
+                      <dt>Pipeline</dt>
+                      <dd>IF / ID / EX / MEM / WB with forwarding, stalls, and flushes</dd>
                     </div>
                     <div>
-                      <dt>World</dt>
-                      <dd>Generated terrain, lake, structures, food, and weather</dd>
+                      <dt>Toolchain</dt>
+                      <dd>Two-pass assembler with real RV32I machine-code encoding</dd>
                     </div>
                     <div>
-                      <dt>Behavior</dt>
-                      <dd>Seeking, fleeing, hunting, energy, genetics, and recovery</dd>
+                      <dt>Performance</dt>
+                      <dd>Adaptive branch predictor, direct-mapped cache, and CPI telemetry</dd>
                     </div>
                     <div>
-                      <dt>Optimization</dt>
-                      <dd>Spatial hashing, background caching, and population caps</dd>
+                      <dt>Verification</dt>
+                      <dd>Deterministic tests against an independent sequential reference model</dd>
                     </div>
                   </dl>
 
                   <div class="project-tags" role="group" aria-label="Technologies">
                     <span>JavaScript</span>
-                    <span>Canvas 2D</span>
-                    <span>Simulation</span>
-                    <span>Procedural Generation</span>
+                    <span>RISC-V</span>
+                    <span>CPU Architecture</span>
+                    <span>Verification</span>
                   </div>
 
                   <div class="window-actions">
-                    <a class="industrial-button industrial-button--primary" href="#ecosystem">
+                    <a class="industrial-button industrial-button--primary" href="#cpu">
                       <span aria-hidden="true">▶</span>
-                      Launch simulation
+                      Launch CPU lab
                     </a>
                     <a
                       class="industrial-button"
-                      href="https://github.com/michaelkahen/michaelkahen.com"
+                      href="https://github.com/michaelkahen/michaelkahen.com/blob/main/assets/js/cpu.js"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -533,6 +553,180 @@
                   </div>
                 </div>
               </article>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="site-view site-view--cpu"
+          id="cpu"
+          data-view="cpu"
+          aria-labelledby="cpu-title"
+          hidden
+        >
+          <div class="cpu-app" id="cpu-lab" data-cpu-state="loading">
+            <header class="cpu-app__header">
+              <div class="cpu-brand">
+                <span class="cpu-brand__mark" aria-hidden="true"></span>
+                <div class="cpu-brand__copy">
+                  <h1 id="cpu-title">RISC-V Pipeline Lab</h1>
+                  <p>RV32I · FIVE-STAGE PIPELINE · CYCLE-LEVEL DEBUGGER</p>
+                </div>
+              </div>
+              <div class="cpu-header__status">
+                <span class="cpu-state-pill" id="cpu-state" data-state="loading" role="status" aria-live="polite">LOADING</span>
+                <a class="cpu-close" href="#projects" aria-label="Close CPU lab and return to projects">×</a>
+              </div>
+            </header>
+
+            <div class="cpu-toolbar" role="toolbar" aria-label="CPU simulation controls">
+              <div class="cpu-toolbar__group">
+                <label class="visually-hidden" for="cpu-sample">Sample program</label>
+                <select class="cpu-control" id="cpu-sample"></select>
+                <button class="cpu-button cpu-button--primary" id="cpu-assemble" type="button" aria-keyshortcuts="Control+Enter Meta+Enter">
+                  Assemble
+                </button>
+              </div>
+              <div class="cpu-toolbar__group">
+                <button class="cpu-button" id="cpu-reset" type="button">Reset</button>
+                <button class="cpu-button" id="cpu-step" type="button" aria-keyshortcuts="F8">Step cycle</button>
+                <button class="cpu-button cpu-button--run" id="cpu-run" type="button" aria-pressed="false" aria-keyshortcuts="F9">Run</button>
+                <label class="visually-hidden" for="cpu-speed">Execution speed</label>
+                <select class="cpu-control" id="cpu-speed">
+                  <option value="2">2 cycles/s</option>
+                  <option value="10" selected>10 cycles/s</option>
+                  <option value="60">60 cycles/s</option>
+                  <option value="240">240 cycles/s</option>
+                </select>
+              </div>
+              <div class="cpu-toolbar__group">
+                <label class="visually-hidden" for="cpu-predictor">Branch predictor</label>
+                <select class="cpu-control" id="cpu-predictor">
+                  <option value="adaptive" selected>Adaptive predictor</option>
+                  <option value="static">Static not-taken</option>
+                </select>
+                <label class="cpu-toggle">
+                  <input id="cpu-cache-toggle" type="checkbox" checked>
+                  Data cache
+                </label>
+              </div>
+            </div>
+
+            <div class="cpu-workspace">
+              <section class="cpu-panel cpu-code-panel" aria-labelledby="cpu-source-title">
+                <header class="cpu-panel__header">
+                  <h2 id="cpu-source-title">Assembly source</h2>
+                  <span>CTRL / ⌘ + ENTER TO ASSEMBLE</span>
+                </header>
+                <div class="cpu-source-wrap">
+                  <pre class="cpu-line-numbers" id="cpu-line-numbers" aria-hidden="true">1</pre>
+                  <textarea
+                    class="cpu-source"
+                    id="cpu-source"
+                    aria-label="RISC-V assembly source"
+                    spellcheck="false"
+                    autocapitalize="off"
+                    autocomplete="off"
+                  ></textarea>
+                </div>
+                <div class="cpu-diagnostic" id="cpu-diagnostic" role="status" tabindex="-1" data-type="info">
+                  Initializing assembler…
+                </div>
+                <section class="cpu-listing" id="cpu-listing" aria-label="Encoded instruction listing"></section>
+              </section>
+
+              <section class="cpu-panel cpu-pipeline-panel" aria-labelledby="cpu-pipeline-title">
+                <header class="cpu-panel__header">
+                  <h2 id="cpu-pipeline-title">Pipeline state</h2>
+                  <span class="cpu-pipeline-summary"><i aria-hidden="true"></i> SINGLE-ISSUE · IN-ORDER</span>
+                </header>
+                <div class="cpu-pipeline" role="group" aria-label="Five pipeline stages">
+                  <article class="cpu-stage" data-cpu-stage="IF">
+                    <div class="cpu-stage__topline">
+                      <span class="cpu-stage__name">IF</span>
+                      <span class="cpu-stage__pc" data-stage-pc>—</span>
+                    </div>
+                    <strong class="cpu-stage__instruction" data-stage-instruction>BUBBLE</strong>
+                    <span class="cpu-stage__divider" aria-hidden="true"></span>
+                    <span class="cpu-stage__detail" data-stage-detail>No valid instruction</span>
+                  </article>
+                  <article class="cpu-stage" data-cpu-stage="ID">
+                    <div class="cpu-stage__topline">
+                      <span class="cpu-stage__name">ID</span>
+                      <span class="cpu-stage__pc" data-stage-pc>—</span>
+                    </div>
+                    <strong class="cpu-stage__instruction" data-stage-instruction>BUBBLE</strong>
+                    <span class="cpu-stage__divider" aria-hidden="true"></span>
+                    <span class="cpu-stage__detail" data-stage-detail>No valid instruction</span>
+                  </article>
+                  <article class="cpu-stage" data-cpu-stage="EX">
+                    <div class="cpu-stage__topline">
+                      <span class="cpu-stage__name">EX</span>
+                      <span class="cpu-stage__pc" data-stage-pc>—</span>
+                    </div>
+                    <strong class="cpu-stage__instruction" data-stage-instruction>BUBBLE</strong>
+                    <span class="cpu-stage__divider" aria-hidden="true"></span>
+                    <span class="cpu-stage__detail" data-stage-detail>No valid instruction</span>
+                  </article>
+                  <article class="cpu-stage" data-cpu-stage="MEM">
+                    <div class="cpu-stage__topline">
+                      <span class="cpu-stage__name">MEM</span>
+                      <span class="cpu-stage__pc" data-stage-pc>—</span>
+                    </div>
+                    <strong class="cpu-stage__instruction" data-stage-instruction>BUBBLE</strong>
+                    <span class="cpu-stage__divider" aria-hidden="true"></span>
+                    <span class="cpu-stage__detail" data-stage-detail>No valid instruction</span>
+                  </article>
+                  <article class="cpu-stage" data-cpu-stage="WB">
+                    <div class="cpu-stage__topline">
+                      <span class="cpu-stage__name">WB</span>
+                      <span class="cpu-stage__pc" data-stage-pc>—</span>
+                    </div>
+                    <strong class="cpu-stage__instruction" data-stage-instruction>BUBBLE</strong>
+                    <span class="cpu-stage__divider" aria-hidden="true"></span>
+                    <span class="cpu-stage__detail" data-stage-detail>No valid instruction</span>
+                  </article>
+                </div>
+                <div class="cpu-event-panel">
+                  <div class="cpu-event-panel__label">Cycle analysis</div>
+                  <ul class="cpu-events" id="cpu-events"></ul>
+                </div>
+              </section>
+
+              <section class="cpu-panel cpu-inspector-panel" aria-label="Processor inspectors">
+                <div class="cpu-tabs" role="tablist" aria-label="Processor state">
+                  <button class="cpu-tab" id="cpu-tab-registers" type="button" role="tab" aria-selected="true" aria-controls="cpu-registers" data-inspector-tab="registers">Registers</button>
+                  <button class="cpu-tab" id="cpu-tab-memory" type="button" role="tab" aria-selected="false" aria-controls="cpu-memory" tabindex="-1" data-inspector-tab="memory">Memory</button>
+                  <button class="cpu-tab" id="cpu-tab-cache" type="button" role="tab" aria-selected="false" aria-controls="cpu-cache" tabindex="-1" data-inspector-tab="cache">Cache</button>
+                  <button class="cpu-tab" id="cpu-tab-predictor" type="button" role="tab" aria-selected="false" aria-controls="cpu-predictor-table" tabindex="-1" data-inspector-tab="predictor">Predictor</button>
+                </div>
+                <div class="cpu-inspector-content">
+                  <div class="cpu-inspector-view cpu-registers" id="cpu-registers" role="tabpanel" aria-labelledby="cpu-tab-registers" data-inspector-panel="registers"></div>
+                  <div class="cpu-inspector-view cpu-table" id="cpu-memory" role="tabpanel" aria-labelledby="cpu-tab-memory" data-inspector-panel="memory" hidden></div>
+                  <div class="cpu-inspector-view cpu-table" id="cpu-cache" role="tabpanel" aria-labelledby="cpu-tab-cache" data-inspector-panel="cache" hidden></div>
+                  <div class="cpu-inspector-view cpu-table" id="cpu-predictor-table" role="tabpanel" aria-labelledby="cpu-tab-predictor" data-inspector-panel="predictor" hidden></div>
+                </div>
+              </section>
+            </div>
+
+            <footer class="cpu-statusbar">
+              <span class="cpu-statusbar__hint">F8 STEP · F9 RUN / PAUSE · VALUES SHOWN AS SIGNED + HEX</span>
+              <dl class="cpu-telemetry">
+                <div><dt>PC</dt><dd id="cpu-stat-pc">0x0000</dd></div>
+                <div><dt>CYCLES</dt><dd id="cpu-stat-cycles">0</dd></div>
+                <div><dt>RETIRED</dt><dd id="cpu-stat-retired">0</dd></div>
+                <div><dt>CPI</dt><dd id="cpu-stat-cpi">—</dd></div>
+                <div><dt>STALLS</dt><dd id="cpu-stat-stalls">0</dd></div>
+                <div><dt>BRANCH</dt><dd id="cpu-stat-branches">—</dd></div>
+                <div><dt>D-CACHE</dt><dd id="cpu-stat-cache">—</dd></div>
+              </dl>
+            </footer>
+
+            <div class="cpu-loader" id="cpu-loader" role="status">
+              <div class="cpu-loader__content">
+                <span class="cpu-loader__chip" aria-hidden="true"></span>
+                <strong>INITIALIZING PIPELINE</strong>
+              </div>
             </div>
           </div>
         </section>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-labelledby="title desc">
+  <title id="title">RISC-V processor core</title>
+  <desc id="desc">A modern microprocessor package with five illuminated pipeline blocks</desc>
+  <defs>
+    <linearGradient id="package" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#26374a"/>
+      <stop offset="0.55" stop-color="#111b28"/>
+      <stop offset="1" stop-color="#0a111c"/>
+    </linearGradient>
+    <linearGradient id="die" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#173f57"/>
+      <stop offset="1" stop-color="#0d2233"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="9" stdDeviation="7" flood-color="#02060c" flood-opacity=".72"/>
+    </filter>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <g fill="#51657a" opacity=".8">
+    <path d="M72 31h10v20H72zM105 31h10v20h-10zM138 31h10v20h-10zM171 31h10v20h-10zM204 31h10v20h-10zM237 31h10v20h-10z"/>
+    <path d="M72 189h10v20H72zM105 189h10v20h-10zM138 189h10v20h-10zM171 189h10v20h-10zM204 189h10v20h-10zM237 189h10v20h-10z"/>
+    <path d="M41 62h20v10H41zM41 92h20v10H41zM41 122h20v10H41zM41 152h20v10H41z"/>
+    <path d="M259 62h20v10h-20zM259 92h20v10h-20zM259 122h20v10h-20zM259 152h20v10h-20z"/>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="57" y="47" width="206" height="146" rx="15" fill="url(#package)" stroke="#63788d" stroke-width="3"/>
+    <rect x="70" y="60" width="180" height="120" rx="8" fill="#07101b" stroke="#30465b" stroke-width="2"/>
+    <rect x="82" y="74" width="156" height="92" rx="5" fill="url(#die)" stroke="#4b7895"/>
+    <g fill="none" stroke="#315b76" stroke-width="1.5" opacity=".85">
+      <path d="M91 95h19l9 9h31l7-7h25l8 8h37"/>
+      <path d="M91 144h20l9-10h25l8 7h30l9-10h35"/>
+      <path d="M105 83v17M219 83v22M105 141v16M219 130v27"/>
+    </g>
+    <g filter="url(#glow)">
+      <rect x="94" y="109" width="22" height="18" rx="3" fill="#49b9ff"/>
+      <rect x="122" y="109" width="22" height="18" rx="3" fill="#57d6c7"/>
+      <rect x="150" y="109" width="22" height="18" rx="3" fill="#9c8cff"/>
+      <rect x="178" y="109" width="22" height="18" rx="3" fill="#f0b35d"/>
+      <rect x="206" y="109" width="22" height="18" rx="3" fill="#70df94"/>
+    </g>
+    <g fill="#d8e8f4" font-family="monospace" font-size="7" text-anchor="middle">
+      <text x="105" y="121">IF</text><text x="133" y="121">ID</text><text x="161" y="121">EX</text><text x="189" y="121">MEM</text><text x="217" y="121">WB</text>
+    </g>
+    <text x="160" y="91" fill="#8db4cc" font-family="monospace" font-size="10" letter-spacing="3" text-anchor="middle">RV32I</text>
+    <text x="160" y="151" fill="#638aa2" font-family="monospace" font-size="7" letter-spacing="1.4" text-anchor="middle">PIPELINE CORE</text>
+  </g>
+</svg>
