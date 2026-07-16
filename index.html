@@ -434,25 +434,16 @@
                   <h2 id="project-catalog-title">Production queue</h2>
                   <span>2 / 2</span>
                 </div>
-                <a class="project-slot is-selected" href="#cpu" aria-current="true">
-                  <span class="project-slot__icon">
-                    <img
-                      src="assets/icons/cpu-core.svg"
-                      alt=""
-                      width="96"
-                      height="72"
-                      loading="lazy"
-                      decoding="async"
-                    >
-                    <span>02</span>
-                  </span>
-                  <span class="project-slot__copy">
-                    <strong>RISC-V Pipeline Lab</strong>
-                    <small>Cycle-level CPU debugger</small>
-                  </span>
-                  <span class="project-slot__status"><i></i> RUNNABLE</span>
-                </a>
-                <a class="project-slot" href="#ecosystem">
+                <button
+                  class="project-slot is-selected"
+                  type="button"
+                  data-project-selector="biosphere"
+                  data-project-name="Biosphere Unit"
+                  data-project-code="BIOSPHERE-UNIT-01"
+                  data-project-source="/ECOSYSTEM.JS"
+                  aria-controls="biosphere-project-detail"
+                  aria-pressed="true"
+                >
                   <span class="project-slot__icon">
                     <img
                       src="assets/icons/biosphere-module.svg"
@@ -469,15 +460,130 @@
                     <small>Autonomous ecosystem</small>
                   </span>
                   <span class="project-slot__status"><i></i> RUNNABLE</span>
-                </a>
+                </button>
+                <button
+                  class="project-slot"
+                  type="button"
+                  data-project-selector="cpu"
+                  data-project-name="RISC-V Pipeline Lab"
+                  data-project-code="RISCV-PIPELINE-02"
+                  data-project-source="/CPU.JS"
+                  aria-controls="cpu-project-detail"
+                  aria-pressed="false"
+                >
+                  <span class="project-slot__icon">
+                    <img
+                      src="assets/icons/cpu-core.svg"
+                      alt=""
+                      width="96"
+                      height="72"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                    <span>02</span>
+                  </span>
+                  <span class="project-slot__copy">
+                    <strong>RISC-V Pipeline Lab</strong>
+                    <small>Cycle-level CPU debugger</small>
+                  </span>
+                  <span class="project-slot__status"><i></i> RUNNABLE</span>
+                </button>
                 <div class="catalog-readout">
                   <span>SELECTED</span>
-                  <strong>RISCV-PIPELINE-02</strong>
-                  <span class="alt-data">SOURCE: /CPU.JS</span>
+                  <strong data-project-readout-name>BIOSPHERE-UNIT-01</strong>
+                  <span class="alt-data" data-project-readout-source>SOURCE: /ECOSYSTEM.JS</span>
                 </div>
               </aside>
 
-              <article class="project-detail" aria-labelledby="cpu-project-title">
+              <article
+                class="project-detail"
+                id="biosphere-project-detail"
+                data-project-detail="biosphere"
+                aria-labelledby="biosphere-project-title"
+              >
+                <div class="project-detail__visual">
+                  <div class="project-detail__screen">
+                    <img
+                      src="assets/icons/biosphere-module.svg"
+                      alt="Biosphere ecosystem module with illuminated habitat telemetry"
+                      width="320"
+                      height="240"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                    <div class="scan-sweep" aria-hidden="true"></div>
+                    <span class="screen-corner screen-corner--tl" aria-hidden="true"></span>
+                    <span class="screen-corner screen-corner--br" aria-hidden="true"></span>
+                  </div>
+                  <div
+                    class="project-detail__telemetry"
+                    role="group"
+                    aria-label="Project status"
+                  >
+                    <span><i class="status-light status-light--green"></i> AUTONOMOUS</span>
+                    <span>CANVAS 2D</span>
+                    <span>30 HZ</span>
+                  </div>
+                </div>
+
+                <div class="project-detail__content">
+                  <p class="section-label">ACTIVE RECIPE</p>
+                  <h2 id="biosphere-project-title">Biosphere Unit</h2>
+                  <p class="project-lede">
+                    A real-time autonomous ASCII ecosystem with procedural terrain,
+                    evolving wildlife, weather, resources, and live population telemetry.
+                  </p>
+
+                  <dl class="project-specs">
+                    <div>
+                      <dt>Simulation</dt>
+                      <dd>Fixed-step agents with energy, aging, reproduction, inheritance, and mutation</dd>
+                    </div>
+                    <div>
+                      <dt>Behavior</dt>
+                      <dd>Wandering, seeking, fleeing, separation, hunting, and habitat boundaries</dd>
+                    </div>
+                    <div>
+                      <dt>World</dt>
+                      <dd>Procedural terrain, lake, structures, vegetation, resources, and weather</dd>
+                    </div>
+                    <div>
+                      <dt>Rendering</dt>
+                      <dd>Animated ASCII wildlife on a cached, responsive Canvas 2D scene</dd>
+                    </div>
+                  </dl>
+
+                  <div class="project-tags" role="group" aria-label="Technologies">
+                    <span>JavaScript</span>
+                    <span>Canvas 2D</span>
+                    <span>Agent Simulation</span>
+                    <span>Procedural Generation</span>
+                  </div>
+
+                  <div class="window-actions">
+                    <a class="industrial-button industrial-button--primary" href="#ecosystem">
+                      <span aria-hidden="true">▶</span>
+                      Launch Biosphere Unit
+                    </a>
+                    <a
+                      class="industrial-button"
+                      href="https://github.com/michaelkahen/michaelkahen.com/blob/main/assets/js/ecosystem.js"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View simulation source <span aria-hidden="true">↗</span>
+                    </a>
+                  </div>
+                </div>
+              </article>
+
+              <article
+                class="project-detail"
+                id="cpu-project-detail"
+                data-project-detail="cpu"
+                aria-labelledby="cpu-project-title"
+                hidden
+              >
                 <div class="project-detail__visual">
                   <div class="project-detail__screen project-detail__screen--cpu">
                     <img

@@ -15,6 +15,16 @@
     document.querySelectorAll("[data-nav-route]"),
   );
   const machines = Array.from(document.querySelectorAll("[data-machine]"));
+  const projectSelectors = Array.from(
+    document.querySelectorAll("[data-project-selector]"),
+  );
+  const projectDetails = Array.from(
+    document.querySelectorAll("[data-project-detail]"),
+  );
+  const projectReadoutName = document.querySelector("[data-project-readout-name]");
+  const projectReadoutSource = document.querySelector(
+    "[data-project-readout-source]",
+  );
   const reducedMotionQuery = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   );
@@ -312,6 +322,25 @@
     factoryMap.dataset.activeMachine = machineName || "";
   }
 
+  function selectProject(selector) {
+    const projectName = selector.dataset.projectName;
+    const selectedProject = selector.dataset.projectSelector;
+
+    projectSelectors.forEach(function (projectSelector) {
+      const isSelected = projectSelector === selector;
+      projectSelector.classList.toggle("is-selected", isSelected);
+      projectSelector.setAttribute("aria-pressed", String(isSelected));
+    });
+
+    projectDetails.forEach(function (detail) {
+      detail.hidden = detail.dataset.projectDetail !== selectedProject;
+    });
+
+    projectReadoutName.textContent = selector.dataset.projectCode;
+    projectReadoutSource.textContent = "SOURCE: " + selector.dataset.projectSource;
+    routeAnnouncer.textContent = projectName + " details selected";
+  }
+
   function machineLostFocus(machine) {
     window.requestAnimationFrame(function () {
       if (!machine.matches(":hover") && !machine.contains(document.activeElement)) {
@@ -363,6 +392,12 @@
     });
     machine.addEventListener("blur", function () {
       machineLostFocus(machine);
+    });
+  });
+
+  projectSelectors.forEach(function (selector) {
+    selector.addEventListener("click", function () {
+      selectProject(selector);
     });
   });
 

@@ -123,28 +123,26 @@ The production site is intentionally self-contained:
 ```text
 .
 ├── index.html
-├── assets/
-│   ├── css/
-│   │   ├── cpu.css
-│   │   ├── ecosystem.css
-│   │   └── site.css
-│   ├── documents/
-│   │   └── README.md
-│   ├── icons/
-│   │   ├── biosphere-module.svg
-│   │   ├── contact-radar.svg
-│   │   ├── cpu-core.svg
-│   │   ├── favicon.svg
-│   │   ├── github-uplink.svg
-│   │   ├── linkedin-relay.svg
-│   │   ├── project-assembler.svg
-│   │   └── resume-archive.svg
-│   └── js/
-│       ├── cpu.js
-│       ├── ecosystem.js
-│       └── site.js
-└── tests/
-    └── cpu.test.js
+└── assets/
+    ├── css/
+    │   ├── cpu.css
+    │   ├── ecosystem.css
+    │   └── site.css
+    ├── documents/
+    │   └── README.md
+    ├── icons/
+    │   ├── biosphere-module.svg
+    │   ├── contact-radar.svg
+    │   ├── cpu-core.svg
+    │   ├── favicon.svg
+    │   ├── github-uplink.svg
+    │   ├── linkedin-relay.svg
+    │   ├── project-assembler.svg
+    │   └── resume-archive.svg
+    └── js/
+        ├── cpu.js
+        ├── ecosystem.js
+        └── site.js
 ```
 
 All production artwork is original to the portfolio. The factory theme is an

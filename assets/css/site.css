@@ -1237,7 +1237,11 @@ a:focus-visible {
   border-radius: 2px;
   background: linear-gradient(#777267, #55584f);
   box-shadow: var(--bevel);
+  color: #eee5d6;
+  font: inherit;
+  text-align: left;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .project-slot:hover,
@@ -1344,6 +1348,10 @@ a:focus-visible {
   gap: clamp(18px, 3vw, 40px);
   min-width: 0;
   padding: clamp(16px, 2.5vw, 34px);
+}
+
+.project-detail[hidden] {
+  display: none;
 }
 
 .project-detail__visual {
