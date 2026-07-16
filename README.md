@@ -1,8 +1,8 @@
-# root@biosphere
+# Michael Kahen - Portfolio Factory
 
-An autonomous ASCII ecosystem rendered on an HTML canvas. Deer, fish, snakes,
-alligators, and tigers move, feed, reproduce, hunt, and adapt within a generated
-jungle-and-lake habitat.
+A dependency-free portfolio for Michael Kahen, a computer engineer and Stony
+Brook University Class of 2025 graduate. The site presents projects and contact
+links as an original factory-automation interface.
 
 ## Run locally
 
@@ -12,44 +12,81 @@ No dependencies or build step are required.
 python3 -m http.server 8000
 ```
 
-Open [http://localhost:8000](http://localhost:8000) in a browser.
+Open [http://localhost:8000](http://localhost:8000).
 
-## Controls
+## Navigation
 
-- `Space` — pause or resume
-- `S` — cycle between 1×, 2×, and 4× speed
-- `R` — generate a new ecosystem
+- `#home` - interactive factory floor
+- `#projects` - project assembly console
+- `#ecosystem` - autonomous ASCII ecosystem
+- `#resume` - resume archive
+- `#contact` - direct contact console
+- GitHub and LinkedIn open their external profiles in new tabs
 
-## Mathematics
+The header includes Alt Mode for additional technical labels and a master motion
+control. `Alt+A` toggles Alt Mode and `Alt+M` toggles ambient motion.
 
-The simulation advances in fixed steps of $\Delta t = 1/30$ second, keeping its
-behavior consistent across different display frame rates.
+## Ecosystem controls
 
-- **Motion:** Each animal combines seek, flee, wander, separation, boundary, and
-  obstacle forces into an acceleration $\mathbf{F}$. Velocity and position are
-  updated as $\mathbf{v} \leftarrow \mathbf{v} + \mathbf{F}\Delta t$ and
-  $\mathbf{x} \leftarrow \mathbf{x} + \mathbf{v}\Delta t$, with speed and force
-  capped by the animal's inherited traits.
-- **Energy:** Energy decreases through baseline metabolism and movement cost.
-  Movement cost grows approximately with
-  $(\lVert\mathbf{v}\rVert / v_{\max})^2$, so faster movement is increasingly
-  expensive. Eating plants or prey restores energy.
-- **Reproduction:** Eligible animals reproduce probabilistically. Per step,
-  $p = r\,c\,\Delta t$, where $r$ is the species reproduction rate and $c$
-  decreases as the population approaches its target capacity.
-- **Genetics:** Speed, sensing, and size multipliers are inherited with bounded
-  random mutation. These traits affect movement, perception, appearance, and
-  energy use, allowing population characteristics to drift over generations.
-- **Terrain:** The lake is a distorted ellipse. Its shoreline radius is perturbed
-  by two sine waves,
-  $R(\theta) = 1 + A_1\sin(k_1\theta + \phi_1) + A_2\sin(k_2\theta + \phi_2)$,
-  producing a deterministic irregular boundary from each terrain seed.
-- **Neighborhoods:** Spatial hashing divides the world into grid cells, limiting
-  food, predator, prey, and separation searches to nearby cells instead of the
-  entire population.
+- `Space` - pause or resume
+- `S` - cycle between 1x, 2x, and 4x speed
+- `R` - generate a new ecosystem
 
-## Project files
+The ecosystem script is loaded only when the simulation is opened. It suspends
+itself when its view or browser tab is hidden.
 
-- `index.html` — page structure and controls
-- `styles.css` — terminal-inspired presentation
-- `ecosystem.js` — simulation, terrain generation, and canvas rendering
+## Add the resume
+
+Place the PDF at:
+
+```text
+assets/documents/michael-kahen-resume.pdf
+```
+
+Then replace the pending document block in `index.html` with view and download
+links to that file.
+
+## Add a project
+
+1. Add an original project illustration under `assets/icons/`.
+2. Add a project slot inside `.project-catalog` in `index.html`.
+3. Add the corresponding project detail article.
+4. Add a hash route in `assets/js/site.js` if the project has an interactive view.
+
+Project descriptions should identify the problem, implementation, important
+engineering choices, technologies, and source or live links.
+
+## Project structure
+
+```text
+index.html
+assets/
+  css/
+    site.css
+    ecosystem.css
+  documents/
+    README.md
+    michael-kahen-resume.pdf  # added later
+  icons/
+    biosphere-module.svg
+    contact-radar.svg
+    favicon.svg
+    github-uplink.svg
+    linkedin-relay.svg
+    project-assembler.svg
+    resume-archive.svg
+  js/
+    site.js
+    ecosystem.js
+```
+
+All machine artwork is original SVG. The site does not include or redistribute
+Factorio sprites, textures, fonts, audio, or logos.
+
+## Ecosystem model
+
+The simulation advances in fixed steps of `1/30` second. Animals combine seek,
+flee, wander, separation, boundary, and obstacle steering. Energy use depends
+on metabolism and movement, eligible animals reproduce probabilistically, and
+speed, sensing, and size traits can mutate across generations. Spatial hashing
+limits nearby food, predator, prey, and separation searches.

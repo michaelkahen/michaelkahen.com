@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-labelledby="cr-title cr-desc">
+  <title id="cr-title">Industrial contact radar</title>
+  <desc id="cr-desc">A prominent directional dish on a mechanical pedestal with signal arcs, a cable, and an illuminated control console.</desc>
+  <defs>
+    <linearGradient id="cr-steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#afa591"/>
+      <stop offset="0.42" stop-color="#77766b"/>
+      <stop offset="1" stop-color="#414845"/>
+    </linearGradient>
+    <linearGradient id="cr-dish" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#b4aa95"/>
+      <stop offset="0.48" stop-color="#77776d"/>
+      <stop offset="1" stop-color="#3c4542"/>
+    </linearGradient>
+    <linearGradient id="cr-copper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e29444"/>
+      <stop offset="0.5" stop-color="#ad6336"/>
+      <stop offset="1" stop-color="#6c392b"/>
+    </linearGradient>
+    <radialGradient id="cr-lamp">
+      <stop offset="0" stop-color="#e0f59a"/>
+      <stop offset="0.45" stop-color="#79b85f"/>
+      <stop offset="1" stop-color="#315e3d"/>
+    </radialGradient>
+    <pattern id="cr-hazard" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(34)">
+      <rect width="7" height="14" fill="#e88b31"/>
+      <rect x="7" width="7" height="14" fill="#252c2b"/>
+    </pattern>
+  </defs>
+
+  <ellipse cx="158" cy="222" rx="140" ry="10" fill="#101515" opacity="0.3"/>
+
+  <g fill="none" stroke="#df8733" stroke-linecap="round">
+    <path d="M178 65q24 10 34 34" stroke-width="4"/>
+    <path d="M185 48q40 16 55 54" stroke-width="4"/>
+    <path d="M191 31q57 21 77 72" stroke-width="4"/>
+    <circle cx="174" cy="69" r="4" fill="#72af5d" stroke="#171c1c" stroke-width="2"/>
+  </g>
+
+  <g stroke="#171c1c" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M58 57C84 91 126 114 174 108C150 72 108 52 58 57z" fill="url(#cr-dish)" stroke-width="4"/>
+    <path d="M64 62c29 29 64 44 103 42" fill="none" stroke="#c8bba1" stroke-width="3" opacity="0.72"/>
+    <path d="M59 57q54 52 115 51" fill="none" stroke="#2a3230" stroke-width="5"/>
+    <path d="M109 87l43-25" fill="none" stroke="#252c2b" stroke-width="7"/>
+    <path d="M109 87l43-25" fill="none" stroke="#b86b39" stroke-width="3"/>
+    <path d="M146 57l17-5 12 12-8 17-15-2z" fill="url(#cr-copper)" stroke-width="3"/>
+    <circle cx="160" cy="67" r="5" fill="url(#cr-lamp)" stroke-width="2"/>
+    <circle cx="108" cy="88" r="8" fill="#343c3a" stroke-width="3"/>
+  </g>
+
+  <g stroke="#171c1c" stroke-linejoin="round">
+    <path d="M98 101h35l12 26-8 52H91l-8-52z" fill="url(#cr-steel)" stroke-width="4"/>
+    <path d="M98 101l10-12h16l9 12z" fill="#464e4b" stroke-width="3"/>
+    <circle cx="116" cy="106" r="8" fill="url(#cr-copper)" stroke-width="3"/>
+    <path d="M90 126h53M87 143h54M94 150h40" fill="none" stroke="#2d3533" stroke-width="3"/>
+    <path d="M102 118l-5 50M130 118l5 50" fill="none" stroke="#a49a85" stroke-width="2" opacity="0.75"/>
+    <rect x="93" y="158" width="44" height="19" rx="3" fill="#29312f" stroke-width="3"/>
+    <path d="M101 165h28M101 171h19" stroke="#a96a40" stroke-width="2"/>
+  </g>
+
+  <path d="M133 165c23 0 29 27 53 27h31" fill="none" stroke="#171c1c" stroke-width="10" stroke-linecap="round"/>
+  <path d="M133 165c23 0 29 27 53 27h31" fill="none" stroke="#ad6337" stroke-width="4" stroke-linecap="round"/>
+  <rect x="174" y="185" width="14" height="14" rx="3" fill="#3a423f" stroke="#171c1c" stroke-width="2"/>
+
+  <g stroke="#171c1c" stroke-linejoin="round">
+    <path d="M202 114l12-11h63l13 12-10 15h-66z" fill="#8c8475" stroke-width="3"/>
+    <path d="M214 115h66v72h-66z" fill="url(#cr-steel)" stroke-width="4"/>
+    <path d="M280 115l10 7v57l-10 8z" fill="#3a4240" stroke-width="3"/>
+    <rect x="224" y="126" width="44" height="28" rx="3" fill="#17201e" stroke-width="3"/>
+    <path d="M229 148l8-8 7 4 8-11 11 7" fill="none" stroke="#72b05d" stroke-width="2.5"/>
+    <path d="M230 132h32" stroke="#4e625a" stroke-width="1.5"/>
+    <circle cx="229" cy="164" r="4" fill="url(#cr-lamp)" stroke-width="1.5"/>
+    <circle cx="241" cy="164" r="4" fill="#df8530" stroke-width="1.5"/>
+    <circle cx="259" cy="164" r="6" fill="url(#cr-copper)" stroke-width="2"/>
+    <path d="M224 176h44" stroke="#827b6d" stroke-width="3"/>
+  </g>
+
+  <g stroke="#171c1c" stroke-linejoin="round">
+    <path d="M27 185h263l20 17H45z" fill="#7d796d" stroke-width="3"/>
+    <path d="M45 202h265l-12 23H36z" fill="#2b3231" stroke-width="3"/>
+    <path d="M58 210h220v10H58z" fill="url(#cr-hazard)" stroke-width="2"/>
+    <path d="M76 178h77l13 12H63z" fill="#4a514e" stroke-width="3"/>
+  </g>
+  <g fill="#c5b99f" stroke="#171c1c" stroke-width="1.5">
+    <circle cx="38" cy="193" r="2.5"/><circle cx="289" cy="193" r="2.5"/>
+    <circle cx="48" cy="213" r="2.5"/><circle cx="299" cy="210" r="2.5"/>
+    <circle cx="220" cy="121" r="2.5"/><circle cx="274" cy="121" r="2.5"/>
+  </g>
+</svg>

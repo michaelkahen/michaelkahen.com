@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="fav-title fav-desc">
+  <title id="fav-title">Factory gear M mark</title>
+  <desc id="fav-desc">An original compact graphite gear surrounding a copper letter M with a green machine status light.</desc>
+  <defs>
+    <linearGradient id="fav-steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9e9685"/>
+      <stop offset="0.48" stop-color="#626863"/>
+      <stop offset="1" stop-color="#303735"/>
+    </linearGradient>
+    <linearGradient id="fav-copper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f0a04a"/>
+      <stop offset="0.5" stop-color="#d17138"/>
+      <stop offset="1" stop-color="#8c462d"/>
+    </linearGradient>
+    <radialGradient id="fav-lamp">
+      <stop offset="0" stop-color="#dcf490"/>
+      <stop offset="0.5" stop-color="#76b65c"/>
+      <stop offset="1" stop-color="#315e3c"/>
+    </radialGradient>
+    <rect id="fav-tooth" x="27" y="1.5" width="10" height="13" rx="2.5"/>
+  </defs>
+
+  <g fill="url(#fav-steel)" stroke="#171c1c" stroke-width="2.5" stroke-linejoin="round">
+    <use href="#fav-tooth"/>
+    <use href="#fav-tooth" transform="rotate(45 32 32)"/>
+    <use href="#fav-tooth" transform="rotate(90 32 32)"/>
+    <use href="#fav-tooth" transform="rotate(135 32 32)"/>
+    <use href="#fav-tooth" transform="rotate(180 32 32)"/>
+    <use href="#fav-tooth" transform="rotate(225 32 32)"/>
+    <use href="#fav-tooth" transform="rotate(270 32 32)"/>
+    <use href="#fav-tooth" transform="rotate(315 32 32)"/>
+    <circle cx="32" cy="32" r="23"/>
+  </g>
+  <circle cx="32" cy="32" r="17.5" fill="#202727" stroke="#171c1c" stroke-width="2"/>
+  <path d="M17.5 44V20l14.5 16L46.5 20v24" fill="none" stroke="url(#fav-copper)" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter"/>
+  <path d="M19 17q13-9 26 0" fill="none" stroke="#c5bba5" stroke-width="2" stroke-linecap="round" opacity="0.55"/>
+  <circle cx="48" cy="47" r="5" fill="#171c1c"/>
+  <circle cx="48" cy="47" r="3.2" fill="url(#fav-lamp)"/>
+</svg>

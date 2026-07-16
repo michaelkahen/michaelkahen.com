@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-labelledby="lr-title lr-desc">
+  <title id="lr-title">Professional network relay</title>
+  <desc id="lr-desc">An original industrial relay tower joining identity nodes through illuminated circuit links, with no branded marks.</desc>
+  <defs>
+    <linearGradient id="lr-steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a69c89"/>
+      <stop offset="0.42" stop-color="#73736a"/>
+      <stop offset="1" stop-color="#414845"/>
+    </linearGradient>
+    <linearGradient id="lr-tower" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#777d75"/>
+      <stop offset="1" stop-color="#28302f"/>
+    </linearGradient>
+    <linearGradient id="lr-copper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e29243"/>
+      <stop offset="0.48" stop-color="#ac6236"/>
+      <stop offset="1" stop-color="#6d392a"/>
+    </linearGradient>
+    <radialGradient id="lr-node">
+      <stop offset="0" stop-color="#d5efa0"/>
+      <stop offset="0.42" stop-color="#73b45d"/>
+      <stop offset="1" stop-color="#315e3c"/>
+    </radialGradient>
+    <pattern id="lr-hazard" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
+      <rect width="6" height="12" fill="#e78a30"/>
+      <rect x="6" width="6" height="12" fill="#252c2b"/>
+    </pattern>
+  </defs>
+
+  <ellipse cx="160" cy="222" rx="139" ry="10" fill="#101515" opacity="0.3"/>
+
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M70 74L137 97M93 45l53 43M250 74l-67 23M227 45l-53 43M55 143l81-24M265 143l-81-24" stroke="#202626" stroke-width="9"/>
+    <path d="M70 74L137 97M93 45l53 43M250 74l-67 23M227 45l-53 43M55 143l81-24M265 143l-81-24" stroke="#a85f35" stroke-width="3"/>
+    <path d="M91 46l-20 28-16 69M229 46l21 28 15 69" stroke="#28302f" stroke-width="4"/>
+  </g>
+  <g fill="#d78332" stroke="#171c1c" stroke-width="2">
+    <circle cx="105" cy="86" r="5"/><circle cx="119" cy="66" r="5"/><circle cx="215" cy="86" r="5"/>
+    <circle cx="201" cy="66" r="5"/><circle cx="96" cy="131" r="5"/><circle cx="224" cy="131" r="5"/>
+  </g>
+
+  <g stroke="#171c1c" stroke-linejoin="round">
+    <g transform="translate(52 70)">
+      <path d="M0-20l22 8v24L0 20l-22-8v-24z" fill="url(#lr-steel)" stroke-width="3"/>
+      <circle cy="-5" r="6" fill="#293230" stroke-width="2"/>
+      <path d="M-11 12q2-11 11-11t11 11" fill="#303a37" stroke-width="2"/>
+      <circle cx="16" cy="-13" r="3" fill="url(#lr-node)" stroke-width="1"/>
+    </g>
+    <g transform="translate(91 39)">
+      <path d="M0-18l20 7v22L0 18l-20-7v-22z" fill="url(#lr-steel)" stroke-width="3"/>
+      <circle cy="-4" r="5" fill="#293230" stroke-width="2"/>
+      <path d="M-10 11q2-9 10-9t10 9" fill="#303a37" stroke-width="2"/>
+      <circle cx="14" cy="-12" r="3" fill="url(#lr-node)" stroke-width="1"/>
+    </g>
+    <g transform="translate(268 70)">
+      <path d="M0-20l22 8v24L0 20l-22-8v-24z" fill="url(#lr-steel)" stroke-width="3"/>
+      <circle cy="-5" r="6" fill="#293230" stroke-width="2"/>
+      <path d="M-11 12q2-11 11-11t11 11" fill="#303a37" stroke-width="2"/>
+      <circle cx="16" cy="-13" r="3" fill="url(#lr-node)" stroke-width="1"/>
+    </g>
+    <g transform="translate(229 39)">
+      <path d="M0-18l20 7v22L0 18l-20-7v-22z" fill="url(#lr-steel)" stroke-width="3"/>
+      <circle cy="-4" r="5" fill="#293230" stroke-width="2"/>
+      <path d="M-10 11q2-9 10-9t10 9" fill="#303a37" stroke-width="2"/>
+      <circle cx="14" cy="-12" r="3" fill="url(#lr-node)" stroke-width="1"/>
+    </g>
+    <g transform="translate(38 147)">
+      <path d="M0-20l22 8v24L0 20l-22-8v-24z" fill="url(#lr-steel)" stroke-width="3"/>
+      <circle cy="-5" r="6" fill="#293230" stroke-width="2"/>
+      <path d="M-11 12q2-11 11-11t11 11" fill="#303a37" stroke-width="2"/>
+      <circle cx="16" cy="-13" r="3" fill="url(#lr-node)" stroke-width="1"/>
+    </g>
+    <g transform="translate(282 147)">
+      <path d="M0-20l22 8v24L0 20l-22-8v-24z" fill="url(#lr-steel)" stroke-width="3"/>
+      <circle cy="-5" r="6" fill="#293230" stroke-width="2"/>
+      <path d="M-11 12q2-11 11-11t11 11" fill="#303a37" stroke-width="2"/>
+      <circle cx="16" cy="-13" r="3" fill="url(#lr-node)" stroke-width="1"/>
+    </g>
+  </g>
+
+  <g stroke="#171c1c" stroke-linejoin="round">
+    <path d="M147 57l13-15 13 15-4 19h-18z" fill="url(#lr-copper)" stroke-width="3"/>
+    <circle cx="160" cy="43" r="7" fill="url(#lr-node)" stroke-width="3"/>
+    <path d="M139 74h42l10 102h-62z" fill="url(#lr-tower)" stroke-width="4"/>
+    <path d="M139 74l21 12 21-12M136 103h48M133 134h54M130 164h60" fill="none" stroke="#9a8f79" stroke-width="3"/>
+    <path d="M145 77l-9 97M175 77l9 97M138 103l45 31M182 103l-47 31M134 134l51 30M186 134l-55 30" fill="none" stroke="#242c2b" stroke-width="3"/>
+    <rect x="148" y="93" width="24" height="18" rx="3" fill="#252e2c" stroke-width="2"/>
+    <circle cx="155" cy="102" r="3" fill="url(#lr-node)" stroke-width="1"/>
+    <circle cx="165" cy="102" r="3" fill="#df8430" stroke-width="1"/>
+    <path d="M153 118h14M151 126h18M149 142h22M147 151h26" stroke="#b27043" stroke-width="2"/>
+  </g>
+
+  <g fill="none" stroke="#d78332" stroke-linecap="round">
+    <path d="M179 49q17 9 20 25M186 37q27 14 32 38M141 49q-17 9-20 25M134 37q-27 14-32 38" stroke-width="3"/>
+  </g>
+
+  <g stroke="#171c1c" stroke-linejoin="round">
+    <path d="M29 181h262l19 17H45z" fill="#7d796d" stroke-width="3"/>
+    <path d="M45 198h265l-12 27H36z" fill="#2b3231" stroke-width="3"/>
+    <path d="M57 207h221v11H57z" fill="url(#lr-hazard)" stroke-width="2"/>
+    <path d="M119 176h82l13 11H106z" fill="#4c5450" stroke-width="3"/>
+    <path d="M119 176l10-10h62l10 10z" fill="#8b8373" stroke-width="3"/>
+  </g>
+  <g fill="#c6baa0" stroke="#171c1c" stroke-width="1.5">
+    <circle cx="50" cy="190" r="2.5"/><circle cx="290" cy="190" r="2.5"/>
+    <circle cx="48" cy="214" r="2.5"/><circle cx="298" cy="207" r="2.5"/>
+    <circle cx="126" cy="181" r="2.5"/><circle cx="194" cy="181" r="2.5"/>
+  </g>
+</svg>

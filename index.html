@@ -3,71 +3,734 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#000000">
-    <title>root@biosphere</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta name="theme-color" content="#171a18">
+    <meta
+      name="description"
+      content="Michael Kahen is a computer engineer and Stony Brook University Class of 2025 graduate building simulations, tools, and interactive software."
+    >
+    <meta property="og:title" content="Michael Kahen | Computer Engineer">
+    <meta
+      property="og:description"
+      content="Projects, experiments, and engineering work by Michael Kahen."
+    >
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://michaelkahen.com/">
+    <title>Michael Kahen | Computer Engineer</title>
+    <script>document.documentElement.classList.add("js");</script>
+    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="assets/css/site.css">
+    <link rel="stylesheet" href="assets/css/ecosystem.css">
+    <script defer src="assets/js/site.js"></script>
   </head>
   <body>
-    <main
-      class="terminal"
-      aria-label="Autonomous ASCII jungle and lake ecosystem"
+    <a class="skip-link" href="#site-content">Skip to content</a>
+
+    <div
+      class="site-shell"
+      id="site-shell"
+      data-route="home"
+      data-ecosystem-script="assets/js/ecosystem.js"
     >
-      <header class="topbar">
-        <h1>
-          <span class="shell-user">root@biosphere</span>:~$ ./ecosystem
-          --watch<span class="cursor" aria-hidden="true"></span>
-        </h1>
-        <div class="live-mark" id="live-mark">[ RUNNING ]</div>
+      <header class="site-header">
+        <a class="site-identity" href="#home" aria-label="Michael Kahen home">
+          <img src="assets/icons/favicon.svg" alt="" width="38" height="38">
+          <span>
+            <strong>MICHAEL KAHEN</strong>
+            <small>COMPUTER ENGINEER</small>
+          </span>
+        </a>
+
+        <div class="system-readout" aria-hidden="true">
+          <span>FACTORY MK-01</span>
+          <span class="system-readout__online">
+            <i></i>
+            SYSTEM ONLINE
+          </span>
+        </div>
+
+        <div class="header-actions" role="group" aria-label="Display controls">
+          <button
+            class="utility-button"
+            id="alt-mode-button"
+            type="button"
+            aria-pressed="false"
+            aria-keyshortcuts="Alt+A"
+          >
+            <span class="utility-button__lamp" aria-hidden="true"></span>
+            <span class="utility-button__label">ALT MODE</span>
+          </button>
+          <button
+            class="utility-button"
+            id="motion-button"
+            type="button"
+            aria-pressed="false"
+            aria-keyshortcuts="Alt+M"
+          >
+            <span class="utility-button__lamp" aria-hidden="true"></span>
+            <span class="utility-button__label">MOTION ON</span>
+          </button>
+        </div>
       </header>
 
-      <div class="layout">
-        <section class="world-wrap" aria-label="Ecosystem viewport">
-          <canvas
-            id="world"
-            tabindex="0"
-            aria-label="Animated ecosystem. Deer, snakes, and a tiger inhabit a structured jungle; fish and an alligator inhabit one generated lake; decorative birds fly overhead without interacting with the habitat."
-          ></canvas>
-          <div class="paused" id="paused-overlay" hidden>
-            [ PROCESS SUSPENDED ]
+      <main class="site-main" id="site-content">
+        <section
+          class="home-view"
+          id="home"
+          data-view="home"
+          aria-labelledby="home-title"
+        >
+          <h1 class="visually-hidden" id="home-title">
+            Michael Kahen, Computer Engineer
+          </h1>
+
+          <div class="factory-stage">
+            <nav
+              class="factory-map"
+              id="factory-map"
+              aria-label="Portfolio factory floor"
+              data-active-machine=""
+            >
+              <div class="factory-map__tiles" aria-hidden="true"></div>
+              <div class="factory-map__vignette" aria-hidden="true"></div>
+
+              <svg
+                class="logistics-network"
+                viewBox="0 0 1200 675"
+                preserveAspectRatio="none"
+                aria-hidden="true"
+              >
+                <defs>
+                  <pattern
+                    id="belt-treads"
+                    width="28"
+                    height="12"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <path d="M0 0L12 12M14 0l12 12M28 0l12 12" />
+                  </pattern>
+                  <filter id="route-glow" x="-30%" y="-30%" width="160%" height="160%">
+                    <feGaussianBlur stdDeviation="2.5" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
+
+                <g class="route route--projects">
+                  <path class="belt-shadow" d="M500 350H408V286H286" />
+                  <path class="belt-bed" d="M500 350H408V286H286" />
+                  <path class="belt-treads" d="M500 350H408V286H286" />
+                  <path class="circuit-wire circuit-wire--red" d="M500 338H425V272H286" />
+                  <path class="circuit-wire circuit-wire--green" d="M500 362H392V301H286" />
+                </g>
+                <g class="route route--resume">
+                  <path class="belt-shadow" d="M700 334H794V246H900" />
+                  <path class="belt-bed" d="M700 334H794V246H900" />
+                  <path class="belt-treads" d="M700 334H794V246H900" />
+                  <path class="circuit-wire circuit-wire--red" d="M700 322H812V232H900" />
+                  <path class="circuit-wire circuit-wire--green" d="M700 346H778V261H900" />
+                </g>
+                <g class="route route--github">
+                  <path class="belt-shadow" d="M520 398V467H322V515" />
+                  <path class="belt-bed" d="M520 398V467H322V515" />
+                  <path class="belt-treads" d="M520 398V467H322V515" />
+                  <path class="circuit-wire circuit-wire--red" d="M507 398V451H307V515" />
+                  <path class="circuit-wire circuit-wire--green" d="M533 398V483H338V515" />
+                </g>
+                <g class="route route--linkedin">
+                  <path class="belt-shadow" d="M680 398V467H864V515" />
+                  <path class="belt-bed" d="M680 398V467H864V515" />
+                  <path class="belt-treads" d="M680 398V467H864V515" />
+                  <path class="circuit-wire circuit-wire--red" d="M667 398V482H849V515" />
+                  <path class="circuit-wire circuit-wire--green" d="M693 398V451H879V515" />
+                </g>
+                <g class="route route--contact">
+                  <path class="belt-shadow" d="M600 286V178" />
+                  <path class="belt-bed" d="M600 286V178" />
+                  <path class="belt-treads" d="M600 286V178" />
+                  <path class="circuit-wire circuit-wire--red" d="M588 286V178" />
+                  <path class="circuit-wire circuit-wire--green" d="M612 286V178" />
+                </g>
+
+                <g class="power-node" transform="translate(408 350)">
+                  <circle r="16" />
+                  <circle class="power-node__core" r="6" />
+                </g>
+                <g class="power-node" transform="translate(794 334)">
+                  <circle r="16" />
+                  <circle class="power-node__core" r="6" />
+                </g>
+                <g class="power-node" transform="translate(520 467)">
+                  <circle r="16" />
+                  <circle class="power-node__core" r="6" />
+                </g>
+                <g class="power-node" transform="translate(680 467)">
+                  <circle r="16" />
+                  <circle class="power-node__core" r="6" />
+                </g>
+                <g class="power-node" transform="translate(600 215)">
+                  <circle r="16" />
+                  <circle class="power-node__core" r="6" />
+                </g>
+              </svg>
+
+              <div class="factory-pipe factory-pipe--left" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="factory-pipe factory-pipe--right" aria-hidden="true">
+                <span></span><span></span>
+              </div>
+              <div class="floor-mark floor-mark--north" aria-hidden="true">N-04</div>
+              <div class="floor-mark floor-mark--south" aria-hidden="true">S-17</div>
+
+              <section class="identity-hub" aria-label="Engineer profile">
+                <span class="identity-hub__eyebrow">ENGINEER PROFILE</span>
+                <h2>MICHAEL KAHEN</h2>
+                <p>COMPUTER ENGINEER</p>
+                <p class="identity-hub__education">
+                  STONY BROOK UNIVERSITY
+                  <span>CLASS OF 2025</span>
+                </p>
+                <div class="identity-hub__status">
+                  <span><i></i> CORE ONLINE</span>
+                  <span class="alt-data">ID: MK-2025-CE</span>
+                </div>
+              </section>
+
+              <a
+                class="machine machine--projects"
+                href="#projects"
+                data-machine="projects"
+                aria-describedby="machine-tip-projects"
+              >
+                <span class="machine__light" aria-hidden="true"></span>
+                <span class="machine__steam" aria-hidden="true"></span>
+                <img
+                  class="machine__art"
+                  src="assets/icons/project-assembler.svg"
+                  alt=""
+                  width="320"
+                  height="240"
+                >
+                <span class="machine__plate">
+                  <strong>ASSEMBLY COMPLEX</strong>
+                  <small>PROJECTS</small>
+                </span>
+                <span class="machine__metadata alt-data">UNIT A-01 // 1 RECIPE</span>
+                <span class="machine-tooltip" id="machine-tip-projects" role="tooltip">
+                  Inspect and launch engineering projects
+                </span>
+              </a>
+
+              <a
+                class="machine machine--resume"
+                href="#resume"
+                data-machine="resume"
+                aria-describedby="machine-tip-resume"
+              >
+                <span class="machine__light machine__light--warning" aria-hidden="true"></span>
+                <img
+                  class="machine__art"
+                  src="assets/icons/resume-archive.svg"
+                  alt=""
+                  width="320"
+                  height="240"
+                >
+                <span class="machine__plate">
+                  <strong>DOCUMENT ARCHIVE</strong>
+                  <small>RESUME</small>
+                </span>
+                <span class="machine__metadata alt-data">VAULT R-25 // PDF PENDING</span>
+                <span class="machine-tooltip" id="machine-tip-resume" role="tooltip">
+                  Resume document archive
+                </span>
+              </a>
+
+              <a
+                class="machine machine--github"
+                href="https://github.com/michaelkahen"
+                target="_blank"
+                rel="me noopener noreferrer"
+                data-machine="github"
+                aria-describedby="machine-tip-github"
+              >
+                <span class="machine__light" aria-hidden="true"></span>
+                <img
+                  class="machine__art"
+                  src="assets/icons/github-uplink.svg"
+                  alt=""
+                  width="320"
+                  height="240"
+                >
+                <span class="machine__plate">
+                  <strong>CODE UPLINK</strong>
+                  <small>GITHUB <span aria-hidden="true">↗</span></small>
+                </span>
+                <span class="machine__metadata alt-data">REMOTE // MICHAELKAHEN</span>
+                <span class="machine-tooltip" id="machine-tip-github" role="tooltip">
+                  Open Michael's GitHub profile in a new tab
+                </span>
+              </a>
+
+              <a
+                class="machine machine--linkedin"
+                href="https://www.linkedin.com/in/michaelkahen/"
+                target="_blank"
+                rel="me noopener noreferrer"
+                data-machine="linkedin"
+                aria-describedby="machine-tip-linkedin"
+              >
+                <span class="machine__light" aria-hidden="true"></span>
+                <img
+                  class="machine__art"
+                  src="assets/icons/linkedin-relay.svg"
+                  alt=""
+                  width="320"
+                  height="240"
+                >
+                <span class="machine__plate">
+                  <strong>NETWORK RELAY</strong>
+                  <small>LINKEDIN <span aria-hidden="true">↗</span></small>
+                </span>
+                <span class="machine__metadata alt-data">PROFESSIONAL NETWORK // LINKED</span>
+                <span class="machine-tooltip" id="machine-tip-linkedin" role="tooltip">
+                  Open Michael's LinkedIn profile in a new tab
+                </span>
+              </a>
+
+              <a
+                class="machine machine--contact"
+                href="#contact"
+                data-machine="contact"
+                aria-describedby="machine-tip-contact"
+              >
+                <span class="machine__light" aria-hidden="true"></span>
+                <span class="machine__signal" aria-hidden="true"></span>
+                <img
+                  class="machine__art"
+                  src="assets/icons/contact-radar.svg"
+                  alt=""
+                  width="320"
+                  height="240"
+                >
+                <span class="machine__plate">
+                  <strong>COMMUNICATIONS</strong>
+                  <small>CONTACT</small>
+                </span>
+                <span class="machine__metadata alt-data">RADAR C-36 // READY</span>
+                <span class="machine-tooltip" id="machine-tip-contact" role="tooltip">
+                  Open a direct communication channel
+                </span>
+              </a>
+            </nav>
+
+            <p class="factory-instruction">
+              <span aria-hidden="true">[ LMB ]</span>
+              Select a machine
+              <span class="factory-instruction__divider" aria-hidden="true"></span>
+              Keyboard navigation available
+            </p>
           </div>
         </section>
-      </div>
 
-      <footer class="bottombar">
-        <nav class="instructions" aria-label="Simulation instructions">
-          <button
-            type="button"
-            id="pause-button"
-            aria-pressed="false"
-            aria-keyshortcuts="Space"
-          >
-            SPACE : PAUSE
-          </button>
-          <button
-            type="button"
-            id="speed-button"
-            aria-label="Change simulation speed"
-            aria-keyshortcuts="S"
-          >
-            S : 1×
-          </button>
-          <button type="button" id="reset-button" aria-keyshortcuts="R">
-            R : RESET
-          </button>
-        </nav>
-        <div
-          class="footer-status"
-          role="group"
-          aria-label="Simulation telemetry"
+        <section
+          class="site-view"
+          id="projects"
+          data-view="projects"
+          aria-labelledby="projects-title"
+          hidden
         >
-          <span>TIME=<strong id="stat-time">00:00</strong></span>
-          <span>GEN=<strong id="stat-generation">000</strong></span>
-          <span>POP=<strong id="stat-population">000</strong></span>
-          <span>FPS=<strong id="stat-fps">60</strong></span>
-        </div>
-      </footer>
-    </main>
+          <div class="machine-window machine-window--projects">
+            <header class="machine-window__titlebar">
+              <div>
+                <span class="machine-window__kicker">ASSEMBLY COMPLEX A-01</span>
+                <h1 id="projects-title">Projects</h1>
+              </div>
+              <span class="machine-window__grip" aria-hidden="true"></span>
+              <a class="window-close" href="#home" aria-label="Close projects and return home">×</a>
+            </header>
 
-    <script src="ecosystem.js"></script>
+            <div class="project-console">
+              <aside class="project-catalog" aria-labelledby="project-catalog-title">
+                <div class="subheader">
+                  <h2 id="project-catalog-title">Production queue</h2>
+                  <span>1 / 1</span>
+                </div>
+                <a class="project-slot is-selected" href="#ecosystem" aria-current="true">
+                  <span class="project-slot__icon">
+                    <img
+                      src="assets/icons/biosphere-module.svg"
+                      alt=""
+                      width="96"
+                      height="72"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                    <span>01</span>
+                  </span>
+                  <span class="project-slot__copy">
+                    <strong>Biosphere Unit</strong>
+                    <small>Autonomous ecosystem</small>
+                  </span>
+                  <span class="project-slot__status"><i></i> RUNNABLE</span>
+                </a>
+                <div class="catalog-readout">
+                  <span>SELECTED</span>
+                  <strong>BIOSPHERE-01</strong>
+                  <span class="alt-data">SOURCE: /ECOSYSTEM.JS</span>
+                </div>
+              </aside>
+
+              <article class="project-detail" aria-labelledby="biosphere-title">
+                <div class="project-detail__visual">
+                  <div class="project-detail__screen">
+                    <img
+                      src="assets/icons/biosphere-module.svg"
+                      alt="Industrial glass biosphere chamber containing water and vegetation"
+                      width="320"
+                      height="240"
+                      loading="lazy"
+                      decoding="async"
+                    >
+                    <div class="scan-sweep" aria-hidden="true"></div>
+                    <span class="screen-corner screen-corner--tl" aria-hidden="true"></span>
+                    <span class="screen-corner screen-corner--br" aria-hidden="true"></span>
+                  </div>
+                  <div
+                    class="project-detail__telemetry"
+                    role="group"
+                    aria-label="Project status"
+                  >
+                    <span><i class="status-light status-light--green"></i> STABLE</span>
+                    <span>CANVAS 2D</span>
+                    <span>VANILLA JS</span>
+                  </div>
+                </div>
+
+                <div class="project-detail__content">
+                  <p class="section-label">ACTIVE RECIPE</p>
+                  <h2 id="biosphere-title">Autonomous ASCII Ecosystem</h2>
+                  <p class="project-lede">
+                    A procedural jungle-and-lake habitat where animals forage,
+                    hunt, reproduce, and pass evolving traits to new generations.
+                  </p>
+
+                  <dl class="project-specs">
+                    <div>
+                      <dt>Simulation</dt>
+                      <dd>Fixed 30 Hz model with independent rendering</dd>
+                    </div>
+                    <div>
+                      <dt>World</dt>
+                      <dd>Generated terrain, lake, structures, food, and weather</dd>
+                    </div>
+                    <div>
+                      <dt>Behavior</dt>
+                      <dd>Seeking, fleeing, hunting, energy, genetics, and recovery</dd>
+                    </div>
+                    <div>
+                      <dt>Optimization</dt>
+                      <dd>Spatial hashing, background caching, and population caps</dd>
+                    </div>
+                  </dl>
+
+                  <div class="project-tags" role="group" aria-label="Technologies">
+                    <span>JavaScript</span>
+                    <span>Canvas 2D</span>
+                    <span>Simulation</span>
+                    <span>Procedural Generation</span>
+                  </div>
+
+                  <div class="window-actions">
+                    <a class="industrial-button industrial-button--primary" href="#ecosystem">
+                      <span aria-hidden="true">▶</span>
+                      Launch simulation
+                    </a>
+                    <a
+                      class="industrial-button"
+                      href="https://github.com/michaelkahen/michaelkahen.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View source <span aria-hidden="true">↗</span>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="site-view"
+          id="resume"
+          data-view="resume"
+          aria-labelledby="resume-title"
+          hidden
+        >
+          <div class="machine-window machine-window--compact">
+            <header class="machine-window__titlebar">
+              <div>
+                <span class="machine-window__kicker">DOCUMENT ARCHIVE R-25</span>
+                <h1 id="resume-title">Resume</h1>
+              </div>
+              <span class="machine-window__grip" aria-hidden="true"></span>
+              <a class="window-close" href="#home" aria-label="Close resume and return home">×</a>
+            </header>
+
+            <div class="resume-console">
+              <div class="resume-console__vault" aria-hidden="true">
+                <img
+                  src="assets/icons/resume-archive.svg"
+                  alt=""
+                  width="320"
+                  height="240"
+                  loading="lazy"
+                  decoding="async"
+                >
+                <span class="vault-scan"></span>
+              </div>
+              <div class="resume-console__content">
+                <span class="status-badge status-badge--warning">
+                  <i></i> FILE SLOT RESERVED
+                </span>
+                <h2>Resume document pending</h2>
+                <p>
+                  Michael's resume will be available here shortly. The archive is
+                  online, but its document module has not been installed yet.
+                </p>
+                <div
+                  class="document-slot"
+                  role="group"
+                  aria-label="Reserved resume file location"
+                >
+                  <span class="document-slot__icon" aria-hidden="true">PDF</span>
+                  <span>
+                    <strong>michael-kahen-resume.pdf</strong>
+                    <small>Awaiting document upload</small>
+                  </span>
+                  <span class="document-slot__state">EMPTY</span>
+                </div>
+                <p class="technical-note alt-data">
+                  TARGET: /assets/documents/michael-kahen-resume.pdf
+                </p>
+                <a class="industrial-button" href="mailto:mkahen36@gmail.com?subject=Resume%20request">
+                  Request by email
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="site-view"
+          id="contact"
+          data-view="contact"
+          aria-labelledby="contact-title"
+          hidden
+        >
+          <div class="machine-window machine-window--compact">
+            <header class="machine-window__titlebar">
+              <div>
+                <span class="machine-window__kicker">COMMUNICATIONS RADAR C-36</span>
+                <h1 id="contact-title">Contact</h1>
+              </div>
+              <span class="machine-window__grip" aria-hidden="true"></span>
+              <a class="window-close" href="#home" aria-label="Close contact and return home">×</a>
+            </header>
+
+            <div class="contact-console">
+              <div class="contact-console__radar" aria-hidden="true">
+                <span class="radar-grid"></span>
+                <span class="radar-sweep"></span>
+                <span class="radar-blip radar-blip--one"></span>
+                <span class="radar-blip radar-blip--two"></span>
+                <img
+                  src="assets/icons/contact-radar.svg"
+                  alt=""
+                  width="320"
+                  height="240"
+                  loading="lazy"
+                  decoding="async"
+                >
+              </div>
+              <div class="contact-console__content">
+                <span class="status-badge status-badge--ready"><i></i> CHANNEL OPEN</span>
+                <h2>Send a signal</h2>
+                <p>
+                  The fastest way to reach Michael is by email. GitHub and LinkedIn
+                  are available through their dedicated uplinks.
+                </p>
+                <div class="email-channel">
+                  <span class="email-channel__label">PRIMARY FREQUENCY</span>
+                  <a href="mailto:mkahen36@gmail.com">mkahen36@gmail.com</a>
+                  <button type="button" id="copy-email-button" data-email="mkahen36@gmail.com">
+                    Copy address
+                  </button>
+                </div>
+                <div class="contact-links">
+                  <a
+                    class="industrial-button industrial-button--primary"
+                    href="mailto:mkahen36@gmail.com"
+                  >
+                    Compose email
+                  </a>
+                  <a
+                    class="industrial-button"
+                    href="https://www.linkedin.com/in/michaelkahen/"
+                    target="_blank"
+                    rel="me noopener noreferrer"
+                  >
+                    LinkedIn <span aria-hidden="true">↗</span>
+                  </a>
+                  <a
+                    class="industrial-button"
+                    href="https://github.com/michaelkahen"
+                    target="_blank"
+                    rel="me noopener noreferrer"
+                  >
+                    GitHub <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          class="site-view site-view--ecosystem"
+          id="ecosystem"
+          data-view="ecosystem"
+          aria-labelledby="ecosystem-title"
+          hidden
+        >
+          <div class="terminal">
+            <header class="topbar">
+              <h1 id="ecosystem-title">
+                <span class="shell-user">BIOSPHERE-01</span>:~$ ./ecosystem
+                --watch<span class="cursor" aria-hidden="true"></span>
+              </h1>
+              <div class="ecosystem-header-actions">
+                <div class="live-mark" id="live-mark">[ STANDBY ]</div>
+                <a
+                  class="ecosystem-close"
+                  href="#projects"
+                  aria-label="Close ecosystem and return to projects"
+                >×</a>
+              </div>
+            </header>
+
+            <div class="layout">
+              <section class="world-wrap" aria-label="Ecosystem viewport">
+                <canvas
+                  id="world"
+                  role="img"
+                  aria-label="Animated ecosystem. Deer, snakes, and a tiger inhabit a structured jungle; fish and an alligator inhabit one generated lake; decorative birds fly overhead without interacting with the habitat."
+                >
+                  An autonomous ecosystem simulation containing deer, fish,
+                  snakes, alligators, tigers, plants, and decorative birds.
+                </canvas>
+                <div class="paused" id="paused-overlay" hidden>
+                  [ PROCESS SUSPENDED ]
+                </div>
+                <div class="ecosystem-loader" id="ecosystem-loader" role="status">
+                  <span class="ecosystem-loader__gear" aria-hidden="true"></span>
+                  <strong>INITIALIZING BIOSPHERE</strong>
+                  <small>Loading simulation systems...</small>
+                </div>
+              </section>
+            </div>
+
+            <footer class="bottombar">
+              <nav class="instructions" aria-label="Simulation instructions">
+                <button
+                  type="button"
+                  id="pause-button"
+                  aria-pressed="false"
+                  aria-keyshortcuts="Space"
+                >
+                  SPACE : PAUSE
+                </button>
+                <button
+                  type="button"
+                  id="speed-button"
+                  aria-label="S : 1× - Change simulation speed, current speed 1 times"
+                  aria-keyshortcuts="S"
+                >
+                  S : 1×
+                </button>
+                <button type="button" id="reset-button" aria-keyshortcuts="R">
+                  R : RESET
+                </button>
+              </nav>
+              <div
+                class="footer-status"
+                role="group"
+                aria-label="Simulation telemetry"
+              >
+                <span>TIME=<strong id="stat-time">00:00</strong></span>
+                <span>GEN=<strong id="stat-generation">000</strong></span>
+                <span>POP=<strong id="stat-population">000</strong></span>
+                <span>FPS=<strong id="stat-fps">60</strong></span>
+              </div>
+            </footer>
+          </div>
+        </section>
+      </main>
+
+      <nav class="quickbar" aria-label="Primary portfolio navigation">
+        <a class="quickbar-slot" href="#home" data-nav-route="home" aria-current="page">
+          <span class="quickbar-slot__number" aria-hidden="true">1</span>
+          <img src="assets/icons/favicon.svg" alt="" width="38" height="38">
+          <span>Factory</span>
+        </a>
+        <a class="quickbar-slot" href="#projects" data-nav-route="projects">
+          <span class="quickbar-slot__number" aria-hidden="true">2</span>
+          <span class="quickbar-slot__glyph quickbar-slot__glyph--gear" aria-hidden="true"></span>
+          <span>Projects</span>
+        </a>
+        <a class="quickbar-slot" href="#resume" data-nav-route="resume">
+          <span class="quickbar-slot__number" aria-hidden="true">3</span>
+          <span class="quickbar-slot__glyph quickbar-slot__glyph--file" aria-hidden="true">PDF</span>
+          <span>Resume</span>
+        </a>
+        <a
+          class="quickbar-slot"
+          href="https://github.com/michaelkahen"
+          target="_blank"
+          rel="me noopener noreferrer"
+        >
+          <span class="quickbar-slot__number" aria-hidden="true">4</span>
+          <span class="quickbar-slot__glyph quickbar-slot__glyph--code" aria-hidden="true">&lt;/&gt;</span>
+          <span>GitHub <span aria-hidden="true">↗</span></span>
+        </a>
+        <a
+          class="quickbar-slot"
+          href="https://www.linkedin.com/in/michaelkahen/"
+          target="_blank"
+          rel="me noopener noreferrer"
+        >
+          <span class="quickbar-slot__number" aria-hidden="true">5</span>
+          <span class="quickbar-slot__glyph quickbar-slot__glyph--network" aria-hidden="true">●─●</span>
+          <span>LinkedIn <span aria-hidden="true">↗</span></span>
+        </a>
+        <a class="quickbar-slot" href="#contact" data-nav-route="contact">
+          <span class="quickbar-slot__number" aria-hidden="true">6</span>
+          <span class="quickbar-slot__glyph quickbar-slot__glyph--signal" aria-hidden="true">)))</span>
+          <span>Contact</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="toast" id="site-toast" role="status" aria-live="polite" hidden></div>
+    <div class="visually-hidden" id="route-announcer" aria-live="polite"></div>
+
+    <noscript>
+      <p class="noscript-notice">
+        JavaScript is required to run the ecosystem. Portfolio links and project
+        information remain available below.
+      </p>
+    </noscript>
   </body>
 </html>

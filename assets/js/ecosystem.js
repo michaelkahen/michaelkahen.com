@@ -564,11 +564,14 @@
   let simulationTime = 0;
   let maxGeneration = 0;
   let isPaused = false;
+  let isViewActive = true;
+  let isDocumentVisible = !document.hidden;
   let simulationSpeedIndex = 0;
   let simulationAccumulator = 0;
   let lastFrameTimestamp = performance.now();
   let lastTelemetryUpdate = 0;
   let framesPerSecond = 60;
+  let animationFrameRequest = 0;
   let terrainSeed = Math.floor(Math.random() * 0x7fffffff);
   const steeringForceScratch = {
     primary: { x: 0, y: 0 },
@@ -3017,6 +3020,9 @@
   // Viewport, telemetry, and controls.
   function resizeCanvasToContainer() {
     const containerBounds = canvas.parentElement.getBoundingClientRect();
+    if (containerBounds.width < 2 || containerBounds.height < 2) {
+      return null;
+    }
     const measuredWidth = Math.max(1, Math.floor(containerBounds.width));
     const measuredHeight = Math.max(1, Math.floor(containerBounds.height));
     const measuredPixelRatio = Math.min(window.devicePixelRatio || 1, 2);
@@ -3150,7 +3156,14 @@
     setTextContent(statGenerationElement, zeroPad(maxGeneration, 3));
     setTextContent(statPopulationElement, zeroPad(animals.length, 3));
     setTextContent(statFpsElement, zeroPad(Math.round(framesPerSecond), 2));
-    setTextContent(liveMarkElement, isPaused ? "[ HOLD ]" : "[ RUNNING ]");
+    setTextContent(
+      liveMarkElement,
+      !isViewActive || !isDocumentVisible
+        ? "[ STANDBY ]"
+        : isPaused
+          ? "[ HOLD ]"
+          : "[ RUNNING ]",
+    );
   }
 
   function setPaused(nextPausedState) {
@@ -3166,8 +3179,16 @@
   function cycleSpeed() {
     simulationSpeedIndex =
       (simulationSpeedIndex + 1) % SIMULATION_SPEEDS.length;
-    speedButtonElement.textContent =
-      "S : " + SIMULATION_SPEEDS[simulationSpeedIndex] + "×";
+    const currentSpeed = SIMULATION_SPEEDS[simulationSpeedIndex];
+    speedButtonElement.textContent = "S : " + currentSpeed + "×";
+    speedButtonElement.setAttribute(
+      "aria-label",
+      "S : " +
+        currentSpeed +
+        "× - Change simulation speed, current speed " +
+        currentSpeed +
+        " times",
+    );
   }
 
   function togglePaused() {
@@ -3175,14 +3196,14 @@
   }
 
   function handleKeyboardShortcut(event) {
-    const targetTagName = event.target && event.target.tagName;
     const targetIsInteractive =
-      targetTagName === "BUTTON" ||
-      targetTagName === "INPUT" ||
-      targetTagName === "SELECT" ||
-      targetTagName === "TEXTAREA" ||
-      (event.target && event.target.isContentEditable);
-    if (event.repeat || targetIsInteractive) {
+      event.target instanceof Element &&
+      Boolean(
+        event.target.closest(
+          "a, button, input, select, textarea, [contenteditable='true']",
+        ),
+      );
+    if (!isViewActive || event.repeat || targetIsInteractive) {
       return;
     }
 
@@ -3197,11 +3218,20 @@
   }
 
   function handleVisibilityChange() {
+    isDocumentVisible = !document.hidden;
     lastFrameTimestamp = performance.now();
     simulationAccumulator = 0;
+    if (isDocumentVisible) {
+      startAnimationLoop();
+    } else if (animationFrameRequest) {
+      cancelAnimationFrame(animationFrameRequest);
+      animationFrameRequest = 0;
+    }
+    updateTelemetry();
   }
 
   function animationFrame(now) {
+    animationFrameRequest = 0;
     const elapsedSeconds = Math.min(
       0.08,
       Math.max(0, (now - lastFrameTimestamp) / 1000),
@@ -3213,7 +3243,7 @@
       framesPerSecond += (instantaneousFps - framesPerSecond) * 0.08;
     }
 
-    if (!isPaused) {
+    if (isViewActive && isDocumentVisible && !isPaused) {
       simulationAccumulator +=
         elapsedSeconds * SIMULATION_SPEEDS[simulationSpeedIndex];
       while (
@@ -3236,7 +3266,34 @@
       updateTelemetry();
       lastTelemetryUpdate = now;
     }
-    requestAnimationFrame(animationFrame);
+    if (isViewActive && isDocumentVisible) {
+      animationFrameRequest = requestAnimationFrame(animationFrame);
+    }
+  }
+
+  function startAnimationLoop() {
+    if (animationFrameRequest || !isViewActive || !isDocumentVisible) {
+      return;
+    }
+    lastFrameTimestamp = performance.now();
+    simulationAccumulator = 0;
+    animationFrameRequest = requestAnimationFrame(animationFrame);
+  }
+
+  function setViewActive(nextActiveState) {
+    isViewActive = Boolean(nextActiveState);
+    lastFrameTimestamp = performance.now();
+    simulationAccumulator = 0;
+
+    if (isViewActive) {
+      resizeWorld();
+      renderWorld();
+      startAnimationLoop();
+    } else if (animationFrameRequest) {
+      cancelAnimationFrame(animationFrameRequest);
+      animationFrameRequest = 0;
+    }
+    updateTelemetry();
   }
 
   pauseButtonElement.addEventListener("click", togglePaused);
@@ -3276,14 +3333,29 @@
     reset: resetWorld,
   };
 
+  window.ECOSYSTEM = {
+    setActive: setViewActive,
+    isActive: function () {
+      return isViewActive;
+    },
+  };
+
   resizeCanvasToContainer();
   resetWorld();
 
   if (typeof ResizeObserver !== "undefined") {
-    new ResizeObserver(resizeWorld).observe(canvas.parentElement);
+    new ResizeObserver(function () {
+      if (isViewActive) {
+        resizeWorld();
+      }
+    }).observe(canvas.parentElement);
   } else {
-    window.addEventListener("resize", resizeWorld);
+    window.addEventListener("resize", function () {
+      if (isViewActive) {
+        resizeWorld();
+      }
+    });
   }
 
-  requestAnimationFrame(animationFrame);
+  startAnimationLoop();
 })();
