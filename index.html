@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#020906">
-  <title>BIOSPHERE_07 — Autonomous ASCII Ecosystem</title>
+  <meta name="theme-color" content="#000000">
+  <title>root@biosphere — Autonomous ASCII Ecosystem</title>
   <style>
     :root {
       color-scheme: dark;
@@ -568,16 +568,360 @@
         animation: none;
       }
     }
+
+    /* Minimal black terminal skin */
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+
+    body {
+      display: block;
+      padding: 0;
+      background: #000;
+      letter-spacing: 0.02em;
+    }
+
+    .terminal {
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) auto;
+      width: 100vw;
+      height: 100vh;
+      border: 0;
+      border-radius: 0;
+      background: #000;
+      box-shadow: none;
+    }
+
+    .terminal::before {
+      opacity: 0.18;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(140, 255, 176, 0.025) 0,
+        rgba(140, 255, 176, 0.025) 1px,
+        transparent 1px,
+        transparent 4px
+      );
+    }
+
+    .terminal::after {
+      border-radius: 0;
+      background: radial-gradient(ellipse at center, transparent 68%, rgba(0, 0, 0, 0.48) 100%);
+    }
+
+    .topbar {
+      z-index: 10;
+      min-height: 36px;
+      padding: 9px 13px 8px;
+      border-bottom: 1px dashed rgba(121, 255, 163, 0.18);
+      background: #000;
+    }
+
+    .topbar h1 {
+      overflow: hidden;
+      color: #8cf9ac;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.025em;
+      text-overflow: ellipsis;
+      text-shadow: 0 0 8px rgba(105, 255, 153, 0.35);
+      white-space: nowrap;
+    }
+
+    .shell-user {
+      color: #d2ffdd;
+    }
+
+    .prompt-cursor {
+      width: 6px;
+      height: 11px;
+      margin-left: 5px;
+    }
+
+    .live-mark {
+      color: #4da769;
+      font-size: 9px;
+    }
+
+    .live-mark::before {
+      display: none;
+    }
+
+    .layout {
+      position: relative;
+      display: block;
+      min-height: 0;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .world-wrap {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      border: 0;
+      background: #000;
+    }
+
+    #world {
+      background: #000;
+      cursor: crosshair;
+    }
+
+    #world:focus-visible {
+      box-shadow: 0 0 0 1px rgba(121, 255, 163, 0.48) inset;
+    }
+
+    .sector-label {
+      top: auto;
+      bottom: 9px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: rgba(101, 219, 133, 0.38);
+      font-size: 8px;
+    }
+
+    .sector-label.land {
+      left: 12px;
+    }
+
+    .sector-label.lake {
+      right: 12px;
+      color: rgba(93, 202, 220, 0.42);
+    }
+
+    .coordinates {
+      top: 10px;
+      right: 12px;
+      bottom: auto;
+      color: rgba(93, 202, 220, 0.32);
+      font-size: 8px;
+    }
+
+    .paused {
+      background: rgba(0, 0, 0, 0.72);
+      color: #d1ffdc;
+      font-size: clamp(14px, 3vw, 24px);
+      text-shadow: 0 0 14px rgba(121, 255, 163, 0.55);
+    }
+
+    .hud {
+      position: absolute;
+      z-index: 4;
+      top: 11px;
+      left: 12px;
+      display: block;
+      width: min(338px, calc(100% - 24px));
+      padding: 0;
+      background: transparent;
+      color: rgba(157, 255, 188, 0.74);
+      pointer-events: none;
+      text-shadow: 0 0 5px rgba(99, 255, 148, 0.18);
+    }
+
+    .status-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px 13px;
+      margin-bottom: 7px;
+      font-size: 8px;
+    }
+
+    .status-line span {
+      color: #376e49;
+    }
+
+    .status-line strong {
+      color: #9dffc2;
+      font-weight: 400;
+    }
+
+    .population-block {
+      width: 100%;
+    }
+
+    .population-block table {
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .population-block th,
+    .population-block td {
+      padding: 2px 3px;
+      border: 0;
+      color: rgba(126, 216, 153, 0.66);
+      font-size: 8px;
+    }
+
+    .population-block th {
+      color: #315f40;
+      font-size: 7px;
+    }
+
+    .population-block th:first-child,
+    .population-block td:first-child {
+      width: 75px;
+    }
+
+    .population-block tbody tr.extinct td {
+      color: #ff7169;
+    }
+
+    .specimen {
+      width: auto;
+      min-width: 15px;
+      margin-right: 4px;
+    }
+
+    .bear-glyph {
+      min-width: 39px;
+      margin-left: -9px;
+      font-size: 7px;
+    }
+
+    .resource-block {
+      display: flex;
+      gap: 18px;
+      margin-top: 7px;
+      color: #376e49;
+      font-size: 8px;
+    }
+
+    .resource-block strong {
+      color: #9dffc2;
+      font-weight: 400;
+    }
+
+    .events {
+      min-height: 0;
+      margin-top: 9px;
+    }
+
+    #event-log {
+      min-height: 0;
+      color: #376e49;
+      font-size: 8px;
+      line-height: 1.45;
+    }
+
+    .event.good {
+      color: rgba(130, 234, 160, 0.58);
+    }
+
+    .event.warn {
+      color: rgba(255, 113, 105, 0.8);
+    }
+
+    .bottombar {
+      z-index: 10;
+      display: flex;
+      min-height: 39px;
+      padding: 7px 12px;
+      border-top: 1px dashed rgba(121, 255, 163, 0.18);
+      background: #000;
+      color: #376e49;
+      font-size: 8px;
+      text-transform: none;
+    }
+
+    .instructions,
+    .legend {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px 14px;
+    }
+
+    .instructions button {
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: #6fc98b;
+      font-size: 8px;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+    }
+
+    .instructions button:hover {
+      color: #caffd8;
+      text-shadow: 0 0 7px rgba(121, 255, 163, 0.6);
+    }
+
+    .instructions button:focus-visible {
+      outline: 1px dotted #9dffc2;
+      outline-offset: 3px;
+    }
+
+    .legend {
+      justify-content: flex-end;
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        min-height: 34px;
+        padding-inline: 9px;
+      }
+
+      .live-mark {
+        display: none;
+      }
+
+      .hud {
+        top: 8px;
+        left: 8px;
+        width: min(310px, calc(100% - 16px));
+      }
+
+      .coordinates {
+        display: none;
+      }
+
+      .population-block th,
+      .population-block td {
+        font-size: 7px;
+      }
+
+      .legend {
+        display: none;
+      }
+
+      .bottombar {
+        min-height: 38px;
+        padding-inline: 9px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .status-line span:nth-child(3) {
+        display: none;
+      }
+
+      .population-block th:nth-child(4),
+      .population-block td:nth-child(4),
+      .population-block th:nth-child(5),
+      .population-block td:nth-child(5) {
+        display: none;
+      }
+
+      .instructions {
+        gap: 5px 10px;
+      }
+    }
   </style>
 </head>
 <body>
   <main class="terminal" aria-label="Autonomous ASCII jungle and lake ecosystem">
     <header class="topbar">
-      <div class="identity">
-        <p class="eyebrow">FIELD TERMINAL / AUTONOMOUS LIFE MONITOR</p>
-        <h1>BIOSPHERE_07::<span class="rabbit-color">JUNGLE</span>/<span class="fish-color">LAKE</span></h1>
-      </div>
-      <div class="live-mark" id="live-mark">SYSTEM LIVE</div>
+      <h1><span class="shell-user">root@biosphere</span>:~$ ./ecosystem --watch<span class="cursor prompt-cursor" aria-hidden="true"></span></h1>
+      <div class="live-mark" id="live-mark">[ RUNNING ]</div>
     </header>
 
     <div class="layout">
@@ -585,54 +929,38 @@
         <canvas
           id="world"
           tabindex="0"
-          aria-label="Animated ecosystem. Rabbits, snakes, and a bear inhabit the jungle; fish inhabit the lake."
+          aria-label="Animated ecosystem. Rabbits, snakes, and a bear inhabit a structured jungle; fish inhabit the lake."
         ></canvas>
-        <div class="sector-label land">SECTOR_A :: JUNGLE</div>
-        <div class="sector-label lake">SECTOR_B :: LAKE</div>
+        <div class="sector-label land">/JUNGLE</div>
+        <div class="sector-label lake">/LAKE</div>
         <div class="coordinates" id="coordinates">GRID 0000×0000</div>
-        <div class="paused" id="paused-overlay" hidden>[ SIMULATION PAUSED ]</div>
+        <div class="paused" id="paused-overlay" hidden>[ PROCESS SUSPENDED ]</div>
       </section>
 
       <aside class="hud" aria-label="Live ecosystem telemetry">
-        <section class="hud-block">
-          <h2 class="hud-label">Process telemetry</h2>
-          <div class="readouts">
-            <div class="readout">
-              <span>Elapsed sim</span>
-              <strong id="stat-time">00:00</strong>
-            </div>
-            <div class="readout">
-              <span>Max generation</span>
-              <strong class="cyan" id="stat-generation">GEN_000</strong>
-            </div>
-            <div class="readout">
-              <span>Lifeforms / FPS</span>
-              <strong id="stat-load">000 / 60</strong>
-            </div>
-            <div class="readout">
-              <span>Ecosystem mode</span>
-              <strong class="amber" id="stat-mode">BOOTING</strong>
-            </div>
-          </div>
+        <section class="status-line" aria-label="Process telemetry">
+          <span>TIME=<strong id="stat-time">00:00</strong></span>
+          <span>GEN=<strong id="stat-generation">GEN_000</strong></span>
+          <span>LOAD=<strong id="stat-load">000 / 60</strong></span>
+          <span>MODE=<strong id="stat-mode">BOOTING</strong></span>
         </section>
 
-        <section class="hud-block">
-          <h2 class="hud-label">Population + avg genome</h2>
+        <section class="population-block">
           <table>
             <caption>Population and average genome multipliers by species</caption>
             <thead>
               <tr>
-                <th>Species</th>
-                <th>Pop</th>
-                <th>Spd×</th>
-                <th>Sen×</th>
-                <th>Siz×</th>
-                <th>Gen</th>
+                <th>SPECIES</th>
+                <th>POP</th>
+                <th>SPD×</th>
+                <th>SEN×</th>
+                <th>SIZ×</th>
+                <th>GEN</th>
               </tr>
             </thead>
             <tbody>
               <tr id="row-rabbit">
-                <td><span class="specimen rabbit-color">r</span>RABBIT</td>
+                <td><span class="specimen rabbit-color">r</span>rabbit</td>
                 <td id="pop-rabbit">--</td>
                 <td id="speed-rabbit">--</td>
                 <td id="sense-rabbit">--</td>
@@ -640,7 +968,7 @@
                 <td id="gen-rabbit">--</td>
               </tr>
               <tr id="row-fish">
-                <td><span class="specimen fish-color">&gt;&lt;&gt;</span>FISH</td>
+                <td><span class="specimen fish-color">&gt;&lt;&gt;</span>fish</td>
                 <td id="pop-fish">--</td>
                 <td id="speed-fish">--</td>
                 <td id="sense-fish">--</td>
@@ -648,7 +976,7 @@
                 <td id="gen-fish">--</td>
               </tr>
               <tr id="row-snake">
-                <td><span class="specimen snake-color">~</span>SNAKE</td>
+                <td><span class="specimen snake-color">~</span>snake</td>
                 <td id="pop-snake">--</td>
                 <td id="speed-snake">--</td>
                 <td id="sense-snake">--</td>
@@ -656,7 +984,7 @@
                 <td id="gen-snake">--</td>
               </tr>
               <tr id="row-bear">
-                <td><span class="specimen bear-color">B</span>BEAR</td>
+                <td><span class="specimen bear-glyph bear-color">ʕ•ᴥ•ʔ</span>bear</td>
                 <td id="pop-bear">--</td>
                 <td id="speed-bear">--</td>
                 <td id="sense-bear">--</td>
@@ -667,36 +995,31 @@
           </table>
         </section>
 
-        <section class="hud-block">
-          <h2 class="hud-label">Resource buffer</h2>
-          <p class="resource-line"><span><span class="rabbit-color">*</span> BERRIES / LAND</span><strong id="food-berry">000</strong></p>
-          <p class="resource-line"><span><span class="fish-color">.</span> PLANKTON / LAKE</span><strong id="food-plankton">000</strong></p>
-          <p class="equation">STEER := LIMIT((TARGET − POS)^ · MAX_SPEED − VELOCITY, MAX_FORCE)</p>
+        <section class="resource-block" aria-label="Resource counts">
+          <span><span class="rabbit-color">*</span> BERRY=<strong id="food-berry">000</strong></span>
+          <span><span class="fish-color">.</span> PLANKTON=<strong id="food-plankton">000</strong></span>
         </section>
 
-        <section class="hud-block events">
-          <h2 class="hud-label">Kernel messages</h2>
+        <section class="events">
           <div id="event-log" role="log" aria-live="polite"></div>
-          <div class="prompt">&gt; biosphere_watch --live<span class="cursor" aria-hidden="true"></span></div>
         </section>
-
-        <nav class="controls" aria-label="Simulation controls">
-          <button type="button" id="pause-button" aria-pressed="false">[ PAUSE ]</button>
-          <button type="button" id="speed-button" aria-label="Change simulation speed">[ 1× ]</button>
-          <button type="button" id="reset-button">[ RESET ]</button>
-        </nav>
       </aside>
     </div>
 
     <footer class="bottombar">
+      <nav class="instructions" aria-label="Simulation instructions">
+        <button type="button" id="pause-button" aria-pressed="false">SPACE : PAUSE</button>
+        <button type="button" id="speed-button" aria-label="Change simulation speed">S : 1×</button>
+        <button type="button" id="reset-button">R : RESET</button>
+        <span>DBLCLICK : PAUSE</span>
+      </nav>
       <div class="legend" aria-label="Glyph legend">
-        <span><span class="rabbit-color">r</span> herbivore</span>
-        <span><span class="fish-color">&gt;&lt;&gt;</span> planktivore</span>
-        <span><span class="snake-color">~</span> hunter</span>
-        <span><span class="bear-color">B</span> apex</span>
+        <span><span class="rabbit-color">r</span> rabbit</span>
+        <span><span class="fish-color">&gt;&lt;&gt;</span> fish</span>
+        <span><span class="snake-color">~</span> snake</span>
+        <span><span class="bear-color">ʕ•ᴥ•ʔ</span> bear</span>
         <span><span class="rabbit-color">*</span>/<span class="fish-color">.</span> food</span>
       </div>
-      <div class="keys">SPACE pause&nbsp;&nbsp; S speed&nbsp;&nbsp; R reset</div>
     </footer>
   </main>
 
@@ -792,7 +1115,7 @@
         },
         bear: {
           label: "BEAR",
-          glyph: "B",
+          glyph: "ʕ•ᴥ•ʔ",
           hue: 10,
           saturation: 93,
           habitat: "land",
@@ -816,12 +1139,104 @@
         }
       };
 
+      var STRUCTURE_LIBRARY = {
+        land: [
+          {
+            name: "kapok",
+            radius: 22,
+            fontSize: 9,
+            color: "rgba(84, 205, 113, 0.42)",
+            sprite: ["  /\\  ", " /++\\ ", "/++++\\", "  ||  ", "  ||  "]
+          },
+          {
+            name: "canopy",
+            radius: 24,
+            fontSize: 9,
+            color: "rgba(95, 221, 126, 0.38)",
+            sprite: ["  &&&  ", " &&&&& ", "&&&&&&&", "  |||  ", "   |   "]
+          },
+          {
+            name: "palm",
+            radius: 20,
+            fontSize: 9,
+            color: "rgba(111, 221, 128, 0.38)",
+            sprite: [" \\ | / ", "--(*)--", "  /|\\  ", "   |   ", "   |   "]
+          },
+          {
+            name: "fern",
+            radius: 13,
+            fontSize: 8,
+            color: "rgba(81, 188, 109, 0.34)",
+            sprite: [" \\|/ ", "--*--", " /|\\ "]
+          },
+          {
+            name: "bush",
+            radius: 14,
+            fontSize: 9,
+            color: "rgba(73, 173, 101, 0.32)",
+            sprite: [" .***. ", "{*****}"]
+          },
+          {
+            name: "rock",
+            radius: 13,
+            fontSize: 8,
+            color: "rgba(128, 161, 137, 0.30)",
+            sprite: [" /--\\ ", "/____\\"]
+          },
+          {
+            name: "fallen_log",
+            radius: 18,
+            fontSize: 8,
+            color: "rgba(161, 135, 77, 0.35)",
+            sprite: ["===[_]===="]
+          },
+          {
+            name: "shrine",
+            radius: 17,
+            fontSize: 8,
+            color: "rgba(145, 190, 151, 0.32)",
+            sprite: ["  /\\  ", " /__\\ ", " |::| ", "_|__|_"]
+          }
+        ],
+        lake: [
+          {
+            name: "reeds",
+            radius: 13,
+            fontSize: 8,
+            color: "rgba(91, 191, 152, 0.32)",
+            sprite: [" | |/ ", "|||/| ", " | |  "]
+          },
+          {
+            name: "lilies",
+            radius: 15,
+            fontSize: 8,
+            color: "rgba(84, 204, 205, 0.32)",
+            sprite: ["~(_)_~", "  .   "]
+          },
+          {
+            name: "lake_rock",
+            radius: 13,
+            fontSize: 8,
+            color: "rgba(105, 159, 171, 0.28)",
+            sprite: ["  /\\  ", "~/__\\~"]
+          },
+          {
+            name: "driftwood",
+            radius: 17,
+            fontSize: 8,
+            color: "rgba(121, 157, 142, 0.29)",
+            sprite: ["~~==/==~~"]
+          }
+        ]
+      };
+
       var worldWidth = 0;
       var worldHeight = 0;
       var pixelRatio = 1;
       var backgroundCanvas = null;
       var agents = [];
       var resources = [];
+      var structures = [];
       var echoes = [];
       var eventMessages = [];
       var extinctions = {};
@@ -836,6 +1251,7 @@
       var lastHud = 0;
       var fps = 60;
       var initialized = false;
+      var terrainSeed = Math.floor(Math.random() * 0x7fffffff);
 
       function clamp(value, min, max) {
         return Math.max(min, Math.min(max, value));
@@ -938,30 +1354,113 @@
         return x - shoreAt(y);
       }
 
+      function pointClearOfStructures(x, y, padding) {
+        for (var i = 0; i < structures.length; i += 1) {
+          var structure = structures[i];
+          var dx = x - structure.x;
+          var dy = y - structure.y;
+          var minimum = structure.radius + padding;
+          if (dx * dx + dy * dy < minimum * minimum) {
+            return false;
+          }
+        }
+        return true;
+      }
+
+      function generateStructures() {
+        structures = [];
+        var terrainRandom = mulberry32(terrainSeed);
+        var area = worldWidth * worldHeight;
+        var targets = {
+          land: clamp(Math.floor(area / 18000), 12, 40),
+          lake: clamp(Math.floor(area / 46000), 5, 18)
+        };
+        var habitats = ["land", "lake"];
+
+        for (var h = 0; h < habitats.length; h += 1) {
+          var habitat = habitats[h];
+          var library = STRUCTURE_LIBRARY[habitat];
+          var attempts = 0;
+          while (
+            structures.filter(function (structure) {
+              return structure.habitat === habitat;
+            }).length < targets[habitat] &&
+            attempts < targets[habitat] * 70
+          ) {
+            attempts += 1;
+            var y = 20 + terrainRandom() * Math.max(1, worldHeight - 40);
+            var shore = shoreAt(y);
+            var x;
+
+            if (habitat === "land") {
+              x = 20 + terrainRandom() * Math.max(1, shore - 48);
+            } else {
+              x = shore + 25 + terrainRandom() * Math.max(1, worldWidth - shore - 45);
+            }
+
+            if (x < 365 && y < 178) {
+              continue;
+            }
+
+            var typeIndex;
+            if (habitat === "land" && terrainRandom() < 0.62) {
+              typeIndex = Math.floor(terrainRandom() * 3);
+            } else if (habitat === "land") {
+              typeIndex = 3 + Math.floor(terrainRandom() * (library.length - 3));
+            } else {
+              typeIndex = Math.floor(terrainRandom() * library.length);
+            }
+            var definition = library[typeIndex];
+
+            if (!pointClearOfStructures(x, y, definition.radius + 6)) {
+              continue;
+            }
+
+            structures.push({
+              name: definition.name,
+              habitat: habitat,
+              x: x,
+              y: y,
+              radius: definition.radius,
+              fontSize: definition.fontSize,
+              color: definition.color,
+              sprite: definition.sprite
+            });
+          }
+        }
+      }
+
       function randomPoint(habitat, nearShore) {
         var margin = 18;
-        var y = random(margin, Math.max(margin + 1, worldHeight - margin));
-        var shore = shoreAt(y);
-        var low;
-        var high;
-        var x;
+        var point = { x: margin, y: margin };
+        for (var attempt = 0; attempt < 32; attempt += 1) {
+          var y = random(margin, Math.max(margin + 1, worldHeight - margin));
+          var shore = shoreAt(y);
+          var low;
+          var high;
+          var x;
 
-        if (habitat === "lake") {
-          low = Math.min(worldWidth - margin, shore + 10);
-          high = Math.max(low + 1, worldWidth - margin);
-          if (nearShore) {
-            high = Math.min(high, shore + 58);
+          if (habitat === "lake") {
+            low = Math.min(worldWidth - margin, shore + 10);
+            high = Math.max(low + 1, worldWidth - margin);
+            if (nearShore) {
+              high = Math.min(high, shore + 58);
+            }
+            x = random(low, high);
+          } else {
+            high = Math.max(margin + 1, shore - 10);
+            low = margin;
+            if (nearShore) {
+              low = Math.max(margin, shore - 82);
+            }
+            x = random(low, high);
           }
-          x = random(low, high);
-        } else {
-          high = Math.max(margin + 1, shore - 10);
-          low = margin;
-          if (nearShore) {
-            low = Math.max(margin, shore - 82);
+          point = { x: x, y: y };
+          if (pointClearOfStructures(x, y, nearShore ? 20 : 11)) {
+            return point;
           }
-          x = random(low, high);
         }
-        return { x: x, y: y };
+        return point;
       }
 
       function randomGenome() {
@@ -1252,6 +1751,41 @@
         );
       }
 
+      function obstacleSteering(agent) {
+        var speed = length(agent.vx, agent.vy);
+        var directionX = speed > 0.5 ? agent.vx / speed : Math.cos(agent.heading);
+        var directionY = speed > 0.5 ? agent.vy / speed : Math.sin(agent.heading);
+        var lookAhead = 10 + agent.displaySize * 0.55 + speed * 0.32;
+        var probeX = agent.x + directionX * lookAhead;
+        var probeY = agent.y + directionY * lookAhead;
+        var forceX = 0;
+        var forceY = 0;
+        var habitat = CONFIG[agent.species].habitat;
+
+        for (var i = 0; i < structures.length; i += 1) {
+          var structure = structures[i];
+          if (structure.habitat !== habitat) {
+            continue;
+          }
+          var dx = probeX - structure.x;
+          var dy = probeY - structure.y;
+          var distance = length(dx, dy);
+          var clearance = structure.radius + agent.displaySize * 0.32 + 12;
+          if (distance >= clearance) {
+            continue;
+          }
+          if (distance < 0.001) {
+            dx = -directionY;
+            dy = directionX;
+            distance = 1;
+          }
+          var strength = 1 - distance / clearance;
+          forceX += dx / distance * agent.maxForce * (0.45 + strength);
+          forceY += dy / distance * agent.maxForce * (0.45 + strength);
+        }
+        return limitVector(forceX, forceY, agent.maxForce * 0.92);
+      }
+
       function boundarySteering(agent) {
         var forceX = 0;
         var forceY = 0;
@@ -1326,8 +1860,17 @@
 
         var separation = separationSteering(agent);
         var boundary = boundarySteering(agent);
-        var totalX = mainForce.x * weight + separation.x * 0.42 + boundary.x * 1.18;
-        var totalY = mainForce.y * weight + separation.y * 0.42 + boundary.y * 1.18;
+        var obstacle = obstacleSteering(agent);
+        var totalX =
+          mainForce.x * weight +
+          separation.x * 0.42 +
+          boundary.x * 1.18 +
+          obstacle.x * 1.12;
+        var totalY =
+          mainForce.y * weight +
+          separation.y * 0.42 +
+          boundary.y * 1.18 +
+          obstacle.y * 1.12;
         return limitVector(totalX, totalY, agent.maxForce);
       }
 
@@ -1356,6 +1899,34 @@
         } else if (habitat === "lake" && agent.x <= shore + 2) {
           agent.x = shore + 2;
           agent.vx = Math.abs(agent.vx) * 0.42;
+        }
+
+        for (var i = 0; i < structures.length; i += 1) {
+          var structure = structures[i];
+          if (structure.habitat !== habitat) {
+            continue;
+          }
+          var dx = agent.x - structure.x;
+          var dy = agent.y - structure.y;
+          var distance = length(dx, dy);
+          var minimum = structure.radius + agent.displaySize * 0.22;
+          if (distance >= minimum) {
+            continue;
+          }
+          if (distance < 0.001) {
+            dx = Math.cos(agent.heading + Math.PI / 2);
+            dy = Math.sin(agent.heading + Math.PI / 2);
+            distance = 1;
+          }
+          var normalX = dx / distance;
+          var normalY = dy / distance;
+          agent.x = structure.x + normalX * minimum;
+          agent.y = structure.y + normalY * minimum;
+          var inwardSpeed = agent.vx * normalX + agent.vy * normalY;
+          if (inwardSpeed < 0) {
+            agent.vx -= inwardSpeed * normalX * 1.45;
+            agent.vy -= inwardSpeed * normalY * 1.45;
+          }
         }
       }
 
@@ -1730,10 +2301,16 @@
           var energyRatio = clamp(agent.energy / agent.maxEnergy, 0, 1);
           ctx.save();
           ctx.translate(agent.x, agent.y);
-          ctx.rotate(agent.heading);
+          ctx.rotate(
+            agent.species === "bear" ?
+              Math.sin(agent.heading) * 0.08 :
+              agent.heading
+          );
           ctx.font =
             (agent.species === "bear" ? "700 " : "600 ") +
-            agent.displaySize.toFixed(1) +
+            (agent.species === "bear" ?
+              (agent.displaySize * 0.52).toFixed(1) :
+              agent.displaySize.toFixed(1)) +
             "px Menlo, Consolas, monospace";
           ctx.fillStyle = genomeColor(agent);
           ctx.globalAlpha = 0.48 + energyRatio * 0.52;
@@ -1754,27 +2331,16 @@
         var background = backgroundCanvas.getContext("2d", { alpha: false });
         background.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 
-        background.fillStyle = "#03100b";
+        background.fillStyle = "#000000";
         background.fillRect(0, 0, worldWidth, worldHeight);
 
-        background.beginPath();
-        background.moveTo(worldWidth, 0);
-        background.lineTo(worldWidth, worldHeight);
-        background.lineTo(shoreAt(worldHeight), worldHeight);
-        for (var y = worldHeight; y >= 0; y -= 8) {
-          background.lineTo(shoreAt(y), y);
-        }
-        background.closePath();
-        background.fillStyle = "#041722";
-        background.fill();
-
         var decorRandom = mulberry32(
-          0x7a11ce + Math.floor(worldWidth) * 31 + Math.floor(worldHeight) * 17
+          terrainSeed ^ (Math.floor(worldWidth) * 31 + Math.floor(worldHeight) * 17)
         );
         background.textAlign = "center";
         background.textBaseline = "middle";
 
-        var cell = worldWidth < 700 ? 15 : 17;
+        var cell = worldWidth < 700 ? 18 : 21;
         for (var gridY = 8; gridY < worldHeight; gridY += cell) {
           for (var gridX = 8; gridX < worldWidth; gridX += cell) {
             var x = gridX + (decorRandom() - 0.5) * 5;
@@ -1788,18 +2354,18 @@
                 (8 + Math.floor(decorRandom() * 3)) +
                 "px Menlo, Consolas, monospace";
               background.fillStyle = p < 0.4 ?
-                "rgba(90, 211, 235, 0.18)" :
-                "rgba(75, 158, 185, 0.11)";
+                "rgba(90, 211, 235, 0.17)" :
+                "rgba(75, 158, 185, 0.09)";
             } else {
               var shoreDistance = Math.abs(distanceFromShore(x, textureY));
               if (shoreDistance < 20) {
                 glyph = p < 0.55 ? ":" : ";";
                 background.fillStyle = "rgba(201, 231, 147, 0.21)";
               } else {
-                glyph = p < 0.10 ? "Y" : p < 0.25 ? "^" : p < 0.41 ? "|" : p < 0.65 ? "'" : ".";
-                background.fillStyle = p < 0.25 ?
-                  "rgba(99, 218, 126, 0.19)" :
-                  "rgba(80, 175, 104, 0.105)";
+                glyph = p < 0.07 ? "Y" : p < 0.18 ? "^" : p < 0.31 ? "|" : p < 0.59 ? "'" : ".";
+                background.fillStyle = p < 0.18 ?
+                  "rgba(99, 218, 126, 0.17)" :
+                  "rgba(80, 175, 104, 0.08)";
               }
               background.font =
                 (9 + Math.floor(decorRandom() * 4)) +
@@ -1818,6 +2384,29 @@
             shoreY
           );
         }
+
+        var sortedStructures = structures.slice().sort(function (a, b) {
+          return a.y - b.y;
+        });
+        for (var s = 0; s < sortedStructures.length; s += 1) {
+          var structure = sortedStructures[s];
+          var lineHeight = structure.fontSize * 1.08;
+          background.font =
+            structure.fontSize + "px Menlo, Consolas, monospace";
+          background.fillStyle = structure.color;
+          background.shadowColor = structure.habitat === "lake" ?
+            "rgba(86, 218, 235, 0.22)" :
+            "rgba(83, 235, 126, 0.2)";
+          background.shadowBlur = 3;
+          for (var line = 0; line < structure.sprite.length; line += 1) {
+            background.fillText(
+              structure.sprite[line],
+              structure.x,
+              structure.y + (line - (structure.sprite.length - 1) / 2) * lineHeight
+            );
+          }
+        }
+        background.shadowBlur = 0;
       }
 
       function resizeWorld() {
@@ -1835,6 +2424,7 @@
         canvas.style.width = newWidth + "px";
         canvas.style.height = newHeight + "px";
         ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        generateStructures();
 
         if (oldWidth && oldHeight) {
           var scaleX = newWidth / oldWidth;
@@ -1848,8 +2438,11 @@
             resource.x *= scaleX;
             resource.y *= scaleY;
             var habitat = resource.type === "berry" ? "land" : "lake";
-            if ((habitat === "land" && isLake(resource.x, resource.y)) ||
-                (habitat === "lake" && !isLake(resource.x, resource.y))) {
+            if (
+              (habitat === "land" && isLake(resource.x, resource.y)) ||
+              (habitat === "lake" && !isLake(resource.x, resource.y)) ||
+              !pointClearOfStructures(resource.x, resource.y, 5)
+            ) {
               var point = randomPoint(habitat, false);
               resource.x = point.x;
               resource.y = point.y;
@@ -1869,7 +2462,7 @@
           text: "[" + time + "] " + message,
           tone: tone || ""
         });
-        eventMessages = eventMessages.slice(0, 5);
+        eventMessages = eventMessages.slice(0, 3);
         document.getElementById("event-log").innerHTML = eventMessages.map(function (entry) {
           return "<div class=\"event " + entry.tone + "\">" + entry.text + "</div>";
         }).join("");
@@ -1890,6 +2483,9 @@
         maxGeneration = 0;
         accumulator = 0;
         nextId = 1;
+        terrainSeed = Math.floor(Math.random() * 0x7fffffff);
+        generateStructures();
+        buildBackground();
         SPECIES_ORDER.forEach(function (species) {
           extinctions[species] = { active: false, remaining: 0 };
           spawnAgents(species, CONFIG[species].initial, 0);
@@ -1897,7 +2493,7 @@
         spawnResources("berry", 76);
         spawnResources("plankton", 136);
         addEvent("BOOT :: 101 autonomous lifeforms online", "good");
-        addEvent("CACHE :: terrain raster locked / steering active");
+        addEvent("MAP :: " + structures.length + " terrain obstacles indexed");
         rebuildSpatialIndexes();
         updateHud();
         render();
@@ -1944,14 +2540,14 @@
         setText("stat-mode", paused ? "PAUSED" : recovering ? "RECOVERY" : "ADAPTIVE");
         setText("food-berry", pad(resourceCounts.berry, 3));
         setText("food-plankton", pad(resourceCounts.plankton, 3));
-        document.getElementById("live-mark").textContent = paused ? "SYSTEM HOLD" : "SYSTEM LIVE";
+        document.getElementById("live-mark").textContent = paused ? "[ HOLD ]" : "[ RUNNING ]";
       }
 
       function setPaused(nextPaused) {
         paused = nextPaused;
         document.getElementById("paused-overlay").hidden = !paused;
         var button = document.getElementById("pause-button");
-        button.textContent = paused ? "[ RESUME ]" : "[ PAUSE ]";
+        button.textContent = paused ? "SPACE : RESUME" : "SPACE : PAUSE";
         button.setAttribute("aria-pressed", String(paused));
         updateHud();
       }
@@ -1959,7 +2555,7 @@
       function cycleSpeed() {
         speedIndex = (speedIndex + 1) % SPEEDS.length;
         document.getElementById("speed-button").textContent =
-          "[ " + SPEEDS[speedIndex] + "× ]";
+          "S : " + SPEEDS[speedIndex] + "×";
         addEvent("CLOCK :: simulation rate " + SPEEDS[speedIndex] + "×");
       }
 
@@ -2035,7 +2631,8 @@
             populations: countPopulations(),
             resources: countResources(),
             maxGeneration: maxGeneration,
-            agents: agents.length
+            agents: agents.length,
+            structures: structures.length
           };
         },
         reset: resetWorld
