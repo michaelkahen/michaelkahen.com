@@ -1,0 +1,5 @@
+# Search engines may crawl and index the public portfolio.
+User-agent: *
+Allow: /
+
+Sitemap: https://michaelkahen.com/sitemap.xml
