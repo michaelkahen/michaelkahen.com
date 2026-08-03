@@ -263,7 +263,7 @@
 
 			document.body.appendChild(script);
 		}).catch(function (error) {
-			ecosystemLoader.innerHTML = "";
+			ecosystemLoader.replaceChildren();
 			const title = document.createElement("strong");
 			const detail = document.createElement("small");
 			title.textContent = "BIOSPHERE FAILED TO INITIALIZE";
@@ -310,7 +310,7 @@
 
 			document.body.appendChild(script);
 		}).catch(function (error) {
-			cpuLoader.innerHTML = "";
+			cpuLoader.replaceChildren();
 			const content = document.createElement("div");
 			const title = document.createElement("strong");
 			const detail = document.createElement("small");

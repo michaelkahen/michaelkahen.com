@@ -1,10 +1,10 @@
 # Resume document
 
-Add Michael's resume to this directory as:
+The public resume is stored at:
 
 ```text
-michael-kahen-resume.pdf
+Michael_Kahen_Resume.pdf
 ```
 
-The public Resume panel in `index.html` intentionally shows a pending state
-until the PDF is available.
+The Resume panel in `index.html` links to this exact case-sensitive filename for
+viewing and downloading.

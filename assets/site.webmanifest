@@ -1,7 +1,7 @@
 {
   "name": "Michael Kahen | Computer Engineer & Software Developer",
   "short_name": "Michael Kahen",
-  "description": "Michael Kahen's computer engineering and software development portfolio.",
+  "description": "I'm Michael Kahen, a computer engineer building interactive software, developer tools, simulations, and software that automates and speeds up everyday tasks.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
@@ -9,7 +9,7 @@
   "background_color": "#171a18",
   "theme_color": "#171a18",
   "lang": "en-US",
-  "categories": ["portfolio", "education", "developer tools"],
+  "categories": ["portfolio", "education", "developer tools", "automation"],
   "icons": [
     {
       "src": "/assets/icons/icon-192.png",

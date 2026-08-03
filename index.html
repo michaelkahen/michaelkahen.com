@@ -9,7 +9,7 @@
     <title>Michael Kahen | Computer Engineer &amp; Software Developer</title>
     <meta
       name="description"
-      content="Michael Kahen is a computer engineer and Stony Brook University graduate building interactive software, RISC-V tools, and autonomous simulations."
+      content="I'm Michael Kahen, a computer engineer building interactive software, RISC-V tools, simulations, and software that automates and speeds up everyday tasks."
     />
     <meta name="author" content="Michael Kahen" />
     <meta
@@ -47,7 +47,7 @@
     />
     <meta
       property="og:description"
-      content="Michael Kahen builds interactive software, RISC-V tools, and autonomous simulations. Explore his computer engineering portfolio."
+      content="I'm Michael Kahen. I build interactive software, RISC-V tools, simulations, and software that automates and speeds up everyday tasks. Explore my work."
     />
     <meta property="og:type" content="profile" />
     <meta property="og:url" content="https://michaelkahen.com/" />
@@ -78,7 +78,7 @@
     />
     <meta
       name="twitter:description"
-      content="Michael Kahen builds interactive software, RISC-V tools, and autonomous simulations."
+      content="I'm Michael Kahen. I build interactive software, RISC-V tools, simulations, and software that automates and speeds up everyday tasks."
     />
     <meta
       name="twitter:image"
@@ -107,24 +107,30 @@
             "@id": "https://michaelkahen.com/#profile-page",
             "url": "https://michaelkahen.com/",
             "name": "Michael Kahen | Computer Engineer & Software Developer",
-            "description": "Michael Kahen's computer engineering and software development portfolio.",
+            "description": "I'm Michael Kahen, a computer engineer building interactive software, developer tools, simulations, and software that automates and speeds up everyday tasks.",
             "inLanguage": "en-US",
             "isPartOf": { "@id": "https://michaelkahen.com/#website" },
             "mainEntity": { "@id": "https://michaelkahen.com/#michael-kahen" },
             "dateCreated": "2026-07-15",
-            "dateModified": "2026-07-24",
+            "dateModified": "2026-08-03",
             "hasPart": [
               { "@id": "https://michaelkahen.com/#biosphere-project" },
-              { "@id": "https://michaelkahen.com/#risc-v-project" }
+              { "@id": "https://michaelkahen.com/#risc-v-project" },
+              { "@id": "https://michaelkahen.com/#resume-document" }
             ]
           },
           {
             "@type": "Person",
             "@id": "https://michaelkahen.com/#michael-kahen",
             "name": "Michael Kahen",
+            "givenName": "Michael",
+            "familyName": "Kahen",
             "url": "https://michaelkahen.com/",
+            "mainEntityOfPage": {
+              "@id": "https://michaelkahen.com/#profile-page"
+            },
             "jobTitle": "Computer Engineer",
-            "description": "Computer engineer and software developer building simulations, developer tools, and interactive software.",
+            "description": "I'm Michael Kahen, a computer engineer building interactive software, developer tools, simulations, and software that automates and speeds up everyday tasks.",
             "email": "mailto:michael@michaelkahen.com",
             "alumniOf": {
               "@type": "CollegeOrUniversity",
@@ -138,7 +144,9 @@
               "Computer Architecture",
               "JavaScript",
               "Simulation",
-              "Procedural Generation"
+              "Procedural Generation",
+              "Automation",
+              "Workflow Automation"
             ],
             "sameAs": [
               "https://github.com/michaelkahen",
@@ -149,7 +157,7 @@
             "@type": "SoftwareSourceCode",
             "@id": "https://michaelkahen.com/#biosphere-project",
             "name": "Biosphere Unit",
-            "description": "A real-time autonomous ASCII ecosystem with procedural terrain, evolving wildlife, weather, resources, and population telemetry.",
+            "description": "I built a real-time autonomous ASCII ecosystem with procedural terrain, evolving wildlife, weather, resources, and population telemetry.",
             "url": "https://michaelkahen.com/#projects",
             "codeRepository": "https://github.com/michaelkahen/michaelkahen.com/blob/main/assets/js/ecosystem.js",
             "programmingLanguage": "JavaScript",
@@ -159,10 +167,20 @@
             "@type": "SoftwareSourceCode",
             "@id": "https://michaelkahen.com/#risc-v-project",
             "name": "RISC-V Pipeline Lab",
-            "description": "An interactive cycle-level RV32I CPU debugger with editable assembly, pipeline hazards, branch prediction, cache timing, and differential verification.",
+            "description": "I built an interactive cycle-level RV32I CPU debugger with editable assembly, pipeline hazards, branch prediction, cache timing, and differential verification.",
             "url": "https://michaelkahen.com/#cpu",
             "codeRepository": "https://github.com/michaelkahen/michaelkahen.com/blob/main/assets/js/cpu.js",
             "programmingLanguage": "JavaScript",
+            "author": { "@id": "https://michaelkahen.com/#michael-kahen" }
+          },
+          {
+            "@type": "DigitalDocument",
+            "@id": "https://michaelkahen.com/#resume-document",
+            "name": "Michael Kahen Resume",
+            "description": "My computer engineering and software development resume.",
+            "url": "https://michaelkahen.com/assets/documents/Michael_Kahen_Resume.pdf",
+            "encodingFormat": "application/pdf",
+            "inLanguage": "en-US",
             "author": { "@id": "https://michaelkahen.com/#michael-kahen" }
           }
         ]
@@ -210,6 +228,7 @@
             type="button"
             aria-pressed="false"
             aria-keyshortcuts="Alt+A"
+            aria-label="Toggle alternate technical labels"
           >
             <span class="utility-button__lamp" aria-hidden="true"></span>
             <span class="utility-button__label">ALT MODE</span>
@@ -220,6 +239,7 @@
             type="button"
             aria-pressed="false"
             aria-keyshortcuts="Alt+M"
+            aria-label="Toggle ambient motion"
           >
             <span class="utility-button__lamp" aria-hidden="true"></span>
             <span class="utility-button__label">MOTION ON</span>
@@ -234,10 +254,6 @@
           data-view="home"
           aria-labelledby="home-title"
         >
-          <h1 class="visually-hidden" id="home-title">
-            Michael Kahen, Computer Engineer
-          </h1>
-
           <div class="factory-stage">
             <nav
               class="factory-map"
@@ -479,13 +495,19 @@
                 S-17
               </div>
 
-              <section class="identity-hub" aria-label="Engineer profile">
+              <section class="identity-hub" aria-label="About Michael Kahen">
                 <span class="identity-hub__eyebrow">ENGINEER PROFILE</span>
-                <h2>MICHAEL KAHEN</h2>
+                <h1 id="home-title">MICHAEL KAHEN</h1>
                 <p>COMPUTER ENGINEER</p>
                 <p class="identity-hub__education">
                   STONY BROOK UNIVERSITY
                   <span>CLASS OF 2025</span>
+                </p>
+                <p class="identity-hub__intro">
+                  I'm a computer engineer and Stony Brook University Class of
+                  2025 graduate. I build interactive software, RISC-V tools, and
+                  autonomous simulations. I also build software that automates
+                  and speeds up everyday tasks.
                 </p>
                 <div class="identity-hub__status">
                   <span><i></i> CORE ONLINE</span>
@@ -530,10 +552,7 @@
                 data-machine="resume"
                 aria-describedby="machine-tip-resume"
               >
-                <span
-                  class="machine__light machine__light--warning"
-                  aria-hidden="true"
-                ></span>
+                <span class="machine__light" aria-hidden="true"></span>
                 <img
                   class="machine__art"
                   src="assets/icons/resume-archive.svg"
@@ -546,14 +565,14 @@
                   <small>RESUME</small>
                 </span>
                 <span class="machine__metadata alt-data"
-                  >VAULT R-25 // PDF PENDING</span
+                  >VAULT R-25 // PDF READY</span
                 >
                 <span
                   class="machine-tooltip"
                   id="machine-tip-resume"
                   role="tooltip"
                 >
-                  Resume document archive
+                  Open my available resume
                 </span>
               </a>
 
@@ -678,7 +697,7 @@
                 <span class="machine-window__kicker"
                   >ASSEMBLY COMPLEX A-01</span
                 >
-                <h1 id="projects-title">Projects</h1>
+                <h1 id="projects-title">My Projects</h1>
               </div>
               <span class="machine-window__grip" aria-hidden="true"></span>
               <a
@@ -805,9 +824,9 @@
                   <p class="section-label">ACTIVE RECIPE</p>
                   <h2 id="biosphere-project-title">Biosphere Unit</h2>
                   <p class="project-lede">
-                    A real-time autonomous ASCII ecosystem with procedural
-                    terrain, evolving wildlife, weather, resources, and live
-                    population telemetry.
+                    I built a real-time autonomous ASCII ecosystem with
+                    procedural terrain, evolving wildlife, weather, resources,
+                    and live population telemetry.
                   </p>
 
                   <dl class="project-specs">
@@ -919,9 +938,9 @@
                   <p class="section-label">ACTIVE RECIPE</p>
                   <h2 id="cpu-project-title">RISC-V Pipeline Lab</h2>
                   <p class="project-lede">
-                    An interactive cycle-level CPU debugger with editable
-                    assembly, visible hazards, branch prediction, cache timing,
-                    and differential verification.
+                    I built an interactive cycle-level CPU debugger with
+                    editable assembly, visible hazards, branch prediction, cache
+                    timing, and differential verification.
                   </p>
 
                   <dl class="project-specs">
@@ -1376,7 +1395,7 @@
                 <span class="machine-window__kicker"
                   >DOCUMENT ARCHIVE R-25</span
                 >
-                <h1 id="resume-title">Resume</h1>
+                <h1 id="resume-title">My Resume</h1>
               </div>
               <span class="machine-window__grip" aria-hidden="true"></span>
               <a
@@ -1400,37 +1419,50 @@
                 <span class="vault-scan"></span>
               </div>
               <div class="resume-console__content">
-                <span class="status-badge status-badge--warning">
-                  <i></i> FILE SLOT RESERVED
+                <span class="status-badge status-badge--ready">
+                  <i></i> PDF AVAILABLE
                 </span>
-                <h2>Resume document pending</h2>
+                <h2>View or download my resume</h2>
                 <p>
-                  My resume will be available here shortly. The archive is
-                  online, but its document module has not been installed yet.
+                  My resume is ready as a PDF. Open it in a new tab or download
+                  a copy for later.
                 </p>
-                <div
+                <a
                   class="document-slot"
-                  role="group"
-                  aria-label="Reserved resume file location"
+                  href="assets/documents/Michael_Kahen_Resume.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="View Michael Kahen's resume PDF in a new tab"
                 >
                   <span class="document-slot__icon" aria-hidden="true"
                     >PDF</span
                   >
                   <span>
-                    <strong>michael-kahen-resume.pdf</strong>
-                    <small>Awaiting document upload</small>
+                    <strong>Michael_Kahen_Resume.pdf</strong>
+                    <small>Computer engineering resume</small>
                   </span>
-                  <span class="document-slot__state">EMPTY</span>
-                </div>
-                <p class="technical-note alt-data">
-                  TARGET: /assets/documents/michael-kahen-resume.pdf
-                </p>
-                <a
-                  class="industrial-button"
-                  href="mailto:michael@michaelkahen.com?subject=Resume%20request"
-                >
-                  Request by email
+                  <span class="document-slot__state">READY ↗</span>
                 </a>
+                <p class="technical-note alt-data">
+                  TARGET: /assets/documents/Michael_Kahen_Resume.pdf
+                </p>
+                <div class="window-actions">
+                  <a
+                    class="industrial-button industrial-button--primary"
+                    href="assets/documents/Michael_Kahen_Resume.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    View my resume <span aria-hidden="true">↗</span>
+                  </a>
+                  <a
+                    class="industrial-button"
+                    href="assets/documents/Michael_Kahen_Resume.pdf"
+                    download="Michael_Kahen_Resume.pdf"
+                  >
+                    Download PDF
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -1449,7 +1481,7 @@
                 <span class="machine-window__kicker"
                   >COMMUNICATIONS RADAR C-36</span
                 >
-                <h1 id="contact-title">Contact</h1>
+                <h1 id="contact-title">Contact Me</h1>
               </div>
               <span class="machine-window__grip" aria-hidden="true"></span>
               <a
@@ -1479,7 +1511,7 @@
                 <span class="status-badge status-badge--ready"
                   ><i></i> CHANNEL OPEN</span
                 >
-                <h2>Send a signal</h2>
+                <h2>Let's connect</h2>
                 <p>
                   The fastest way to reach me is by email. GitHub and LinkedIn
                   are available through my dedicated uplinks.
@@ -1644,7 +1676,7 @@
           <span>Resume</span>
         </a>
         <a
-          class="quickbar-slot"
+          class="quickbar-slot quickbar-slot--social"
           href="https://github.com/michaelkahen"
           target="_blank"
           rel="me noopener noreferrer"
@@ -1658,7 +1690,7 @@
           <span>GitHub <span aria-hidden="true">↗</span></span>
         </a>
         <a
-          class="quickbar-slot"
+          class="quickbar-slot quickbar-slot--social"
           href="https://www.linkedin.com/in/michaelkahen/"
           target="_blank"
           rel="me noopener noreferrer"

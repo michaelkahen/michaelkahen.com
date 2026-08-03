@@ -1018,9 +1018,24 @@
     top: 0;
   }
 
+  .cpu-close {
+    width: 44px;
+    height: 44px;
+  }
+
   .cpu-toolbar {
-    position: sticky;
-    top: 62px;
+    position: relative;
+    top: auto;
+    flex-wrap: wrap;
+    align-items: stretch;
+    overflow-x: visible;
+  }
+
+  .cpu-control,
+  .cpu-button,
+  .cpu-toggle,
+  .cpu-tab {
+    min-height: 44px;
   }
 
   .cpu-workspace {
@@ -1028,19 +1043,23 @@
     overflow: visible;
   }
 
-  .cpu-code-panel,
-  .cpu-pipeline-panel,
-  .cpu-inspector-panel {
-    min-height: 520px;
+  .cpu-code-panel {
+    min-height: 440px;
+  }
+
+  .cpu-pipeline-panel {
+    min-height: 400px;
   }
 
   .cpu-inspector-panel {
     grid-column: auto;
+    min-height: 360px;
   }
 
   .cpu-pipeline {
     grid-template-columns: repeat(5, minmax(112px, 1fr));
     align-items: center;
+    overscroll-behavior-inline: contain;
   }
 
   .cpu-statusbar {
@@ -1070,23 +1089,74 @@
     display: none;
   }
 
+  .cpu-brand__copy h1 {
+    font-size: 15px;
+  }
+
   .cpu-toolbar {
-    top: 56px;
+    gap: 7px;
+    padding: 7px;
+  }
+
+  .cpu-toolbar__group {
+    width: 100%;
+  }
+
+  .cpu-toolbar__group:first-child .cpu-control {
+    flex: 1 1 auto;
+    max-width: none;
+  }
+
+  .cpu-toolbar__group:nth-child(2) {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .cpu-toolbar__group:nth-child(3) {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
   }
 
   .cpu-toolbar__group + .cpu-toolbar__group {
     margin-left: 0;
-    padding-left: 6px;
+    padding-top: 7px;
+    padding-left: 0;
+    border-top: 1px solid var(--cpu-line);
+    border-left: 0;
+  }
+
+  .cpu-toolbar__group .cpu-control,
+  .cpu-toolbar__group .cpu-button,
+  .cpu-toolbar__group .cpu-toggle {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    padding-inline: 6px;
+  }
+
+  .cpu-toggle {
+    justify-content: center;
   }
 
   .cpu-workspace {
     padding: 6px;
   }
 
-  .cpu-code-panel,
+  .cpu-code-panel {
+    min-height: 390px;
+  }
+
   .cpu-pipeline-panel,
   .cpu-inspector-panel {
-    min-height: 500px;
+    min-height: 350px;
+  }
+
+  .cpu-pipeline {
+    padding: 14px 12px;
+  }
+
+  .cpu-stage {
+    min-height: 180px;
   }
 
   .cpu-registers {
@@ -1095,6 +1165,20 @@
 
   .cpu-statusbar__hint {
     display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .cpu-close {
+    width: 44px;
+    height: 44px;
+  }
+
+  .cpu-control,
+  .cpu-button,
+  .cpu-toggle,
+  .cpu-tab {
+    min-height: 44px;
   }
 }
 

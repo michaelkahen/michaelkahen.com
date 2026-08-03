@@ -316,8 +316,8 @@
   }
 
   .ecosystem-close {
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
   }
 
   .terminal .footer-status {
@@ -331,7 +331,7 @@
   }
 
   .terminal .instructions button {
-    min-height: 32px;
+    min-height: 44px;
     padding-inline: 7px;
     font-size: 7px;
   }
@@ -359,6 +359,21 @@
     width: 100%;
     margin: 0;
     padding-inline: 4px;
+  }
+
+  .terminal .footer-status span:last-child {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .ecosystem-close {
+    width: 44px;
+    height: 44px;
+  }
+
+  .terminal .instructions button {
+    min-height: 44px;
   }
 }
 
