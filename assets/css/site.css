@@ -348,6 +348,69 @@ a:focus-visible {
 	scrollbar-width: thin;
 }
 
+/*
+ * Route-specific styles load with their feature modules. This lightweight
+ * shell prevents unstyled CPU or ecosystem markup from flashing meanwhile.
+ */
+
+.cpu-loader,
+.ecosystem-loader {
+	position: absolute;
+	z-index: 100;
+	inset: 0;
+	display: grid;
+	place-content: center;
+	justify-items: center;
+	gap: 10px;
+	padding: 24px;
+	background: #090c0a;
+	color: #b9e681;
+	font-family: var(--mono-font);
+	text-align: center;
+}
+
+.feature-loader__error {
+	display: grid;
+	justify-items: center;
+	gap: 8px;
+	max-width: 52ch;
+}
+
+.cpu-loader__content {
+	display: grid;
+	justify-items: center;
+	gap: 10px;
+}
+
+.cpu-loader__chip,
+.ecosystem-loader__gear {
+	display: block;
+	width: 34px;
+	height: 34px;
+	border: 7px dotted currentcolor;
+	border-radius: 50%;
+	opacity: 0.72;
+	animation: feature-loader-spin 2s linear infinite;
+}
+
+@keyframes feature-loader-spin {
+	to {
+		transform: rotate(1turn);
+	}
+}
+
+.feature-loader__error strong {
+	color: var(--orange-bright);
+	font-size: 12px;
+	letter-spacing: 0.12em;
+}
+
+.feature-loader__error small {
+	color: var(--muted);
+	font-size: 9px;
+	line-height: 1.5;
+}
+
 .site-view.is-entering .machine-window,
 .site-view.is-entering .terminal,
 .site-view.is-entering .cpu-app {
@@ -879,6 +942,448 @@ a:focus-visible {
 	height: auto;
 	filter: drop-shadow(0 8px 5px rgba(0, 0, 0, 0.45));
 	pointer-events: none;
+}
+
+/* Animated machinery overlays stay aligned to each 320 x 240 machine asset. */
+
+.machine__motion {
+	position: absolute;
+	z-index: 2;
+	top: 0;
+	left: 0;
+	display: block;
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	overflow: visible;
+	pointer-events: none;
+}
+
+.machine__motion i {
+	position: absolute;
+	display: block;
+	font-style: normal;
+}
+
+.machine--projects .machine__art,
+.machine--projects .machine__motion--assembler {
+	animation: machine-thrum 1.7s steps(2, end) infinite;
+	transform-origin: 50% 82%;
+}
+
+@keyframes machine-thrum {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-1px);
+	}
+}
+
+.machine__gear {
+	top: 36%;
+	left: 39.5%;
+	width: 21%;
+	aspect-ratio: 1;
+	border: clamp(1px, 0.16vw, 2px) dashed rgba(239, 151, 70, 0.82);
+	border-radius: 50%;
+	box-shadow:
+		inset 0 0 0 clamp(2px, 0.3vw, 4px) rgba(22, 28, 27, 0.45),
+		0 0 7px rgba(233, 138, 47, 0.18);
+	animation: machine-gear-turn 4.8s linear infinite;
+}
+
+.machine__gear::before,
+.machine__gear::after {
+	position: absolute;
+	top: 48%;
+	left: 13%;
+	width: 74%;
+	height: 4%;
+	border-radius: 999px;
+	background: rgba(225, 132, 55, 0.68);
+	box-shadow: 0 0 3px rgba(233, 138, 47, 0.35);
+	content: "";
+}
+
+.machine__gear::after {
+	transform: rotate(90deg);
+}
+
+@keyframes machine-gear-turn {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.machine__spark {
+	top: 57%;
+	left: 45%;
+	width: clamp(2px, 0.28vw, 4px);
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: #ffd58a;
+	box-shadow: 0 0 5px #f0933d;
+	opacity: 0;
+	animation: machine-spark 3.2s ease-out infinite;
+}
+
+.machine__spark--two {
+	left: 52%;
+	animation-delay: -3.08s;
+}
+
+.machine__spark--three {
+	top: 55%;
+	left: 49%;
+	animation-delay: -2.96s;
+}
+
+@keyframes machine-spark {
+	0%,
+	84%,
+	100% {
+		opacity: 0;
+		transform: translate(0, 0) scale(0.5);
+	}
+	87% {
+		opacity: 1;
+	}
+	96% {
+		opacity: 0;
+		transform: translate(-9px, 12px) scale(1.2);
+	}
+}
+
+.machine--projects .machine__steam {
+	animation: steam-puff 4.8s ease-out infinite;
+}
+
+.machine__archive-scan {
+	top: 25%;
+	left: 25.5%;
+	width: 48.5%;
+	height: clamp(1px, 0.18vw, 3px);
+	background: linear-gradient(90deg, transparent, #b9e681 22% 78%, transparent);
+	box-shadow: 0 0 8px rgba(185, 230, 129, 0.75);
+	opacity: 0;
+	animation: archive-scan 4.6s ease-in-out infinite;
+}
+
+@keyframes archive-scan {
+	0%,
+	12% {
+		opacity: 0;
+		transform: translateY(0);
+	}
+	18% {
+		opacity: 0.82;
+	}
+	70% {
+		opacity: 0.48;
+		transform: translateY(5200%);
+	}
+	76%,
+	100% {
+		opacity: 0;
+		transform: translateY(5200%);
+	}
+}
+
+.machine__archive-dial {
+	top: 43.5%;
+	left: 64.5%;
+	width: 10.5%;
+	aspect-ratio: 1;
+	border: clamp(1px, 0.16vw, 2px) dashed rgba(225, 137, 61, 0.78);
+	border-radius: 50%;
+	animation: archive-dial 8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+.machine__archive-dial::before {
+	position: absolute;
+	top: 12%;
+	left: calc(50% - 1px);
+	width: 2px;
+	height: 35%;
+	border-radius: 2px;
+	background: #e29549;
+	content: "";
+}
+
+@keyframes archive-dial {
+	0%,
+	20% {
+		transform: rotate(0);
+	}
+	38%,
+	68% {
+		transform: rotate(135deg);
+	}
+	86%,
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.machine__code-screen {
+	top: 35.5%;
+	left: 20.5%;
+	width: 35.5%;
+	height: 26%;
+	overflow: hidden;
+	border-radius: 2px;
+}
+
+.machine__code-screen::before {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		to bottom,
+		transparent 0 44%,
+		rgba(118, 182, 92, 0.2) 48%,
+		rgba(185, 230, 129, 0.68) 50%,
+		transparent 54%
+	);
+	content: "";
+	animation: code-screen-scan 2.8s linear infinite;
+}
+
+.machine__code-screen::after {
+	position: absolute;
+	right: 12%;
+	bottom: 14%;
+	width: 12%;
+	height: 4%;
+	background: #b9e681;
+	box-shadow: 0 0 4px rgba(185, 230, 129, 0.72);
+	content: "";
+	animation: code-cursor 900ms steps(2, end) infinite;
+}
+
+@keyframes code-screen-scan {
+	from {
+		transform: translateY(-55%);
+	}
+	to {
+		transform: translateY(55%);
+	}
+}
+
+@keyframes code-cursor {
+	50% {
+		opacity: 0;
+	}
+}
+
+.machine__uplink-ring {
+	top: -2%;
+	left: 72%;
+	width: 19%;
+	aspect-ratio: 1;
+	border: clamp(1px, 0.18vw, 3px) solid transparent;
+	border-top-color: rgba(245, 159, 77, 0.9);
+	border-right-color: rgba(245, 159, 77, 0.45);
+	border-radius: 50%;
+	animation: uplink-ping 2.4s ease-out infinite;
+}
+
+@keyframes uplink-ping {
+	0% {
+		opacity: 0;
+		transform: scale(0.3) rotate(-35deg);
+	}
+	18% {
+		opacity: 0.92;
+	}
+	72%,
+	100% {
+		opacity: 0;
+		transform: scale(1.5) rotate(28deg);
+	}
+}
+
+.machine__rack-lights {
+	top: 36.5%;
+	left: 79%;
+	width: clamp(2px, 0.28vw, 4px);
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: #b9e681;
+	box-shadow:
+		0 clamp(14px, 2.7vw, 43px) 0 #e98a2f,
+		0 clamp(27px, 5.2vw, 81px) 0 #b9e681,
+		0 0 5px rgba(185, 230, 129, 0.6);
+	animation: rack-lights 1.3s steps(2, end) infinite;
+}
+
+@keyframes rack-lights {
+	50% {
+		opacity: 0.32;
+	}
+}
+
+.machine__network-wave {
+	top: 7%;
+	left: 41%;
+	width: 18%;
+	aspect-ratio: 1;
+	border: clamp(1px, 0.18vw, 3px) solid rgba(239, 148, 67, 0.72);
+	border-radius: 50%;
+	opacity: 0;
+	animation: relay-wave 2.7s ease-out infinite;
+}
+
+@keyframes relay-wave {
+	0% {
+		opacity: 0.75;
+		transform: scale(0.2);
+	}
+	75%,
+	100% {
+		opacity: 0;
+		transform: scale(1.9);
+	}
+}
+
+.machine__network-node {
+	width: clamp(3px, 0.38vw, 6px);
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: #b9e681;
+	box-shadow: 0 0 7px rgba(185, 230, 129, 0.9);
+	animation: relay-node 2.1s ease-in-out infinite;
+}
+
+.machine__network-node:nth-of-type(2) {
+	top: 21%;
+	left: 20.5%;
+}
+
+.machine__network-node:nth-of-type(3) {
+	top: 11%;
+	left: 31.5%;
+	animation-delay: -0.35s;
+}
+
+.machine__network-node:nth-of-type(4) {
+	top: 21%;
+	right: 14%;
+	animation-delay: -0.7s;
+}
+
+.machine__network-node:nth-of-type(5) {
+	top: 11%;
+	right: 27%;
+	animation-delay: -1.05s;
+}
+
+.machine__network-node:nth-of-type(6) {
+	top: 51%;
+	left: 15%;
+	animation-delay: -1.4s;
+}
+
+.machine__network-node:nth-of-type(7) {
+	top: 51%;
+	right: 9.5%;
+	animation-delay: -1.75s;
+}
+
+@keyframes relay-node {
+	0%,
+	100% {
+		opacity: 0.28;
+		transform: scale(0.72);
+	}
+	45% {
+		opacity: 1;
+		transform: scale(1.5);
+	}
+}
+
+.machine__radar-sweep {
+	top: 36.5%;
+	left: 34%;
+	width: 34%;
+	height: clamp(1px, 0.18vw, 3px);
+	background: linear-gradient(90deg, #b9e681, rgba(185, 230, 129, 0));
+	box-shadow: -2px 0 4px rgba(185, 230, 129, 0.7);
+	transform: rotate(-24deg);
+	transform-origin: left center;
+	animation: radar-search 3.4s ease-in-out infinite alternate;
+}
+
+.machine__radar-sweep::after {
+	position: absolute;
+	right: 0;
+	top: 50%;
+	width: clamp(3px, 0.38vw, 6px);
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: #eaf9bb;
+	box-shadow: 0 0 8px #b9e681;
+	content: "";
+	transform: translateY(-50%);
+}
+
+@keyframes radar-search {
+	from {
+		opacity: 0.34;
+		transform: rotate(-45deg);
+	}
+	to {
+		opacity: 0.92;
+		transform: rotate(-9deg);
+	}
+}
+
+.machine__radar-echo {
+	top: 15%;
+	left: 49%;
+	width: 18%;
+	aspect-ratio: 1;
+	border: clamp(1px, 0.18vw, 3px) solid transparent;
+	border-top-color: rgba(233, 138, 47, 0.88);
+	border-right-color: rgba(233, 138, 47, 0.36);
+	border-radius: 50%;
+	opacity: 0;
+	animation: radar-echo 2.6s ease-out infinite;
+}
+
+.machine__radar-echo--two {
+	animation-delay: -1.3s;
+}
+
+@keyframes radar-echo {
+	0% {
+		opacity: 0.72;
+		transform: scale(0.35) rotate(-25deg);
+	}
+	72%,
+	100% {
+		opacity: 0;
+		transform: scale(1.8) rotate(16deg);
+	}
+}
+
+.machine:hover .machine__gear,
+.machine:focus-visible .machine__gear {
+	animation-duration: 2.4s;
+}
+
+.machine:hover .machine__archive-scan,
+.machine:focus-visible .machine__archive-scan {
+	animation-duration: 2.5s;
+}
+
+.machine:hover .machine__uplink-ring,
+.machine:focus-visible .machine__uplink-ring,
+.machine:hover .machine__network-wave,
+.machine:focus-visible .machine__network-wave,
+.machine:hover .machine__radar-echo,
+.machine:focus-visible .machine__radar-echo {
+	animation-duration: 1.45s;
 }
 
 .machine__plate {
@@ -2209,7 +2714,17 @@ html:not(.js) .quickbar {
 .site-shell.is-motion-paused .radar-blip,
 .site-shell.is-motion-paused .machine__signal,
 .site-shell.is-motion-paused .machine__steam,
-.site-shell.is-motion-paused .machine__light {
+.site-shell.is-motion-paused .machine__light,
+.site-shell.is-motion-paused .cpu-loader__chip,
+.site-shell.is-motion-paused .ecosystem-loader__gear {
+	animation-play-state: paused !important;
+}
+
+.site-shell.is-motion-paused .machine__art,
+.site-shell.is-motion-paused .machine__motion,
+.site-shell.is-motion-paused .machine__motion *,
+.site-shell.is-motion-paused .machine__motion *::before,
+.site-shell.is-motion-paused .machine__motion *::after {
 	animation-play-state: paused !important;
 }
 
@@ -2401,6 +2916,12 @@ html:not(.js) .quickbar {
 		justify-self: center;
 		width: min(100%, 220px);
 		max-height: 160px;
+	}
+
+	.machine__motion {
+		top: 8px;
+		left: max(8px, calc(50% - 110px));
+		width: min(calc(100% - 16px), 220px);
 	}
 
 	.machine__plate {
@@ -2670,7 +3191,21 @@ html:not(.js) .quickbar {
 		opacity: 0.76;
 	}
 
+	.machine__motion {
+		top: -7px;
+		right: -13px;
+		left: auto;
+		width: 118px;
+		opacity: 0.88;
+	}
+
 	.machine--contact .machine__art {
+		top: -18px;
+		right: 10px;
+		width: 120px;
+	}
+
+	.machine--contact .machine__motion {
 		top: -18px;
 		right: 10px;
 		width: 120px;

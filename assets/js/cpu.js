@@ -1404,8 +1404,15 @@
     const cacheGrid = document.getElementById("cpu-cache");
     const predictorGrid = document.getElementById("cpu-predictor-table");
     const stateLabel = document.getElementById("cpu-state");
-    const loader = document.getElementById("cpu-loader");
-    const stageElements = Array.from(root.querySelectorAll("[data-cpu-stage]"));
+    const stageViews = Array.from(root.querySelectorAll("[data-cpu-stage]"), function (element) {
+      return {
+        element: element,
+        name: element.dataset.cpuStage,
+        pc: element.querySelector("[data-stage-pc]"),
+        instruction: element.querySelector("[data-stage-instruction]"),
+        detail: element.querySelector("[data-stage-detail]"),
+      };
+    });
     const telemetry = {
       pc: document.getElementById("cpu-stat-pc"),
       cycles: document.getElementById("cpu-stat-cycles"),
@@ -1424,6 +1431,7 @@
     let cycleBudget = 0;
     let assembledSource = "";
     let activeInspector = "registers";
+    let listingRows = [];
 
     Object.keys(SAMPLE_PROGRAMS).forEach(function (key) {
       const option = createElement("option", "", SAMPLE_PROGRAMS[key].name);
@@ -1434,13 +1442,29 @@
     const registerCells = Array.from({ length: 32 }, function (_, index) {
       const cell = createElement("div", "cpu-register");
       cell.dataset.register = String(index);
+      if (index === 0) {
+        cell.classList.add("is-zero");
+      }
       const name = createElement("span", "cpu-register__name", "x" + index + " · " + ABI_NAMES[index]);
       const value = createElement("strong", "cpu-register__value", "0x00000000");
       const signed = createElement("small", "cpu-register__signed", "0");
       cell.append(name, value, signed);
       registerGrid.appendChild(cell);
-      return { cell: cell, value: value, signed: signed };
+      return { cell: cell, value: value, signed: signed, lastValue: 0 };
     });
+
+    const eventItems = Array.from({ length: 4 }, function () {
+      const item = createElement("li", "cpu-event");
+      item.hidden = true;
+      eventFeed.appendChild(item);
+      return item;
+    });
+
+    function updateText(element, text) {
+      if (element.textContent !== text) {
+        element.textContent = text;
+      }
+    }
 
     function setDiagnostic(message, type) {
       diagnostic.textContent = message;
@@ -1458,8 +1482,8 @@
 
     function renderListing(program, activeLines) {
       if (program) {
-        listing.innerHTML = "";
-        program.instructions.forEach(function (instruction) {
+        const fragment = document.createDocumentFragment();
+        listingRows = program.instructions.map(function (instruction) {
           const row = createElement("div", "cpu-listing__row");
           row.dataset.pc = String(instruction.pc);
           row.dataset.line = String(instruction.lineNumber);
@@ -1468,13 +1492,18 @@
             createElement("span", "cpu-listing__word", hex(instruction.word)),
             createElement("span", "cpu-listing__source", instruction.text),
           );
-          listing.appendChild(row);
+          fragment.appendChild(row);
+          return row;
         });
+        listing.replaceChildren(fragment);
       }
       const lines = activeLines || {};
-      Array.from(listing.children).forEach(function (row) {
-        row.classList.toggle("is-active", Boolean(lines[row.dataset.pc]));
-        row.dataset.stage = lines[row.dataset.pc] || "";
+      listingRows.forEach(function (row) {
+        const nextStage = lines[row.dataset.pc] || "";
+        if (row.dataset.stage !== nextStage) {
+          row.classList.toggle("is-active", Boolean(nextStage));
+          row.dataset.stage = nextStage;
+        }
       });
     }
 
@@ -1500,7 +1529,7 @@
       }
       return {
         pc: hex(payload.pc !== undefined ? payload.pc : meta.pc, 4),
-        instruction: meta.text || decoded.name,
+        instruction: meta.text || (decoded ? decoded.name : "FETCH"),
         detail: detail,
       };
     }
@@ -1509,25 +1538,28 @@
       if (activeInspector === "registers") {
         registerCells.forEach(function (parts, index) {
           const value = snapshot.registers[index];
-          parts.value.textContent = hex(value);
-          parts.signed.textContent = String(value);
+          if (parts.lastValue !== value) {
+            updateText(parts.value, hex(value));
+            updateText(parts.signed, String(value));
+            parts.lastValue = value;
+          }
           parts.cell.classList.toggle("is-changed", snapshot.changedRegisters.includes(index));
-          parts.cell.classList.toggle("is-zero", index === 0);
         });
       } else if (activeInspector === "memory") {
-        memoryGrid.innerHTML = "";
+        const fragment = document.createDocumentFragment();
         let shown = 0;
         for (let address = 0; address < snapshot.memory.length && shown < 32; address += 4) {
           const value = readWord(snapshot.memory, address);
           if (value !== 0 || address < 32) {
             const row = createElement("div", "cpu-table-row");
             row.append(createElement("span", "", hex(address, 4)), createElement("strong", "", hex(value)), createElement("small", "", String(value)));
-            memoryGrid.appendChild(row);
+            fragment.appendChild(row);
             shown += 1;
           }
         }
+        memoryGrid.replaceChildren(fragment);
       } else if (activeInspector === "cache") {
-        cacheGrid.innerHTML = "";
+        const fragment = document.createDocumentFragment();
         snapshot.cache.forEach(function (line) {
           const row = createElement("div", "cpu-table-row cpu-table-row--cache");
           row.classList.toggle("is-valid", line.valid);
@@ -1536,10 +1568,11 @@
             createElement("strong", "", line.valid ? "TAG " + hex(line.tag, 2) : "INVALID"),
             createElement("small", "", line.words.map(function (word) { return hex(word); }).join("  ")),
           );
-          cacheGrid.appendChild(row);
+          fragment.appendChild(row);
         });
+        cacheGrid.replaceChildren(fragment);
       } else if (activeInspector === "predictor") {
-        predictorGrid.innerHTML = "";
+        const fragment = document.createDocumentFragment();
         snapshot.predictor.forEach(function (entry) {
           const row = createElement("div", "cpu-table-row cpu-table-row--predictor");
           row.classList.toggle("is-valid", entry.valid);
@@ -1549,8 +1582,9 @@
             createElement("strong", "", entry.valid ? states[entry.counter] : "EMPTY"),
             createElement("small", "", entry.valid ? hex(entry.tag << 2, 4) + " → " + hex(entry.target, 4) : "No branch recorded"),
           );
-          predictorGrid.appendChild(row);
+          fragment.appendChild(row);
         });
+        predictorGrid.replaceChildren(fragment);
       }
     }
 
@@ -1558,50 +1592,57 @@
       const snapshot = cpu.snapshot();
       root.dataset.cpuState = snapshot.state;
       const stateText = snapshot.state.toUpperCase();
-      if (stateLabel.textContent !== stateText) {
-        stateLabel.textContent = stateText;
-      }
+      updateText(stateLabel, stateText);
       stateLabel.dataset.state = snapshot.state;
-      runButton.textContent = running ? "Pause" : "Run";
+      updateText(runButton, running ? "Pause" : "Run");
       runButton.setAttribute("aria-pressed", String(running));
       const terminal = ["halted", "complete", "fault"].includes(snapshot.state);
       stepButton.disabled = terminal || snapshot.state === "empty";
       runButton.disabled = terminal || snapshot.state === "empty";
 
-      const activeLines = {};
-      stageElements.forEach(function (stageElement) {
-        const stageName = stageElement.dataset.cpuStage;
-        const payload = snapshot.pipeline[stageName];
-        const formatted = formatStage(stageName, payload);
-        stageElement.classList.toggle("is-bubble", !payload);
-        stageElement.querySelector("[data-stage-pc]").textContent = formatted.pc;
-        stageElement.querySelector("[data-stage-instruction]").textContent = formatted.instruction;
-        stageElement.querySelector("[data-stage-detail]").textContent = formatted.detail;
+      const activeLines = Object.create(null);
+      stageViews.forEach(function (stage) {
+        const payload = snapshot.pipeline[stage.name];
+        const formatted = formatStage(stage.name, payload);
+        stage.element.classList.toggle("is-bubble", !payload);
+        updateText(stage.pc, formatted.pc);
+        updateText(stage.instruction, formatted.instruction);
+        updateText(stage.detail, formatted.detail);
         if (payload) {
-          const pcValue = payload.pc !== undefined ? payload.pc : payload.pc;
-          activeLines[String(pcValue)] = stageName;
+          const meta = payload.meta || payload;
+          const pcValue = payload.pc !== undefined ? payload.pc : meta.pc;
+          if (pcValue !== undefined) {
+            activeLines[String(pcValue)] = stage.name;
+          }
         }
       });
       renderListing(null, activeLines);
 
-      eventFeed.innerHTML = "";
       const events = snapshot.events.length
         ? snapshot.events
         : [{ type: "idle", message: snapshot.state === "ready" ? "Ready to execute cycle 1" : "No pipeline event this cycle" }];
-      events.slice(-4).forEach(function (event) {
-        const item = createElement("li", "cpu-event cpu-event--" + event.type, event.message);
-        eventFeed.appendChild(item);
+      const visibleEvents = events.slice(-4);
+      eventItems.forEach(function (item, index) {
+        const event = visibleEvents[index];
+        item.hidden = !event;
+        if (event) {
+          const className = "cpu-event cpu-event--" + event.type;
+          if (item.className !== className) {
+            item.className = className;
+          }
+          updateText(item, event.message);
+        }
       });
 
-      telemetry.pc.textContent = hex(snapshot.pc, 4);
-      telemetry.cycles.textContent = String(snapshot.stats.cycles);
-      telemetry.retired.textContent = String(snapshot.stats.retired);
-      telemetry.cpi.textContent = snapshot.stats.cpi ? snapshot.stats.cpi.toFixed(2) : "—";
-      telemetry.stalls.textContent = String(snapshot.stats.dataStalls + snapshot.stats.cacheStalls);
-      telemetry.branches.textContent = snapshot.stats.predictions ? Math.round(snapshot.stats.branchAccuracy * 100) + "%" : "—";
-      telemetry.cache.textContent = snapshot.stats.cacheHits + snapshot.stats.cacheMisses
+      updateText(telemetry.pc, hex(snapshot.pc, 4));
+      updateText(telemetry.cycles, String(snapshot.stats.cycles));
+      updateText(telemetry.retired, String(snapshot.stats.retired));
+      updateText(telemetry.cpi, snapshot.stats.cpi ? snapshot.stats.cpi.toFixed(2) : "—");
+      updateText(telemetry.stalls, String(snapshot.stats.dataStalls + snapshot.stats.cacheStalls));
+      updateText(telemetry.branches, snapshot.stats.predictions ? Math.round(snapshot.stats.branchAccuracy * 100) + "%" : "—");
+      updateText(telemetry.cache, snapshot.stats.cacheHits + snapshot.stats.cacheMisses
         ? Math.round(snapshot.stats.cacheHitRate * 100) + "%"
-        : "—";
+        : "—");
 
       renderInspector(snapshot);
       if (snapshot.state === "fault" && snapshot.fault) {
@@ -1689,7 +1730,8 @@
         } else {
           setDiagnostic(error.message, "error");
         }
-        listing.innerHTML = "";
+        listingRows = [];
+        listing.replaceChildren();
         render();
         return false;
       }
@@ -1748,7 +1790,7 @@
     });
     editor.addEventListener("scroll", function () {
       lineNumbers.style.transform = "translateY(" + (-editor.scrollTop) + "px)";
-    });
+    }, { passive: true });
 
     const inspectorTabs = Array.from(root.querySelectorAll("[data-inspector-tab]"));
     inspectorTabs.forEach(function (tab, tabIndex) {
@@ -1801,7 +1843,6 @@
     updateLineNumbers();
     sampleSelect.value = "fibonacci";
     assembleEditor(false);
-    loader.hidden = true;
 
     return {
       setActive: function (isActive) {

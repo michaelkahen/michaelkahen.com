@@ -8,8 +8,6 @@
 	const copyEmailButton = document.getElementById("copy-email-button");
 	const toast = document.getElementById("site-toast");
 	const routeAnnouncer = document.getElementById("route-announcer");
-	const ecosystemLoader = document.getElementById("ecosystem-loader");
-	const cpuLoader = document.getElementById("cpu-loader");
 	const views = new Map();
 	const navigationLinks = Array.from(
 		document.querySelectorAll("[data-nav-route]"),
@@ -63,11 +61,31 @@
 			navigationRoute: "contact",
 		},
 	};
+	const featureModules = {
+		ecosystem: {
+			apiName: "ECOSYSTEM",
+			loader: document.getElementById("ecosystem-loader"),
+			scriptUrl: shell.dataset.ecosystemScript,
+			stylesheetUrl: shell.dataset.ecosystemStyle,
+			failureTitle: "BIOSPHERE FAILED TO INITIALIZE",
+			failureToast: "Unable to load the ecosystem",
+			respectsMotionPreference: true,
+		},
+		cpu: {
+			apiName: "CPU_LAB",
+			loader: document.getElementById("cpu-loader"),
+			scriptUrl: shell.dataset.cpuScript,
+			stylesheetUrl: shell.dataset.cpuStyle,
+			failureTitle: "CPU LAB FAILED TO INITIALIZE",
+			failureToast: "Unable to load the CPU lab",
+			respectsMotionPreference: false,
+		},
+	};
+	const featureLoadPromises = new Map();
 
 	let activeRoute = null;
-	let ecosystemLoadPromise = null;
-	let cpuLoadPromise = null;
 	let toastTimer = 0;
+	let toastFrame = 0;
 	let altModeEnabled = readPreference("mk-alt-mode") === "enabled";
 	let motionPaused =
 		reducedMotionQuery.matches || readPreference("mk-motion") === "paused";
@@ -133,11 +151,14 @@
 
 	function showToast(message) {
 		window.clearTimeout(toastTimer);
+		window.cancelAnimationFrame(toastFrame);
 		toast.textContent = message;
 		toast.hidden = false;
 		toast.classList.remove("is-visible");
-		void toast.offsetWidth;
-		toast.classList.add("is-visible");
+		toastFrame = window.requestAnimationFrame(function () {
+			toast.classList.add("is-visible");
+			toastFrame = 0;
+		});
 		toastTimer = window.setTimeout(function () {
 			toast.hidden = true;
 			toast.classList.remove("is-visible");
@@ -210,12 +231,8 @@
 			}, 280);
 		});
 
-		if (route === "ecosystem") {
-			loadEcosystem();
-		}
-
-		if (route === "cpu") {
-			loadCpu();
+		if (featureModules[route]) {
+			loadFeatureModule(route);
 		}
 
 		if (moveFocus) {
@@ -227,103 +244,109 @@
 		routeAnnouncer.textContent = routes[route].announcement + " opened";
 	}
 
-	function loadEcosystem() {
-		if (window.ECOSYSTEM) {
-			ecosystemLoader.hidden = true;
-			window.ECOSYSTEM.setActive(!motionPaused);
-			return Promise.resolve(window.ECOSYSTEM);
-		}
-
-		if (ecosystemLoadPromise) {
-			return ecosystemLoadPromise;
-		}
-
-		ecosystemLoader.hidden = false;
-		ecosystemLoadPromise = new Promise(function (resolve, reject) {
-			const script = document.createElement("script");
-			script.src = shell.dataset.ecosystemScript;
-			script.async = true;
-
-			script.addEventListener("load", function () {
-				if (!window.ECOSYSTEM) {
-					reject(new Error("The ecosystem lifecycle API did not initialize."));
-					return;
-				}
-
-				ecosystemLoader.hidden = true;
-				window.ECOSYSTEM.setActive(
-					activeRoute === "ecosystem" && !motionPaused,
-				);
-				resolve(window.ECOSYSTEM);
-			});
-
-			script.addEventListener("error", function () {
-				reject(new Error("The ecosystem script could not be loaded."));
-			});
-
-			document.body.appendChild(script);
-		}).catch(function (error) {
-			ecosystemLoader.replaceChildren();
-			const title = document.createElement("strong");
-			const detail = document.createElement("small");
-			title.textContent = "BIOSPHERE FAILED TO INITIALIZE";
-			detail.textContent = error.message;
-			ecosystemLoader.append(title, detail);
-			showToast("Unable to load the ecosystem");
-			return null;
+	function loadStylesheet(url) {
+		return new Promise(function (resolve, reject) {
+			const link = document.createElement("link");
+			link.rel = "stylesheet";
+			link.href = url;
+			link.addEventListener("load", function () {
+				resolve(link);
+			}, { once: true });
+			link.addEventListener("error", function () {
+				link.remove();
+				reject(new Error("Unable to load " + url + "."));
+			}, { once: true });
+			document.head.appendChild(link);
 		});
-
-		return ecosystemLoadPromise;
 	}
 
-	function loadCpu() {
-		if (window.CPU_LAB) {
-			cpuLoader.hidden = true;
-			window.CPU_LAB.setActive(true);
-			return Promise.resolve(window.CPU_LAB);
-		}
-
-		if (cpuLoadPromise) {
-			return cpuLoadPromise;
-		}
-
-		cpuLoader.hidden = false;
-		cpuLoadPromise = new Promise(function (resolve, reject) {
+	function loadScript(url) {
+		return new Promise(function (resolve, reject) {
 			const script = document.createElement("script");
-			script.src = shell.dataset.cpuScript;
+			script.src = url;
 			script.async = true;
-
 			script.addEventListener("load", function () {
-				if (!window.CPU_LAB) {
-					reject(new Error("The CPU lab lifecycle API did not initialize."));
-					return;
+				resolve(script);
+			}, { once: true });
+			script.addEventListener("error", function () {
+				script.remove();
+				reject(new Error("Unable to load " + url + "."));
+			}, { once: true });
+			document.body.appendChild(script);
+		});
+	}
+
+	function featureShouldBeActive(route, feature) {
+		return (
+			activeRoute === route &&
+			(!feature.respectsMotionPreference || !motionPaused)
+		);
+	}
+
+	function showFeatureError(feature, error) {
+		const content = document.createElement("div");
+		const title = document.createElement("strong");
+		const detail = document.createElement("small");
+		content.className = "feature-loader__error";
+		title.textContent = feature.failureTitle;
+		detail.textContent = error.message;
+		content.append(title, detail);
+		feature.loader.replaceChildren(content);
+		feature.loader.setAttribute("role", "alert");
+		showToast(feature.failureToast);
+	}
+
+	function loadFeatureModule(route) {
+		const feature = featureModules[route];
+		const view = views.get(route);
+		const existingApi = window[feature.apiName];
+		const pendingLoad = featureLoadPromises.get(route);
+
+		if (pendingLoad) {
+			return pendingLoad.then(function (api) {
+				if (api) {
+					api.setActive(featureShouldBeActive(route, feature));
+				}
+				return api;
+			});
+		}
+
+		if (existingApi) {
+			feature.loader.hidden = true;
+			existingApi.setActive(featureShouldBeActive(route, feature));
+			return Promise.resolve(existingApi);
+		}
+
+		feature.loader.hidden = false;
+		feature.loader.setAttribute("role", "status");
+		view.setAttribute("aria-busy", "true");
+		const loadPromise = Promise.all([
+			loadStylesheet(feature.stylesheetUrl),
+			loadScript(feature.scriptUrl),
+		])
+			.then(function () {
+				const api = window[feature.apiName];
+				if (!api || typeof api.setActive !== "function") {
+					throw new Error("The feature lifecycle API did not initialize.");
 				}
 
-				cpuLoader.hidden = true;
-				window.CPU_LAB.setActive(activeRoute === "cpu");
-				resolve(window.CPU_LAB);
+				feature.loader.hidden = true;
+				view.removeAttribute("aria-busy");
+				api.setActive(featureShouldBeActive(route, feature));
+				return api;
+			})
+			.catch(function (error) {
+				const api = window[feature.apiName];
+				if (api && typeof api.setActive === "function") {
+					api.setActive(false);
+				}
+				view.removeAttribute("aria-busy");
+				showFeatureError(feature, error);
+				return null;
 			});
 
-			script.addEventListener("error", function () {
-				reject(new Error("The CPU lab script could not be loaded."));
-			});
-
-			document.body.appendChild(script);
-		}).catch(function (error) {
-			cpuLoader.replaceChildren();
-			const content = document.createElement("div");
-			const title = document.createElement("strong");
-			const detail = document.createElement("small");
-			content.className = "cpu-loader__content";
-			title.textContent = "CPU LAB FAILED TO INITIALIZE";
-			detail.textContent = error.message;
-			content.append(title, detail);
-			cpuLoader.appendChild(content);
-			showToast("Unable to load the CPU lab");
-			return null;
-		});
-
-		return cpuLoadPromise;
+		featureLoadPromises.set(route, loadPromise);
+		return loadPromise;
 	}
 
 	function setFactoryRoute(machineName) {

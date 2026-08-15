@@ -112,7 +112,7 @@
             "isPartOf": { "@id": "https://michaelkahen.com/#website" },
             "mainEntity": { "@id": "https://michaelkahen.com/#michael-kahen" },
             "dateCreated": "2026-07-15",
-            "dateModified": "2026-08-03",
+            "dateModified": "2026-08-15",
             "hasPart": [
               { "@id": "https://michaelkahen.com/#biosphere-project" },
               { "@id": "https://michaelkahen.com/#risc-v-project" },
@@ -190,8 +190,6 @@
       document.documentElement.classList.add("js");
     </script>
     <link rel="stylesheet" href="assets/css/site.css" />
-    <link rel="stylesheet" href="assets/css/ecosystem.css" />
-    <link rel="stylesheet" href="assets/css/cpu.css" />
     <script defer src="assets/js/site.js"></script>
   </head>
   <body>
@@ -202,7 +200,9 @@
       id="site-shell"
       data-route="home"
       data-ecosystem-script="assets/js/ecosystem.js"
+      data-ecosystem-style="assets/css/ecosystem.css"
       data-cpu-script="assets/js/cpu.js"
+      data-cpu-style="assets/css/cpu.css"
     >
       <header class="site-header">
         <a class="site-identity" href="#home" aria-label="My portfolio home">
@@ -527,6 +527,15 @@
                   width="320"
                   height="240"
                 />
+                <span
+                  class="machine__motion machine__motion--assembler"
+                  aria-hidden="true"
+                >
+                  <i class="machine__gear"></i>
+                  <i class="machine__spark machine__spark--one"></i>
+                  <i class="machine__spark machine__spark--two"></i>
+                  <i class="machine__spark machine__spark--three"></i>
+                </span>
                 <span class="machine__plate">
                   <strong>ASSEMBLY COMPLEX</strong>
                   <small>PROJECTS</small>
@@ -557,6 +566,13 @@
                   width="320"
                   height="240"
                 />
+                <span
+                  class="machine__motion machine__motion--archive"
+                  aria-hidden="true"
+                >
+                  <i class="machine__archive-scan"></i>
+                  <i class="machine__archive-dial"></i>
+                </span>
                 <span class="machine__plate">
                   <strong>DOCUMENT ARCHIVE</strong>
                   <small>RESUME</small>
@@ -589,6 +605,14 @@
                   width="320"
                   height="240"
                 />
+                <span
+                  class="machine__motion machine__motion--uplink"
+                  aria-hidden="true"
+                >
+                  <i class="machine__code-screen"></i>
+                  <i class="machine__uplink-ring"></i>
+                  <i class="machine__rack-lights"></i>
+                </span>
                 <span class="machine__plate">
                   <strong>CODE UPLINK</strong>
                   <small>GITHUB <span aria-hidden="true">↗</span></small>
@@ -621,6 +645,18 @@
                   width="320"
                   height="240"
                 />
+                <span
+                  class="machine__motion machine__motion--relay"
+                  aria-hidden="true"
+                >
+                  <i class="machine__network-wave"></i>
+                  <i class="machine__network-node"></i>
+                  <i class="machine__network-node"></i>
+                  <i class="machine__network-node"></i>
+                  <i class="machine__network-node"></i>
+                  <i class="machine__network-node"></i>
+                  <i class="machine__network-node"></i>
+                </span>
                 <span class="machine__plate">
                   <strong>NETWORK RELAY</strong>
                   <small>LINKEDIN <span aria-hidden="true">↗</span></small>
@@ -652,6 +688,14 @@
                   width="320"
                   height="240"
                 />
+                <span
+                  class="machine__motion machine__motion--radar"
+                  aria-hidden="true"
+                >
+                  <i class="machine__radar-sweep"></i>
+                  <i class="machine__radar-echo machine__radar-echo--one"></i>
+                  <i class="machine__radar-echo machine__radar-echo--two"></i>
+                </span>
                 <span class="machine__plate">
                   <strong>COMMUNICATIONS</strong>
                   <small>CONTACT</small>

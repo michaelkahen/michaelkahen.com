@@ -65,13 +65,15 @@ cache, predictor, decoder, and a sequential reference interpreter to Node. Run
 the verification suite with:
 
 ```sh
-node --test tests/cpu.test.js
+node --test tests/*.test.js
 ```
 
 The suite covers canonical encodings, instruction semantics, forwarding,
 interlocks, flushes, cache behavior, predictor saturation, faults, built-in
 programs, and deterministic generated programs checked against the independent
-reference model.
+reference model. It also guards the site's critical-resource budget, lazy
+feature entry points, unique IDs, image layout dimensions, and new-tab link
+isolation.
 
 ## Autonomous Ecosystem
 
@@ -117,6 +119,32 @@ The production site is intentionally self-contained:
   management.
 - `assets/icons/` contains the original SVG machine artwork and site identity.
 - `assets/documents/` is reserved for portfolio documents.
+
+## Performance Engineering
+
+The loading and rendering paths are intentionally split by responsibility:
+
+- The initial route downloads only the shared shell stylesheet and controller.
+  CPU and ecosystem stylesheets load in parallel with their JavaScript the
+  first time their route opens, behind an accessible `aria-busy` loading state.
+- Feature modules expose a small `setActive` lifecycle API. Their animation
+  loops stop when their route closes, and the ecosystem also suspends when the
+  document is hidden or reduced motion is requested.
+- The CPU debugger caches hot-path DOM references, retains listing and event
+  nodes, skips unchanged text mutations, and batches table replacement through
+  document fragments. Simulation work stays separate from presentation logic.
+- The ecosystem uses a fixed simulation step, requestAnimationFrame rendering,
+  spatial hashing, cached background layers, bounded catch-up work, and entity
+  caps so frame rate cannot change simulation behavior or cause runaway work.
+- Original SVG assets provide resolution-independent machinery without a font,
+  component framework, analytics bundle, or other third-party runtime cost.
+- Every image declares intrinsic dimensions, noncritical route imagery is lazy
+  decoded, and all ambient effects honor the global motion preference.
+- The site regression suite enforces a 30 KiB gzip budget for the HTML, shared
+  stylesheet, and boot controller combined.
+
+This keeps the first paint small while preserving deterministic engineering
+projects that can be inspected and tested independently of the page shell.
 
 ## Repository Structure
 
