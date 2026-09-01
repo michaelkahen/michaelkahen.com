@@ -18,7 +18,7 @@ giving each major section a distinct route.
 
 I designed the interface for keyboard, pointer, and touch use. It includes
 focus management, live announcements, semantic controls, responsive layouts,
-and reduced-motion support.
+and a global motion control.
 
 ## Architecture
 
@@ -36,8 +36,8 @@ I intentionally keep the production site self-contained:
 
 I keep the initial loading path small and defer nonessential resources until
 they are needed. I also stop inactive animation loops, avoid unnecessary DOM
-updates, lazy-load noncritical imagery, and honor the global reduced-motion
-preference.
+updates, lazy-load noncritical imagery, and provide a global control for pausing
+ambient motion.
 
 The site does not require a component framework, analytics bundle, external
 font, or other third-party runtime dependency. Every image declares intrinsic

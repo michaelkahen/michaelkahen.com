@@ -1,6 +1,4 @@
-(function () {
-	"use strict";
-
+(() => {
 	const shell = document.getElementById("site-shell");
 	const factoryMap = document.getElementById("factory-map");
 	const altModeButton = document.getElementById("alt-mode-button");
@@ -25,10 +23,6 @@
 	const projectReadoutSource = document.querySelector(
 		"[data-project-readout-source]",
 	);
-	const reducedMotionQuery = window.matchMedia(
-		"(prefers-reduced-motion: reduce)",
-	);
-
 	const routes = {
 		home: {
 			title: "Michael Kahen | Computer Engineer & Software Developer",
@@ -87,10 +81,9 @@
 	let toastTimer = 0;
 	let toastFrame = 0;
 	let altModeEnabled = readPreference("mk-alt-mode") === "enabled";
-	let motionPaused =
-		reducedMotionQuery.matches || readPreference("mk-motion") === "paused";
+	let motionPaused = false;
 
-	document.querySelectorAll("[data-view]").forEach(function (view) {
+	document.querySelectorAll("[data-view]").forEach((view) => {
 		views.set(view.dataset.view, view);
 	});
 
@@ -112,9 +105,7 @@
 
 	function routeFromHash() {
 		const requestedRoute = window.location.hash.slice(1).toLowerCase();
-		return Object.prototype.hasOwnProperty.call(routes, requestedRoute)
-			? requestedRoute
-			: "home";
+		return Object.hasOwn(routes, requestedRoute) ? requestedRoute : "home";
 	}
 
 	function setAltMode(enabled, announce) {
@@ -136,8 +127,6 @@
 		motionButton.setAttribute("aria-pressed", String(motionPaused));
 		motionButton.querySelector(".utility-button__label").textContent =
 			motionPaused ? "MOTION OFF" : "MOTION ON";
-		writePreference("mk-motion", motionPaused ? "paused" : "running");
-
 		if (window.ECOSYSTEM && activeRoute === "ecosystem") {
 			window.ECOSYSTEM.setActive(!motionPaused);
 		}
@@ -155,11 +144,11 @@
 		toast.textContent = message;
 		toast.hidden = false;
 		toast.classList.remove("is-visible");
-		toastFrame = window.requestAnimationFrame(function () {
+		toastFrame = window.requestAnimationFrame(() => {
 			toast.classList.add("is-visible");
 			toastFrame = 0;
 		});
-		toastTimer = window.setTimeout(function () {
+		toastTimer = window.setTimeout(() => {
 			toast.hidden = true;
 			toast.classList.remove("is-visible");
 		}, 2200);
@@ -167,7 +156,7 @@
 
 	function updateNavigation(route) {
 		const currentNavigationRoute = routes[route].navigationRoute;
-		navigationLinks.forEach(function (link) {
+		navigationLinks.forEach((link) => {
 			if (link.dataset.navRoute === currentNavigationRoute) {
 				link.setAttribute("aria-current", "page");
 			} else {
@@ -186,7 +175,7 @@
 		heading.focus({ preventScroll: true });
 		heading.addEventListener(
 			"blur",
-			function () {
+			() => {
 				heading.removeAttribute("tabindex");
 			},
 			{ once: true },
@@ -211,7 +200,7 @@
 			window.CPU_LAB.setActive(false);
 		}
 
-		views.forEach(function (view, viewRoute) {
+		views.forEach((view, viewRoute) => {
 			const isCurrent = viewRoute === route;
 			view.hidden = !isCurrent;
 			view.setAttribute("aria-hidden", String(!isCurrent));
@@ -224,9 +213,9 @@
 		nextView.scrollTop = 0;
 
 		nextView.classList.remove("is-entering");
-		window.requestAnimationFrame(function () {
+		window.requestAnimationFrame(() => {
 			nextView.classList.add("is-entering");
-			window.setTimeout(function () {
+			window.setTimeout(() => {
 				nextView.classList.remove("is-entering");
 			}, 280);
 		});
@@ -236,7 +225,7 @@
 		}
 
 		if (moveFocus) {
-			window.requestAnimationFrame(function () {
+			window.requestAnimationFrame(() => {
 				focusViewHeading(nextView);
 			});
 		}
@@ -245,33 +234,49 @@
 	}
 
 	function loadStylesheet(url) {
-		return new Promise(function (resolve, reject) {
+		return new Promise((resolve, reject) => {
 			const link = document.createElement("link");
 			link.rel = "stylesheet";
 			link.href = url;
-			link.addEventListener("load", function () {
-				resolve(link);
-			}, { once: true });
-			link.addEventListener("error", function () {
-				link.remove();
-				reject(new Error("Unable to load " + url + "."));
-			}, { once: true });
+			link.addEventListener(
+				"load",
+				() => {
+					resolve(link);
+				},
+				{ once: true },
+			);
+			link.addEventListener(
+				"error",
+				() => {
+					link.remove();
+					reject(new Error("Unable to load " + url + "."));
+				},
+				{ once: true },
+			);
 			document.head.appendChild(link);
 		});
 	}
 
 	function loadScript(url) {
-		return new Promise(function (resolve, reject) {
+		return new Promise((resolve, reject) => {
 			const script = document.createElement("script");
 			script.src = url;
 			script.async = true;
-			script.addEventListener("load", function () {
-				resolve(script);
-			}, { once: true });
-			script.addEventListener("error", function () {
-				script.remove();
-				reject(new Error("Unable to load " + url + "."));
-			}, { once: true });
+			script.addEventListener(
+				"load",
+				() => {
+					resolve(script);
+				},
+				{ once: true },
+			);
+			script.addEventListener(
+				"error",
+				() => {
+					script.remove();
+					reject(new Error("Unable to load " + url + "."));
+				},
+				{ once: true },
+			);
 			document.body.appendChild(script);
 		});
 	}
@@ -303,7 +308,7 @@
 		const pendingLoad = featureLoadPromises.get(route);
 
 		if (pendingLoad) {
-			return pendingLoad.then(function (api) {
+			return pendingLoad.then((api) => {
 				if (api) {
 					api.setActive(featureShouldBeActive(route, feature));
 				}
@@ -324,7 +329,7 @@
 			loadStylesheet(feature.stylesheetUrl),
 			loadScript(feature.scriptUrl),
 		])
-			.then(function () {
+			.then(() => {
 				const api = window[feature.apiName];
 				if (!api || typeof api.setActive !== "function") {
 					throw new Error("The feature lifecycle API did not initialize.");
@@ -335,7 +340,7 @@
 				api.setActive(featureShouldBeActive(route, feature));
 				return api;
 			})
-			.catch(function (error) {
+			.catch((error) => {
 				const api = window[feature.apiName];
 				if (api && typeof api.setActive === "function") {
 					api.setActive(false);
@@ -357,13 +362,13 @@
 		const projectName = selector.dataset.projectName;
 		const selectedProject = selector.dataset.projectSelector;
 
-		projectSelectors.forEach(function (projectSelector) {
+		projectSelectors.forEach((projectSelector) => {
 			const isSelected = projectSelector === selector;
 			projectSelector.classList.toggle("is-selected", isSelected);
 			projectSelector.setAttribute("aria-pressed", String(isSelected));
 		});
 
-		projectDetails.forEach(function (detail) {
+		projectDetails.forEach((detail) => {
 			detail.hidden = detail.dataset.projectDetail !== selectedProject;
 		});
 
@@ -374,7 +379,7 @@
 	}
 
 	function machineLostFocus(machine) {
-		window.requestAnimationFrame(function () {
+		window.requestAnimationFrame(() => {
 			if (
 				!machine.matches(":hover") &&
 				!machine.contains(document.activeElement)
@@ -386,7 +391,7 @@
 
 	function copyEmailAddress() {
 		const email = copyEmailButton.dataset.email;
-		const fallbackCopy = function () {
+		const fallbackCopy = () => {
 			const field = document.createElement("textarea");
 			field.value = email;
 			field.setAttribute("readonly", "");
@@ -401,10 +406,10 @@
 
 		if (navigator.clipboard && window.isSecureContext) {
 			navigator.clipboard.writeText(email).then(
-				function () {
+				() => {
 					showToast("Email address copied");
 				},
-				function () {
+				() => {
 					showToast(fallbackCopy() ? "Email address copied" : email);
 				},
 			);
@@ -414,39 +419,39 @@
 		showToast(fallbackCopy() ? "Email address copied" : email);
 	}
 
-	machines.forEach(function (machine) {
+	machines.forEach((machine) => {
 		const machineName = machine.dataset.machine;
-		machine.addEventListener("pointerenter", function () {
+		machine.addEventListener("pointerenter", () => {
 			setFactoryRoute(machineName);
 		});
-		machine.addEventListener("pointerleave", function () {
+		machine.addEventListener("pointerleave", () => {
 			machineLostFocus(machine);
 		});
-		machine.addEventListener("focus", function () {
+		machine.addEventListener("focus", () => {
 			setFactoryRoute(machineName);
 		});
-		machine.addEventListener("blur", function () {
+		machine.addEventListener("blur", () => {
 			machineLostFocus(machine);
 		});
 	});
 
-	projectSelectors.forEach(function (selector) {
-		selector.addEventListener("click", function () {
+	projectSelectors.forEach((selector) => {
+		selector.addEventListener("click", () => {
 			selectProject(selector);
 		});
 	});
 
-	altModeButton.addEventListener("click", function () {
+	altModeButton.addEventListener("click", () => {
 		setAltMode(!altModeEnabled, true);
 	});
 
-	motionButton.addEventListener("click", function () {
+	motionButton.addEventListener("click", () => {
 		setMotionPaused(!motionPaused, true);
 	});
 
 	copyEmailButton.addEventListener("click", copyEmailAddress);
 
-	document.addEventListener("keydown", function (event) {
+	document.addEventListener("keydown", (event) => {
 		const target = event.target;
 		const targetIsEditable =
 			target instanceof HTMLElement &&
@@ -484,14 +489,8 @@
 		}
 	});
 
-	window.addEventListener("hashchange", function () {
+	window.addEventListener("hashchange", () => {
 		revealView(routeFromHash(), true);
-	});
-
-	reducedMotionQuery.addEventListener("change", function (event) {
-		if (event.matches) {
-			setMotionPaused(true, true);
-		}
 	});
 
 	setAltMode(altModeEnabled, false);
