@@ -36,18 +36,57 @@ test("the critical path loads only the shared stylesheet and boot controller", (
 		.map((tag) => attribute(tag, "src"))
 		.filter(Boolean);
 
-	assert.deepEqual(stylesheetUrls, ["assets/css/site.css"]);
-	assert.deepEqual(scriptUrls, ["assets/js/site.js"]);
+	assert.deepEqual(stylesheetUrls, ["assets/css/site.css?v=20260907"]);
+	assert.deepEqual(scriptUrls, ["assets/js/site.js?v=20260907"]);
 	assert.match(
-		tags("script").find((tag) => attribute(tag, "src") === "assets/js/site.js"),
+		tags("script").find(
+			(tag) => attribute(tag, "src") === "assets/js/site.js?v=20260907",
+		),
 		/\sdefer(?:\s|>)/i,
 	);
 });
 
-test("motion is on by default and remains controlled by the site toggle", () => {
-	assert.match(siteScript, /let motionPaused = false;/);
-	assert.doesNotMatch(siteScript, /prefers-reduced-motion/);
-	assert.doesNotMatch(motionStyles, /prefers-reduced-motion/);
+test("motion respects system preferences and persists an explicit choice", () => {
+	assert.match(
+		siteScript,
+		/matchMedia\(\s*"\(prefers-reduced-motion: reduce\)",?\s*\)/,
+	);
+	assert.match(siteScript, /readPreference\("mk-motion"\)/);
+	assert.match(siteScript, /writePreference\("mk-motion"/);
+	assert.match(siteScript, /motionPreference\.addEventListener\("change"/);
+	assert.match(motionStyles, /prefers-reduced-motion: reduce/);
+});
+
+test("the skip link targets a focusable main landmark", () => {
+	const main = tags("main").find(
+		(tag) => attribute(tag, "id") === "site-content",
+	);
+	assert.equal(attribute(main, "tabindex"), "-1");
+	assert.match(siteScript, /querySelector\("\.skip-link"\)/);
+});
+
+test("search and social descriptions identify the owner and featured work", () => {
+	const descriptions = tags("meta").filter((tag) =>
+		["description", "og:description", "twitter:description"].includes(
+			attribute(tag, "name") || attribute(tag, "property"),
+		),
+	);
+	assert.equal(descriptions.length, 3);
+	for (const tag of descriptions) {
+		assert.match(attribute(tag, "content"), /Michael Kahen/);
+		assert.match(attribute(tag, "content"), /RISC-V/);
+	}
+	const schema = JSON.parse(
+		html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1],
+	);
+	assert.ok(schema["@graph"].some((entry) => entry["@type"] === "ProfilePage"));
+});
+
+test("resume references retain a single cache version and the real filename", () => {
+	const urls = [...html.matchAll(/Michael_Kahen_Resume\.pdf\?v=([^"\s<]+)/g)];
+	assert.equal(urls.length, 5);
+	assert.equal(new Set(urls.map((match) => match[1])).size, 1);
+	assert.match(html, /download="Michael_Kahen_Resume\.pdf"/);
 });
 
 test("the compressed critical path stays within its 30 KiB budget", () => {
@@ -73,15 +112,21 @@ test("heavy feature assets are declared as lazy route entry points", () => {
 	);
 
 	assert.ok(shell, "site shell is present");
-	assert.equal(attribute(shell, "data-cpu-script"), "assets/js/cpu.js");
-	assert.equal(attribute(shell, "data-cpu-style"), "assets/css/cpu.css");
+	assert.equal(
+		attribute(shell, "data-cpu-script"),
+		"assets/js/cpu.js?v=20260907",
+	);
+	assert.equal(
+		attribute(shell, "data-cpu-style"),
+		"assets/css/cpu.css?v=20260907",
+	);
 	assert.equal(
 		attribute(shell, "data-ecosystem-script"),
-		"assets/js/ecosystem.js",
+		"assets/js/ecosystem.js?v=20260907",
 	);
 	assert.equal(
 		attribute(shell, "data-ecosystem-style"),
-		"assets/css/ecosystem.css",
+		"assets/css/ecosystem.css?v=20260907",
 	);
 });
 
@@ -99,6 +144,27 @@ test("local asset references resolve inside the repository", () => {
 		const assetPath = reference.split(/[?#]/, 1)[0];
 		assert.ok(fs.existsSync(path.join(projectRoot, assetPath)), assetPath);
 	});
+});
+
+test("CPU scroll panes remain keyboard accessible", () => {
+	for (const id of [
+		"cpu-listing",
+		"cpu-registers",
+		"cpu-memory",
+		"cpu-cache",
+		"cpu-predictor-table",
+	]) {
+		const tag = [...tags("div"), ...tags("section")].find(
+			(node) => attribute(node, "id") === id,
+		);
+		assert.equal(attribute(tag, "tabindex"), "0", id);
+	}
+});
+
+test("third-person search descriptions do not leak into visible portfolio copy", () => {
+	const body = html.split("<body>")[1];
+	assert.doesNotMatch(body, /Michael Kahen is|Explore his/);
+	assert.match(body, /I build software, developer/);
 });
 
 test("document IDs remain unique", () => {

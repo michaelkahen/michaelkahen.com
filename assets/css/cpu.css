@@ -1045,6 +1045,43 @@
 	animation-play-state: paused;
 }
 
+/* Keep editor text and its independently scrolled gutter in exact alignment. */
+.cpu-app .cpu-source,
+.cpu-line-numbers {
+	font-family: var(--mono-font);
+	font-size: 13px;
+	line-height: 1.65;
+}
+
+.cpu-source:focus-visible {
+	outline: 2px solid var(--cpu-blue);
+	outline-offset: -3px;
+}
+
+.cpu-register {
+	grid-template-columns: minmax(38px, auto) minmax(0, 1fr);
+}
+
+.cpu-register__value,
+.cpu-tab,
+.cpu-table-row {
+	font-size: 10px;
+}
+
+.cpu-register__name,
+.cpu-register__signed,
+.cpu-table-row small,
+.cpu-telemetry {
+	font-size: 9px;
+}
+
+.cpu-register__signed,
+.cpu-table-row small,
+.cpu-telemetry dt,
+.cpu-line-numbers {
+	color: #8597ad;
+}
+
 @media (max-width: 1180px) {
 	.cpu-workspace {
 		grid-template-columns: minmax(250px, 0.75fr) minmax(430px, 1.35fr);
@@ -1062,7 +1099,15 @@
 }
 
 @media (max-width: 820px) {
+	/* Native mobile inputs need 16px text to avoid automatic focus zoom. */
+	.cpu-app .cpu-source,
+	.cpu-line-numbers,
+	.cpu-app .cpu-control {
+		font-size: 16px;
+	}
+
 	.cpu-app {
+		grid-template-rows: max-content max-content max-content max-content;
 		overflow: auto;
 	}
 
@@ -1160,14 +1205,23 @@
 		max-width: none;
 	}
 
+	.cpu-toolbar__group:first-child,
 	.cpu-toolbar__group:nth-child(2) {
 		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.cpu-toolbar__group:first-child .cpu-control {
+		grid-column: 1 / -1;
+	}
+
+	.cpu-toolbar__group:first-child .cpu-button {
+		grid-column: 1 / -1;
 	}
 
 	.cpu-toolbar__group:nth-child(3) {
 		display: grid;
-		grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+		grid-template-columns: 1fr;
 	}
 
 	.cpu-toolbar__group + .cpu-toolbar__group {

@@ -8,7 +8,7 @@
 	--terminal-border: rgba(121, 255, 163, 0.18);
 	--terminal-bright: #d2ffdd;
 	--terminal-green: #9dffc2;
-	--terminal-muted: #376e49;
+	--terminal-muted: #80b48f;
 	position: relative;
 	display: grid;
 	grid-template-rows: auto minmax(0, 1fr) auto;
@@ -193,7 +193,7 @@
 }
 
 .ecosystem-loader small {
-	color: #356645;
+	color: #80b48f;
 	font-size: 8px;
 	letter-spacing: 0.1em;
 }
@@ -360,6 +360,42 @@
 
 	.terminal .footer-status span:last-child {
 		display: none;
+	}
+}
+
+/* Keep simulation controls readable without taking space from the canvas. */
+.terminal .topbar h1 {
+	font-size: 11px;
+}
+
+.terminal .instructions button {
+	min-height: 44px;
+	font-size: 11px;
+	padding-inline: 10px;
+}
+
+.terminal .footer-status {
+	font-size: 10px;
+}
+
+.ecosystem-close {
+	width: 44px;
+	height: 44px;
+}
+
+.terminal #world:focus-visible {
+	outline: 2px solid var(--terminal-green);
+	outline-offset: -4px;
+}
+
+@media (max-width: 360px) {
+	.terminal .topbar h1 {
+		font-size: 9px;
+	}
+
+	.terminal .instructions button {
+		padding-inline: 5px;
+		font-size: 10px;
 	}
 }
 

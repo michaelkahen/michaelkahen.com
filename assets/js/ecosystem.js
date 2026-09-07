@@ -3173,6 +3173,12 @@
       ? "SPACE : RESUME"
       : "SPACE : PAUSE";
     pauseButtonElement.setAttribute("aria-pressed", String(isPaused));
+    if (isPaused && animationFrameRequest) {
+      cancelAnimationFrame(animationFrameRequest);
+      animationFrameRequest = 0;
+    } else if (!isPaused) {
+      startAnimationLoop();
+    }
     updateTelemetry();
   }
 
@@ -3266,13 +3272,13 @@
       updateTelemetry();
       lastTelemetryUpdate = now;
     }
-    if (isViewActive && isDocumentVisible) {
+    if (isViewActive && isDocumentVisible && !isPaused) {
       animationFrameRequest = requestAnimationFrame(animationFrame);
     }
   }
 
   function startAnimationLoop() {
-    if (animationFrameRequest || !isViewActive || !isDocumentVisible) {
+    if (animationFrameRequest || !isViewActive || !isDocumentVisible || isPaused) {
       return;
     }
     lastFrameTimestamp = performance.now();
@@ -3335,6 +3341,7 @@
 
   window.ECOSYSTEM = {
     setActive: setViewActive,
+    setPaused: setPaused,
     isActive: function () {
       return isViewActive;
     },

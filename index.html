@@ -5,11 +5,14 @@
 >
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <title>Michael Kahen | Computer Engineer &amp; Software Developer</title>
     <meta
       name="description"
-      content="I build software, developer tools, and automations."
+      content="Michael Kahen is a computer engineer building software, developer tools, and automations. Explore his RISC-V pipeline lab, ecosystem simulation, and resume."
     />
     <meta name="author" content="Michael Kahen" />
     <meta
@@ -47,7 +50,7 @@
     />
     <meta
       property="og:description"
-      content="I build software, developer tools, and automations."
+      content="Michael Kahen is a computer engineer building software, developer tools, and automations. Explore his RISC-V pipeline lab, ecosystem simulation, and resume."
     />
     <meta property="og:type" content="profile" />
     <meta property="og:url" content="https://michaelkahen.com/" />
@@ -78,7 +81,7 @@
     />
     <meta
       name="twitter:description"
-      content="I build software, developer tools, and automations."
+      content="Michael Kahen is a computer engineer building software, developer tools, and automations. Explore his RISC-V pipeline lab, ecosystem simulation, and resume."
     />
     <meta
       name="twitter:image"
@@ -112,7 +115,7 @@
             "isPartOf": { "@id": "https://michaelkahen.com/#website" },
             "mainEntity": { "@id": "https://michaelkahen.com/#michael-kahen" },
             "dateCreated": "2026-07-15",
-            "dateModified": "2026-08-15",
+            "dateModified": "2026-09-07",
             "hasPart": [
               { "@id": "https://michaelkahen.com/#biosphere-project" },
               { "@id": "https://michaelkahen.com/#risc-v-project" },
@@ -189,8 +192,8 @@
     <script>
       document.documentElement.classList.add("js");
     </script>
-    <link rel="stylesheet" href="assets/css/site.css" />
-    <script defer src="assets/js/site.js"></script>
+    <link rel="stylesheet" href="assets/css/site.css?v=20260907" />
+    <script defer src="assets/js/site.js?v=20260907"></script>
   </head>
   <body>
     <a class="skip-link" href="#site-content">Skip to content</a>
@@ -199,10 +202,10 @@
       class="site-shell"
       id="site-shell"
       data-route="home"
-      data-ecosystem-script="assets/js/ecosystem.js"
-      data-ecosystem-style="assets/css/ecosystem.css"
-      data-cpu-script="assets/js/cpu.js"
-      data-cpu-style="assets/css/cpu.css"
+      data-ecosystem-script="assets/js/ecosystem.js?v=20260907"
+      data-ecosystem-style="assets/css/ecosystem.css?v=20260907"
+      data-cpu-script="assets/js/cpu.js?v=20260907"
+      data-cpu-style="assets/css/cpu.css?v=20260907"
     >
       <header class="site-header">
         <a class="site-identity" href="#home" aria-label="My portfolio home">
@@ -247,7 +250,7 @@
         </div>
       </header>
 
-      <main class="site-main" id="site-content">
+      <main class="site-main" id="site-content" tabindex="-1">
         <section
           class="home-view"
           id="home"
@@ -1184,6 +1187,7 @@
                 <section
                   class="cpu-listing"
                   id="cpu-listing"
+                  tabindex="0"
                   aria-label="Encoded instruction listing"
                 ></section>
               </section>
@@ -1200,6 +1204,7 @@
                 </header>
                 <div
                   class="cpu-pipeline"
+                  tabindex="0"
                   role="group"
                   aria-label="Five pipeline stages"
                 >
@@ -1346,6 +1351,7 @@
                   <div
                     class="cpu-inspector-view cpu-registers"
                     id="cpu-registers"
+                    tabindex="0"
                     role="tabpanel"
                     aria-labelledby="cpu-tab-registers"
                     data-inspector-panel="registers"
@@ -1353,6 +1359,7 @@
                   <div
                     class="cpu-inspector-view cpu-table"
                     id="cpu-memory"
+                    tabindex="0"
                     role="tabpanel"
                     aria-labelledby="cpu-tab-memory"
                     data-inspector-panel="memory"
@@ -1361,6 +1368,7 @@
                   <div
                     class="cpu-inspector-view cpu-table"
                     id="cpu-cache"
+                    tabindex="0"
                     role="tabpanel"
                     aria-labelledby="cpu-tab-cache"
                     data-inspector-panel="cache"
@@ -1369,6 +1377,7 @@
                   <div
                     class="cpu-inspector-view cpu-table"
                     id="cpu-predictor-table"
+                    tabindex="0"
                     role="tabpanel"
                     aria-labelledby="cpu-tab-predictor"
                     data-inspector-panel="predictor"
@@ -1554,8 +1563,9 @@
                 >
                 <h2>Let's connect</h2>
                 <p>
-                  The fastest way to reach me is by email. GitHub and LinkedIn
-                  are available through my dedicated uplinks.
+                  Have a project in mind, a role to discuss, or a question about
+                  my work? Send me an email. You can also find me on GitHub and
+                  LinkedIn.
                 </p>
                 <div class="email-channel">
                   <span class="email-channel__label">PRIMARY FREQUENCY</span>

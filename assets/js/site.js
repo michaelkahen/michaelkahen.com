@@ -81,7 +81,13 @@
 	let toastTimer = 0;
 	let toastFrame = 0;
 	let altModeEnabled = readPreference("mk-alt-mode") === "enabled";
-	let motionPaused = false;
+	const motionPreference = window.matchMedia(
+		"(prefers-reduced-motion: reduce)",
+	);
+	let motionChoice = readPreference("mk-motion");
+	let motionPaused =
+		motionChoice === "paused" ||
+		(motionChoice !== "running" && motionPreference.matches);
 
 	document.querySelectorAll("[data-view]").forEach((view) => {
 		views.set(view.dataset.view, view);
@@ -127,11 +133,13 @@
 		motionButton.setAttribute("aria-pressed", String(motionPaused));
 		motionButton.querySelector(".utility-button__label").textContent =
 			motionPaused ? "MOTION OFF" : "MOTION ON";
-		if (window.ECOSYSTEM && activeRoute === "ecosystem") {
-			window.ECOSYSTEM.setActive(!motionPaused);
+		if (window.ECOSYSTEM) {
+			window.ECOSYSTEM.setPaused(motionPaused);
 		}
 
 		if (announce) {
+			motionChoice = motionPaused ? "paused" : "running";
+			writePreference("mk-motion", motionChoice);
 			showToast(
 				motionPaused ? "Ambient motion paused" : "Ambient motion resumed",
 			);
@@ -226,7 +234,7 @@
 
 		if (moveFocus) {
 			window.requestAnimationFrame(() => {
-				focusViewHeading(nextView);
+				if (activeRoute === route) focusViewHeading(nextView);
 			});
 		}
 
@@ -281,11 +289,8 @@
 		});
 	}
 
-	function featureShouldBeActive(route, feature) {
-		return (
-			activeRoute === route &&
-			(!feature.respectsMotionPreference || !motionPaused)
-		);
+	function featureShouldBeActive(route) {
+		return !document.hidden && activeRoute === route;
 	}
 
 	function showFeatureError(feature, error) {
@@ -310,7 +315,7 @@
 		if (pendingLoad) {
 			return pendingLoad.then((api) => {
 				if (api) {
-					api.setActive(featureShouldBeActive(route, feature));
+					api.setActive(featureShouldBeActive(route));
 				}
 				return api;
 			});
@@ -318,7 +323,7 @@
 
 		if (existingApi) {
 			feature.loader.hidden = true;
-			existingApi.setActive(featureShouldBeActive(route, feature));
+			existingApi.setActive(featureShouldBeActive(route));
 			return Promise.resolve(existingApi);
 		}
 
@@ -337,7 +342,8 @@
 
 				feature.loader.hidden = true;
 				view.removeAttribute("aria-busy");
-				api.setActive(featureShouldBeActive(route, feature));
+				if (feature.respectsMotionPreference) api.setPaused(motionPaused);
+				api.setActive(featureShouldBeActive(route));
 				return api;
 			})
 			.catch((error) => {
@@ -399,9 +405,14 @@
 			field.style.opacity = "0";
 			document.body.appendChild(field);
 			field.select();
-			const copied = document.execCommand("copy");
-			field.remove();
-			return copied;
+			try {
+				return document.execCommand("copy");
+			} catch (_error) {
+				return false;
+			} finally {
+				field.remove();
+				copyEmailButton.focus({ preventScroll: true });
+			}
 		};
 
 		if (navigator.clipboard && window.isSecureContext) {
@@ -486,6 +497,25 @@
 		} else if (event.key.toLowerCase() === "m") {
 			event.preventDefault();
 			setMotionPaused(!motionPaused, true);
+		}
+	});
+
+	document.querySelector(".skip-link").addEventListener("click", (event) => {
+		event.preventDefault();
+		focusViewHeading(views.get(activeRoute));
+	});
+
+	motionPreference.addEventListener("change", () => {
+		if (motionChoice !== "paused" && motionChoice !== "running") {
+			setMotionPaused(motionPreference.matches, false);
+		}
+	});
+
+	document.addEventListener("visibilitychange", () => {
+		shell.classList.toggle("is-background", document.hidden);
+		for (const [route, feature] of Object.entries(featureModules)) {
+			const api = window[feature.apiName];
+			if (api) api.setActive(featureShouldBeActive(route));
 		}
 	});
 
